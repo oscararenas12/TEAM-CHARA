@@ -14,6 +14,14 @@ export const MessageInput: React.FC<Props> = ({ onSend }) => {
     }
   };
 
+  // Press Enter to send message
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
     <div style={{ display: "flex", marginTop: 10 }}>
       <input
@@ -21,6 +29,7 @@ export const MessageInput: React.FC<Props> = ({ onSend }) => {
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="Type a message..."
+        onKeyDown={handleKeyDown}
       />
       <button onClick={handleSend}>Send</button>
     </div>
