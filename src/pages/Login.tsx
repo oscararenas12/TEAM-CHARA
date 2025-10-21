@@ -71,6 +71,7 @@ function Login() {
           <button type="submit">Login</button>
         </form>
       </div>
+      <p className="under-card">By signing up, you agree to verify your student status</p>
     </div>
   );
 }

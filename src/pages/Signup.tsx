@@ -66,6 +66,7 @@ function Signup() {
           <button type="submit">Create Account</button>
         </form>
       </div>
+      <p className="under-card">By signing up, you agree to verify your student status</p>
     </div>
   );
 }
