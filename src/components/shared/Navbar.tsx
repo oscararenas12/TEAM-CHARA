@@ -1,10 +1,10 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import homeImg from "../assets/home.png";
-import messageImg from "../assets/message.png";
-import userImg from "../assets/user.png";
-import plusImg from "../assets/plus.png";
-import "../styles.css";
+import homeImg from "../../assets/home.png";
+import messageImg from "../../assets/message.png";
+import userImg from "../../assets/user.png";
+import plusImg from "../../assets/plus.png";
+import "../../styles.css";
 
 function Navbar() {
   return (

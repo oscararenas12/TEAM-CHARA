@@ -1,7 +1,7 @@
 import React from "react";
-import { ChatWindow } from "../components/ChatSystem/ChatWindow";
-import { MessageInput } from "../components/ChatSystem/MessageInput";
-import { Message } from "../types";
+import { ChatWindow } from "../components/ChatWindow";
+import { MessageInput } from "../components/MessageInput";
+import { Message } from "../../../types";
 
 function Messages() {
   const [messages, setMessages] = React.useState<Message[]>([]);

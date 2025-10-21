@@ -1,19 +1,26 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import hatImg from "../assets/hat.png";
-import trustImg from "../assets/shield.png";
-import hat2Img from "../assets/graduation.png";
-import communityImg from "../assets/people.png";
+import hatImg from "../../../assets/hat.png";
+import trustImg from "../../../assets/shield.png";
+import hat2Img from "../../../assets/graduation.png";
+import communityImg from "../../../assets/people.png";
 
-function Signup() {
+function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Check active page based on pathname
   const isLoginPage = location.pathname === "/";
-  const isSignupPage = location.pathname === "/signup";
+  const isSignupPage = location.pathname === "/signup"; // ✅ Fixed lowercase
+
+  const handleLogin = (e: React.FormEvent) => {
+  e.preventDefault(); // Prevent page reload
+    // You can add login validation here later
+  navigate("/home"); // Navigate to Home page
+  };
 
   return (
-    <div className="signup-page">
+    <div className="login-page">
       <img id="hat" src={hatImg} alt="Hat logo" />
 
       <div>
@@ -22,7 +29,7 @@ function Signup() {
 
         <div className="points-container">
           <div className="point">
-            <img src={trustImg} alt="trust" />
+            <img src={trustImg} alt="trust" />           
             <p>Verified Student Only</p>
           </div>
           <div className="point">
@@ -54,16 +61,14 @@ function Signup() {
           </div>
         </div>
 
-        <form>
-          <label htmlFor="name">Name</label>
-          <input name="name" type="text" placeholder="Name" /> <br />
+        <form onSubmit={handleLogin}>
           <label htmlFor="email">Email</label>
-          <input type="email" placeholder="email@student.edu" /> <br />
-          <label htmlFor="Studentid">Student ID</label>
-          <input name="Studentid" type="text" placeholder="Student ID" /> <br />
+          <input name="email" type="email" placeholder="email@student.edu" /><br />
+
           <label htmlFor="password">Password</label>
           <input type="password" placeholder="Password" /> <br />
-          <button type="submit">Create Account</button>
+
+          <button type="submit">Login</button>
         </form>
       </div>
       <p className="under-card">By signing up, you agree to verify your student status</p>
@@ -71,4 +76,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default Login;
