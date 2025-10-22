@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./styles.css";
 import laptopImg from "../../../assets/laptop.jpeg";
+import hatImg from "../../../assets/hat.png";
 
 function Home() {
   // state to hold user search
@@ -24,12 +25,16 @@ function Home() {
     <div>
       {/* page head */}
       <div className="home-head">
-        <h1 id="page-head">Student Mart</h1>
-        <p>Find what you need, Sell what you don't</p>
+        <div className="home-head1">
+          <img id="hat-home" src={hatImg} alt="Hat logo" />
+          <h1 id="page-head">Student Mart</h1>
+                </div>
+
       </div>
+       <p id="line">Find what you need, Sell what you don't</p>
 
       {/* Search bar */}
-      <input
+<input
         type="text"
         placeholder="Search..."
         className="Search-bar"

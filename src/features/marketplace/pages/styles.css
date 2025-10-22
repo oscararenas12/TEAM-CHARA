@@ -37,3 +37,12 @@
     font-size: 0.9rem;
   }
 }
+
+.home-head1 {
+  background: black;
+  width: 100%;
+}
+
+.home-head1 h1 {
+  color: rgb(255, 221, 0);
+}
