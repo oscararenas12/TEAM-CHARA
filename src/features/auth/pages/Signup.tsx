@@ -4,6 +4,7 @@ import hatImg from "../../../assets/hat.png";
 import trustImg from "../../../assets/shield.png";
 import hat2Img from "../../../assets/graduation.png";
 import communityImg from "../../../assets/people.png";
+import "./styles.css";
 
 function Signup() {
   const navigate = useNavigate();
@@ -66,7 +67,9 @@ function Signup() {
           <button type="submit">Create Account</button>
         </form>
       </div>
-      <p className="under-card">By signing up, you agree to verify your student status</p>
+      <p className="under-card">
+        By signing up, you agree to verify your student status
+      </p>
     </div>
   );
 }
