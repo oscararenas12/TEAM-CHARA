@@ -1,22 +1,59 @@
-import React from "react";
+// Can't bypass login page with no inputs now
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { LoginCredentials, User, ApiResponse } from "../../../types";
 import hatImg from "../../../assets/hat.png";
 import trustImg from "../../../assets/shield.png";
 import hat2Img from "../../../assets/graduation.png";
 import communityImg from "../../../assets/people.png";
+import "./styles.css";
 
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // State with proper typing
+  const [credentials, setCredentials] = useState<LoginCredentials>({
+    email: "",
+    password: "",
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
   // Check active page based on pathname
   const isLoginPage = location.pathname === "/";
-  const isSignupPage = location.pathname === "/signup"; // ✅ Fixed lowercase
+  const isSignupPage = location.pathname === "/signup";
 
-  const handleLogin = (e: React.FormEvent) => {
-  e.preventDefault(); // Prevent page reload
-    // You can add login validation here later
-  navigate("/home"); // Navigate to Home page
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // TODO: Replace with actual API call
+      // const response: ApiResponse<User> = await loginUser(credentials);
+      // if (response.success && response.data) {
+      //   // Store user in context/state management
+      //   navigate("/home");
+      // } else {
+      //   setError(response.error || "Login failed");
+      // }
+
+      // Temporary navigation for now
+      navigate("/home");
+    } catch (err) {
+      setError("Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCredentials((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   return (
@@ -29,7 +66,7 @@ function Login() {
 
         <div className="points-container">
           <div className="point">
-            <img src={trustImg} alt="trust" />           
+            <img src={trustImg} alt="trust" />
             <p>Verified Student Only</p>
           </div>
           <div className="point">
@@ -61,17 +98,44 @@ function Login() {
           </div>
         </div>
 
+        {error && (
+          <div
+            className="error-message"
+            style={{ color: "red", marginBottom: "10px", textAlign: "center" }}
+          >
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleLogin}>
           <label htmlFor="email">Email</label>
-          <input name="email" type="email" placeholder="email@student.edu" /><br />
-
+          <input
+            name="email"
+            type="email"
+            placeholder="email@student.csulb.edu"
+            value={credentials.email}
+            onChange={handleInputChange}
+            required
+          />
+          <br />
           <label htmlFor="password">Password</label>
-          <input type="password" placeholder="Password" /> <br />
-
-          <button type="submit">Login</button>
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={credentials.password}
+            onChange={handleInputChange}
+            required
+          />{" "}
+          <br />
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Login"}
+          </button>
         </form>
       </div>
-      <p className="under-card">By signing up, you agree to verify your student status</p>
+      <p className="under-card">
+        By signing up, you agree to verify your student status
+      </p>
     </div>
   );
 }
