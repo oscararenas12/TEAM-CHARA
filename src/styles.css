@@ -7,7 +7,7 @@
 }
 
 body {
-    background: rgb(251, 253, 255);
+    background: #fff;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -94,6 +94,11 @@ a:visited {
 }
 
 .home-head {
+      position: fixed;
+  top: 0;                  /* stick to top of the page */
+  left: 0;
+  right: 0;
+    
     width: 100%;
     margin: 0;
     padding-top: 20px;            /* remove any extra spacing */
@@ -101,7 +106,8 @@ a:visited {
     padding-bottom: 5px;
     background: black;
     box-sizing: border-box;
-    
+
+
 }
 
 .home-head1 {
@@ -122,11 +128,10 @@ a:visited {
 
 /* ===== Search Bar ===== */
 .Search-bar {
-    width: 95%;              /* desired width */
-    margin: 40px;
+    width: 95%;              
     height: 35px;
     margin: 20px auto;
-    display: block;          /* ensures margin auto works */
+    display: block;          
     border-radius: 25px;
     border: none;
     padding: 8px 25px;
@@ -160,7 +165,9 @@ a:visited {
     flex-wrap: wrap;
     justify-content: flex-start; 
     gap: 2vw;                    
-    max-width: 90vw;           
+    max-width: 90vw;   
+    width: 95%;  
+    margin-left: 110px;   
 }
 
 .item-card {

@@ -44,5 +44,132 @@
 }
 
 .home-head1 h1 {
-  color: rgb(255, 221, 0);
+  color: rgb(255, 204, 0);
+}
+
+
+
+/* ===== Item detail page ===== */
+
+.item-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 20px;
+  margin: 0 18% 40px;
+}
+
+.box {
+  width: 100%;
+  border: 1px solid #e7e7e7;
+  padding: 20px 40px;
+  border-radius: 8px;
+  background-color: #fff;
+  margin: 20px 20%;
+}
+
+.box h3 {
+  text-align: left;
+
+}
+
+#backbut {
+  width: 10%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Image carousel */
+.item-images-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.item-images-box img {
+  width: 60%;
+  border-radius: 8px;
+}
+
+.item-images-box button {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0 20px;
+}
+
+/* Item info box */
+.item-info-box{
+  display: flex;             
+  justify-content: space-between; 
+  align-items: center;
+  padding: 2px 30px ;
+  width: 100%;
+}
+
+.item-info-box p {
+  margin: 5px 0;
+  font-size: 1rem;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.item-price {
+  color:rgb(255, 204, 0);
+}
+
+.item-condition {
+  font-weight: bold;
+}
+
+/* Seller info box */
+.seller-info-box h3 {
+  margin-bottom: 10px;
+}
+
+.seller-link {
+  color: #0077cc;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.seller-link:hover {
+  color: #005fa3;
+}
+
+/* Quick questions box */
+.quick-questions-box h3 {
+  margin-bottom: 10px;
+}
+
+.quick-question-btn {
+  padding: 8px 12px;
+  background-color: #ffd518;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.quick-question-btn:hover {
+  background-color: #e6c200;
+}
+
+/* Back button */
+.back-button {
+  align-self: flex-start;
+  margin-bottom: 10px;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+.question {
+  padding: 0 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  margin: 20px;
+  border: 1px solid #e7e7e7;
 }

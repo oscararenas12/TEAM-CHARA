@@ -7,6 +7,7 @@ import Messages from "./features/messaging/pages/Messages";
 import Sell from "./features/marketplace/pages/Sell";
 import Profile from "./features/profile/pages/Profile";
 import Navbar from "./components/shared/Navbar";
+import ItemDetail from "./features/marketplace/pages/ItemDetail";
 
 function App() {
   const location = useLocation();
@@ -23,6 +24,9 @@ function App() {
         <Route path="/messages" element={<Messages />} />
         <Route path="/sell" element={<Sell />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/item/:id" element={<ItemDetail />} />
+
       </Routes>
 
       {!hideNavbar && <Navbar />}
