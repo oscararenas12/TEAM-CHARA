@@ -39,10 +39,7 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: space-around;
     align-items: center;
     height: 5%;
-<<<<<<< Updated upstream
-=======
     background: white;
->>>>>>> Stashed changes
     padding: 10px 0;
     width: 100%;
     border-top: solid 1px rgb(207, 204, 204);
@@ -83,20 +80,6 @@ h1, h2, h3, h4, h5, h6 {
     width: 60px;
 }
 
-<<<<<<< Updated upstream
-/* ===== Shared Utility Classes ===== */
-/* ===== Responsive Breakpoints ===== */
-@media (max-width: 768px) {
-    .bottom-navbar {
-        height: 70px;
-        padding: 5px 0;
-    }
-    
-    .nav-col a.active {
-        width: 50px;
-        padding: 2px 4px;
-    }
-=======
 
 #page-head {
     text-align: left;
@@ -195,5 +178,4 @@ a {
 
 a:visited {
     color: None;
->>>>>>> Stashed changes
 }
