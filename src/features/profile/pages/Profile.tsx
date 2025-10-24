@@ -17,7 +17,10 @@ function Profile() {
   const [user] = useState({
     name: "Alice Johnson",
     email: "alice@example.com",
-    bio: "Student at XYZ University. Loves selling gadgets!",
+    rating: "1.5",
+    item_sold: "3",
+    item_listed: "2"
+   
   });
 
   // Mock all items in the marketplace
@@ -74,15 +77,15 @@ function Profile() {
       </div>
 
       {/* User Items */}
-      <h3>Your Listings</h3>
       <div className="user-items">
-        <div className="item-container">
+        <h3>Your Listings</h3>
+        <div className="profile-item-cont item-container ">
           {userItems.length > 0 ? (
             userItems.map((item) => (
               <Link
                 to={`/item/${item.id}`}
                 key={item.id}
-                className="item-card"
+                className="profile-items"
                 state={{ item }} // send full item data to ItemDetail page
               >
                 <img
