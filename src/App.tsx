@@ -8,6 +8,8 @@ import Sell from "./features/marketplace/pages/Sell";
 import Profile from "./features/profile/pages/Profile";
 import Navbar from "./components/shared/Navbar";
 import ItemDetail from "./features/marketplace/pages/ItemDetail";
+import EditProfile from "./features/profile/pages/EditProfile";
+import PublicProfile from "./features/profile/pages/PublicProfile";
 
 function App() {
   const location = useLocation();
@@ -26,6 +28,8 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/home" element={<Home />} />
         <Route path="/item/:id" element={<ItemDetail />} />
+        <Route path="/editprofile" element={<EditProfile />} />
+        <Route path="/publicprofile" element={<PublicProfile />} />
 
       </Routes>
 
