@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "./styles.css";
 import laptopImg from "../../../assets/laptop.jpeg";
 import hatImg from "../../../assets/hat.png";
+import cartImg from "../../../assets/cart.png";
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -66,9 +67,16 @@ function Home() {
     <div>
       {/* page header */}
         <div className="home-head1">
+          <div className="home-head2">
           <img id="hat-home" src={hatImg} alt="Hat logo" />
-          <h1 id="page-head">Student Mart</h1>
+          <h1 id="page-head">Student Mart</h1></div>
+          <div className="icon-cart">
+
+          <Link to="/messages" className="cart">
+      <img className="cart-icon"  src={cartImg} alt="cart" />
+      </Link></div>
         </div>
+
 
 
       <p id="line">Find what you need, Sell what you don't</p>

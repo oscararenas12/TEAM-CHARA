@@ -42,9 +42,10 @@ const ItemDetail: React.FC = () => {
 
   return (
      <div className="item-detail">
+      <div className="item-detail-head">
       <Link to="/home" className="back-button">
         <img id="backbut" src={backImg} alt="gohome" />
-      </Link>
+      </Link> </div>
 
       {/* Image Carousel */}
       <div className="box item-images-box">
