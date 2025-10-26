@@ -31,3 +31,143 @@ a {
 a:visited {
   color: inherit;
 }
+
+/* ===== Bottom Navigation Bar ===== */
+.bottom-navbar {
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 5%;
+  background: white;
+  padding: 10px 0;
+  width: 100%;
+  border-top: solid 1px rgb(207, 204, 204);
+  z-index: 1000;
+}
+
+.bottom-navbar a {
+  text-decoration: none;
+  color: black;
+  font-size: 0.9rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.Nav-icon {
+  width: 20px;
+  margin: 5px;
+}
+
+.nav-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav-col a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #333;
+}
+
+.nav-col a.active {
+  background-color: rgb(255, 209, 2);
+  border-radius: 4px;
+  padding: 2px 8px;
+  width: 60px;
+}
+
+/* ===== Home Page Header ===== */
+#page-head {
+  text-align: left;
+}
+
+#line {
+  margin-left: 25px;
+  margin-bottom: 0;
+  font-size: 1.5rem;
+  color: rgb(136, 132, 116);
+}
+
+/* ===== Search Bar ===== */
+.Search-bar {
+  width: 95%;
+  height: 35px;
+  margin: 20px auto;
+  display: block;
+  border-radius: 25px;
+  border: none;
+  padding: 8px 25px;
+  font-size: 1rem;
+  background-color: rgb(245, 245, 245);
+  box-sizing: border-box;
+}
+
+.Search-bar:focus {
+  border: solid 2px #ffd518;
+  outline: none;
+}
+
+/* ===== Items Section for Home Page ===== */
+.items-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2vh 2vw;
+}
+
+.item-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin: 0;
+  max-width: 90vw;
+  width: 95%;
+}
+
+.item-card {
+  background-color: rgb(254, 254, 255);
+  padding: 1.5vh 1.5vw;
+  width: 25vw;
+  min-width: 180px;
+  border-radius: 1vh;
+  box-shadow: 0 0.5vh 1.5vh rgba(0, 0, 0, 0.1);
+  margin: 2vh 1vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.item-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0.4vh 1vh rgba(0, 0, 0, 0.15);
+}
+
+.item-img {
+  width: 100%;
+  height: 25vh;
+  object-fit: cover;
+  border-radius: 0.5vh;
+}
+
+.posted-by {
+  font-size: 1.5vh;
+  color: gray;
+  margin-top: 1vh;
+  text-align: center;
+}
+
+#hat-home {
+  width: 50px;
+  margin: 10px;
+}
+
+.no-items {
+  text-align: center;
+  color: gray;
+  font-size: 1.2rem;
+  margin: 40px;
+}
