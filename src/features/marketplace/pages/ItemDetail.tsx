@@ -12,11 +12,21 @@ interface Item {
   description: string;
   images: string[];
   postedBy: string;
+  condition: string;
 }
 
 const ItemDetail: React.FC = () => {
   const location = useLocation();
   const item: Item | undefined = location.state?.item;
+
+    const [user] = useState({
+      name: "Alice Johnson",
+      email: "alice@example.com",
+      rating: "1.5",
+      item_sold: "3",
+      item_listed: "2"
+     
+    });
   
 
   // For image carousel
@@ -63,18 +73,37 @@ const ItemDetail: React.FC = () => {
         <p className="item-price">{item.price}</p>
       </div>
 
+      <div className="box condition">
+        <h3>Condition:</h3>
+        <p id="condition">{item.condition}</p>
+
+      </div>
+
       <div className="box description"> 
         <h3>Description</h3>
-        <p className="item-description">{item.description}</p> </div>
+        <p className="item-description">{item.description}</p>
+          
+        
+         </div>
+      
 
       
 
       {/* Seller Info */}
       <div className="box seller-info-box">
         <h3>Seller Information</h3>
-        <Link to={`/profile/${item.postedBy}`} className="seller-link">
-          {item.postedBy}'s Profile
-        </Link>
+        <div className="seller-info-box1">
+          <div className="seller-info-box3">
+          <div className="seller-avatar">
+  {user.name.charAt(0).toUpperCase()}
+</div>
+        <div className="seller-info-box2">
+          <p>{user.name}</p>
+        <p className="rating">★ {user.rating}</p></div></div>
+        <Link to={`/publicprofile/${user.name}`} className="seller-link">
+          <button>View Profile</button>
+        </Link></div>
+       
       </div>
 
       {/* Quick Questions */}
@@ -91,6 +120,7 @@ const ItemDetail: React.FC = () => {
 
         </div>
         <div className="question">
+          
             <p>What's the condition like?</p>
 
         </div>
@@ -100,9 +130,7 @@ const ItemDetail: React.FC = () => {
 
         </div>
         </div>
-        <button onClick={handleQuickQuestion} className="quick-question-btn">
-          Send a message to seller
-        </button>
+      
       </div>
     </div>
   );

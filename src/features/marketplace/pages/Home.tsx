@@ -14,13 +14,14 @@ function Home() {
       id: 1,
       name: "Laptop",
       price: "$500",
-      postedBy: "Alice",
+      postedBy: "Alice Johnson",
       images: [
         laptopImg,
         "https://via.placeholder.com/300x200?text=Laptop+2",
         "https://via.placeholder.com/300x200?text=Laptop+3",
       ],
       description: "Fast and reliable laptop, perfect for students.",
+      condition: "used-like-new",
     },
     {
       id: 2,
@@ -32,6 +33,7 @@ function Home() {
         "https://via.placeholder.com/300x200?text=Headphones+2",
       ],
       description: "Noise cancelling headphones, great sound quality.",
+      condition: "used-like-new",
     },
     {
       id: 3,
@@ -43,6 +45,7 @@ function Home() {
         "https://via.placeholder.com/300x200?text=Backpack+2",
       ],
       description: "Durable and spacious backpack for daily use.",
+      condition: "used-like-new",
     },
     {
       id: 4,
@@ -55,6 +58,7 @@ function Home() {
         "https://via.placeholder.com/300x200?text=Camera+3",
       ],
       description: "Capture great moments with this professional camera.",
+      condition: "used-like-new",
     },
   ];
 
