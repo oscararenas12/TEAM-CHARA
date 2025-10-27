@@ -29,7 +29,7 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/item/:id" element={<ItemDetail />} />
         <Route path="/editprofile" element={<EditProfile />} />
-        <Route path="/publicprofile" element={<PublicProfile />} />
+        <Route path="/publicprofile/:user" element={<PublicProfile />} />
 
       </Routes>
 
