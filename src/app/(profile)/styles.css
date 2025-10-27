@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 20px;
   padding: 40px 20px;
   margin: 0 18% 40px;
 
@@ -13,17 +14,142 @@
   justify-content: center; /* center the container horizontally */
   width: 100%;
   margin-top: 30px;
+  flex-direction: column;
+}
+
+
+.profile-pic {
+  width: 100px;         
+  height: 100px;        
+  border-radius: 50%;  
+  object-fit: cover;     
+  border: 2px solid #ccc; 
+  margin-bottom: 7%;
+}
+
+.profile-info {
+  margin: 0 20px 0 40px;
+  
+}
+
+.profile-pic-info {
+  display:flex;
+  flex-direction: row;
 }
 
 .profile-header {
+  width: 100%;
+  border: 1px solid #e7e7e7;
+  padding: 20px 40px;
+  border-radius: 8px;
+  background-color: #fff;
+  margin: 20px 20%;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.profile-butts{
+  display:flex;
+  flex-direction:row;
+  gap: 40px;
+  
+}
+
+.profile-butts1 {
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #ccc; 
+  font-weight: bold;
+  height: 40px;
+}
+
+.profile-item-cont {
+     gap: 100px; 
+}
+
+.profile-items {
+  width: 14vw;
+  background-color: rgb(254, 254, 255);
+  padding: 1.5vh 1.5vw;               
+  min-width: 250px;            
+  border-radius: 1vh;
+  box-shadow: 0 0.5vh 1.5vh rgba(0, 0, 0, 0.1); 
+  margin: 2vh 1vw;             
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 30px;
-  max-width: 400px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: 20px -40px 0;
+}
+.profile-items:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0.4vh 1vh rgba(0, 0, 0, 0.15);
+}
+
+.infos-cont {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: space-between;
   width: 100%;
-  margin-bottom: 30px;
+  margin: 20px 20%; /* matches profile-header */
+  padding: 0;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+}
+
+.infoss {
+  flex: 1; 
+  border: 1px solid #e7e7e7;
+  padding: 20px 40px;
+  border-radius: 10px;
+  background-color: #fff;
+  margin: 0 -40px;
+  box-sizing: border-box;
+  max-width: 20vw;
+  text-align: center;
+  
+}
+
+.info2 {
+  color: rgb(255, 221, 0);
+  font-weight: bold;
+  font-size: 1.8rem;
+  margin-bottom: 0;
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+}
+
+.info3 {
+  color: rgb(144, 133, 133);
+}
+
+.listings {
+  display:flex;
+  justify-content: space-between;
+}
+
+.listings button {
+  background: rgb(255, 221, 0);
+  border: none;
+  border-radius: 8px;
+  padding: 0 20px;
+  font-weight: bold;
+  height: 45px;
+  font-size: 0.96rem;
 }
 
 
+.edit-profile {
+  display: flex;
+  flex-direction: column;
+}
+
+.public-profile-header {
+  flex-direction: column;
+}
+
+.public-butts {
+  justify-content: center;
+}

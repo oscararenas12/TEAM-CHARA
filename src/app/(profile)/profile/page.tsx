@@ -65,21 +65,56 @@ export default function ProfilePage() {
   return (
     <div className="profile-page">
       {/* Profile Header */}
-      <div className="profile-header">
-        <img
-          className="profile-pic"
-          alt={`${user.name} profile`}
-        />
-        <div className="profile-info">
-          <h2>{user.name}</h2>
-          <p>{user.email}</p>
-          <button>Edit</button>
-        </div>
+
+
+        {/* ===== Profile Header ===== */}
+  <div className="profile-header">
+
+    {/* --- Profile Picture & Info --- */}
+    <div className="profile-pic-info">
+      <img
+        className="profile-pic"
+        alt={`${user.name} profile`}
+      />
+      <div className="profile-info">
+        <h2>{user.name}</h2>
+        <p>{user.email}</p>
       </div>
+    </div>
+
+    {/* --- Profile Buttons --- */}
+    <div className="profile-butts">
+       <Link href="/editprofile" className="back-button">
+      <button className="profile-butts1">Edit Profile</button></Link>
+       <Link href="/" className="back-button">
+      <button className="profile-butts1">Log Out</button></Link>
+    </div>
+
+  </div>
+
+  <div className="infos-cont">
+    <div className="infoss">
+      <p className="info2">{user.item_listed}</p>
+      <p className="info3">Items Listed</p>
+    </div>
+    <div className="infoss">
+      <p className="info2">{user.item_sold}</p>
+       <p className="info3">Items Sold</p>
+    </div>
+
+    <div className="infoss">
+      <p className="info2">{user.rating}</p>
+       <p className="info3">Rating</p>
+    </div>
+  </div>
 
       {/* User Items */}
       <div className="user-items">
+        <div className="listings">
         <h3>Your Listings</h3>
+        <Link href="/sell" className="back-button">
+        <button>Create New Listing</button></Link>
+        </div>
         <div className="profile-item-cont item-container ">
           {userItems.length > 0 ? (
             userItems.map((item) => (
