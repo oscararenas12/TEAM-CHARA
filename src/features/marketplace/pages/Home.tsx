@@ -21,8 +21,7 @@ function Home() {
         "https://via.placeholder.com/300x200?text=Laptop+3",
       ],
       description: "Fast and reliable laptop, perfect for students.",
-      condition: "used-like-new",
-    },
+      condition: "used-like-new"},
     {
       id: 2,
       name: "Headphones",

@@ -4,6 +4,7 @@ import "./styles.css";
 import leftImg from "../../../assets/left.png";
 import rightImg from "../../../assets/right.png";
 import backImg from "../../../assets/back.png";
+import messageImg from "../../../assets/message.png";
 
 interface Item {
   id: number;
@@ -112,21 +113,24 @@ const ItemDetail: React.FC = () => {
         <div className="questions">
 
         <div className="question">
-            <p>Is this available?</p>
+          
+            <p>  <img  src={messageImg} alt="gohome" />Is this available?</p>
 
         </div>
         <div className="question">
-            <p>Can I pick up tomorrow?</p>
+
+            <p>  <img  src={messageImg} alt="gohome" />Can I pick up tomorrow?</p>
 
         </div>
         <div className="question">
           
-            <p>What's the condition like?</p>
+            <p>  <img  src={messageImg} alt="gohome" /> What's the condition like?</p>
 
         </div>
 
          <div className="question">
-            <p>Can you send more photos?</p>
+           
+            <p>  <img  src={messageImg} alt="gohome" /> Can you send more photos?</p>
 
         </div>
         </div>
