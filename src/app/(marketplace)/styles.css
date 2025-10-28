@@ -142,5 +142,206 @@
 .box {
   width: 100%;
   border: 1px solid #e7e7e7;
-  padding:
+  padding: 20px;
+}
+
+/* ==========================
+   Sell Page
+   ========================== */
+.sell-page {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px 60px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  color: #222;
+}
+
+/* Override global centered headings for this page */
+.sell-page h1,
+.sell-page h2,
+.sell-page h3,
+.sell-page h4 {
+  text-align: left;
+}
+
+.create-listing h2 {
+  margin: 0 0 6px;
+}
+.create-listing .subtext {
+  margin-top: 6px;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.photos-wrapper {
+  margin-top: 20px;
+}
+
+.photos-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: flex-start; /* ensure tiles start at left edge */
+}
+
+.photo-preview {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.remove-photo {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.add-photo-tile {
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+}
+
+.add-photo-tile:focus {
+  outline: 3px solid rgba(255,204,0,0.35);
+  outline-offset: 2px;
+}
+
+.add-inner {
+  text-align: center;
+  pointer-events: none; /* keep clicks routed to label */
+}
+.add-inner .plus {
+  font-size: 2.2rem;
+  color: #999;
+  line-height: 1;
+}
+.add-inner .add-text {
+  margin-top: 6px;
+  font-weight: 600;
+}
+.add-inner .small-note {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.item-details {
+  margin-top: 20px;
+}
+
+.item-form {
+  display: block;
+  gap: 12px;
+}
+
+.field {
+  display: block;
+  margin-bottom: 12px;
+}
+.field .required {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.field input[type="text"],
+.field textarea,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+  box-sizing: border-box;
+}
+.row {
+  display: flex;
+  gap: 12px;
+}
+.field.small {
+  flex: 1 1 0;
+}
+
+.actions {
+  margin-top: 12px;
+}
+.primary {
+  background: rgb(255, 204, 0);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.primary:hover {
+  filter: brightness(0.98);
+}
+
+.secondary {
+  background: rgb(159, 159, 155);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.secondary:hover {
+  filter: brightness(1.2);
+}
+
+/* visually-hidden helper for accessibility if needed */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Responsive tweaks */
+@media (max-width: 720px) {
+  .photos-container {
+    gap: 10px;
+  }
+  .photo-preview, .add-photo-tile {
+    width: 110px;
+    height: 110px;
+  }
+  .row { flex-direction: column; }
 }
