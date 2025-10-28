@@ -21,7 +21,8 @@ function Home() {
         "https://via.placeholder.com/300x200?text=Laptop+3",
       ],
       description: "Fast and reliable laptop, perfect for students.",
-      condition: "used-like-new"},
+      condition: "used-like-new",
+    },
     {
       id: 2,
       name: "Headphones",
@@ -69,18 +70,17 @@ function Home() {
   return (
     <div>
       {/* page header */}
-        <div className="home-head1">
-          <div className="home-head2">
+      <div className="home-head1">
+        <div className="home-head2">
           <img id="hat-home" src={hatImg} alt="Hat logo" />
-          <h1 id="page-head">Student Mart</h1></div>
-          <div className="icon-cart">
-
-          <Link to="/messages" className="cart">
-      <img className="cart-icon"  src={cartImg} alt="cart" />
-      </Link></div>
+          <h1 id="page-head">Student Mart</h1>
         </div>
-
-
+        <div className="icon-cart">
+          <Link to="/messages" className="cart">
+            <img className="cart-icon" src={cartImg} alt="cart" />
+          </Link>
+        </div>
+      </div>
 
       <p id="line">Find what you need, Sell what you don't</p>
 
