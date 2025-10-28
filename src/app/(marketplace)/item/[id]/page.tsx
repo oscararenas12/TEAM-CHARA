@@ -7,6 +7,7 @@ import "../../styles.css"
 import leftImg from "@/assets/left.png"
 import rightImg from "@/assets/right.png"
 import backImg from "@/assets/back.png"
+import messageImg from "@/assets/message.png"
 import laptopImg from "@/assets/laptop.jpeg"
 
 interface Item {
@@ -16,11 +17,20 @@ interface Item {
   description: string
   images: string[]
   postedBy: string
+  condition: string
 }
 
 export default function ItemDetailPage() {
   const params = useParams()
   const itemId = Number(params.id)
+
+  const [user] = useState({
+    name: "Alice Johnson",
+    email: "alice@example.com",
+    rating: "1.5",
+    item_sold: "3",
+    item_listed: "2"
+  })
 
   // Mock items (TODO: fetch from Supabase)
   const items: Item[] = [
@@ -28,7 +38,8 @@ export default function ItemDetailPage() {
       id: 1,
       name: "Laptop",
       price: "$500",
-      postedBy: "Alice",
+      postedBy: "Alice Johnson",
+      condition: "Like New",
       images: [
         laptopImg.src,
         "https://via.placeholder.com/300x200?text=Laptop+2",
@@ -40,7 +51,8 @@ export default function ItemDetailPage() {
       id: 2,
       name: "Headphones",
       price: "$40",
-      postedBy: "Ryan",
+      postedBy: "Ryan Smith",
+      condition: "Good",
       images: [
         "https://via.placeholder.com/300x200?text=Headphones+1",
         "https://via.placeholder.com/300x200?text=Headphones+2",
@@ -51,7 +63,8 @@ export default function ItemDetailPage() {
       id: 3,
       name: "Backpack",
       price: "$30",
-      postedBy: "Sophie",
+      postedBy: "Sophie Chen",
+      condition: "Excellent",
       images: [
         "https://via.placeholder.com/300x200?text=Backpack+1",
         "https://via.placeholder.com/300x200?text=Backpack+2",
@@ -62,7 +75,8 @@ export default function ItemDetailPage() {
       id: 4,
       name: "Camera",
       price: "$250",
-      postedBy: "Daniel",
+      postedBy: "Daniel Park",
+      condition: "Like New",
       images: [
         "https://via.placeholder.com/300x200?text=Camera+1",
         "https://via.placeholder.com/300x200?text=Camera+2",
@@ -123,6 +137,11 @@ export default function ItemDetailPage() {
         <p className="item-price">{item.price}</p>
       </div>
 
+      <div className="box condition">
+        <h3>Condition:</h3>
+        <p id="condition">{item.condition}</p>
+      </div>
+
       <div className="box description">
         <h3>Description</h3>
         <p className="item-description">{item.description}</p>
@@ -131,9 +150,20 @@ export default function ItemDetailPage() {
       {/* Seller Info */}
       <div className="box seller-info-box">
         <h3>Seller Information</h3>
-        <Link href={`/profile/${item.postedBy}`} className="seller-link">
-          {item.postedBy}'s Profile
-        </Link>
+        <div className="seller-info-box1">
+          <div className="seller-info-box3">
+            <div className="seller-avatar">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="seller-info-box2">
+              <p>{user.name}</p>
+              <p className="rating">★ {user.rating}</p>
+            </div>
+          </div>
+          <Link href={`/publicprofile/${user.name}`} className="seller-link">
+            <button>View Profile</button>
+          </Link>
+        </div>
       </div>
 
       {/* Quick Questions */}
@@ -141,22 +171,30 @@ export default function ItemDetailPage() {
         <h3>Quick Questions</h3>
         <div className="questions">
           <div className="question">
-            <p>Is this available?</p>
+            <p>
+              <img src={messageImg.src} alt="message" />
+              Is this available?
+            </p>
           </div>
           <div className="question">
-            <p>Can I pick up tomorrow?</p>
+            <p>
+              <img src={messageImg.src} alt="message" />
+              Can I pick up tomorrow?
+            </p>
           </div>
           <div className="question">
-            <p>What's the condition like?</p>
+            <p>
+              <img src={messageImg.src} alt="message" />
+              What's the condition like?
+            </p>
           </div>
-
           <div className="question">
-            <p>Can you send more photos?</p>
+            <p>
+              <img src={messageImg.src} alt="message" />
+              Can you send more photos?
+            </p>
           </div>
         </div>
-        <button onClick={handleQuickQuestion} className="quick-question-btn">
-          Send a message to seller
-        </button>
       </div>
     </div>
   )
