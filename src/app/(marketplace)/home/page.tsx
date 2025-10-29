@@ -19,7 +19,11 @@ export default function HomePage() {
       category: "Electronics",
       price: "$500",
       postedBy: "Alice",
-      images: [laptopImg.src],
+      images: [
+        laptopImg.src,
+        "https://via.placeholder.com/300x200?text=Laptop+2",
+        "https://via.placeholder.com/300x200?text=Laptop+3",
+      ],
     },
     {
       id: 2,
@@ -27,7 +31,10 @@ export default function HomePage() {
       category: "Electronics",
       price: "$40",
       postedBy: "Ryan",
-      images: ["https://via.placeholder.com/300x200?text=Headphones+1"],
+      images: [
+        "https://via.placeholder.com/300x200?text=Headphones+1",
+        "https://via.placeholder.com/300x200?text=Headphones+2",
+      ],
     },
     {
       id: 3,
@@ -35,7 +42,10 @@ export default function HomePage() {
       category: "Accessories",
       price: "$30",
       postedBy: "Sophie",
-      images: ["https://via.placeholder.com/300x200?text=Backpack+1"],
+      images: [
+        "https://via.placeholder.com/300x200?text=Backpack+1",
+        "https://via.placeholder.com/300x200?text=Backpack+2",
+      ],
     },
     {
       id: 4,
@@ -43,32 +53,29 @@ export default function HomePage() {
       category: "Electronics",
       price: "$250",
       postedBy: "Daniel",
-      images: ["https://via.placeholder.com/300x200?text=Camera+1"],
+      images: [
+        "https://via.placeholder.com/300x200?text=Camera+1",
+        "https://via.placeholder.com/300x200?text=Camera+2",
+      ],
     },
   ]
 
-  const categories = ["All", ...new Set(items.map((item) => item.category))]
+  const categories = ["All", ...new Set(items.map(item => item.category))]
 
-  const filteredItems = items.filter((item) => {
-    const matchesCategory =
-      selectedCategory === "All" || item.category === selectedCategory
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase())
+  const filteredItems = items.filter(item => {
+    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
     return matchesCategory && matchesSearch
   })
 
-  // Toggle heart like
   const toggleLike = (itemId: number) => {
-    if (likedItems.includes(itemId)) {
-      setLikedItems(likedItems.filter((id) => id !== itemId))
-    } else {
-      setLikedItems([...likedItems, itemId])
-    }
+    setLikedItems(prev =>
+      prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]
+    )
   }
 
   return (
-    <div>
+    <div className="homepage-wrapper">
       {/* Header */}
       <div className="home-head1">
         <div className="home-head2">
@@ -76,7 +83,7 @@ export default function HomePage() {
           <h1 id="page-head">Student Mart</h1>
         </div>
         <div className="icon-cart">
-          <Link href="/cart" className="cart">
+          <Link href="/cart">
             <img className="cart-icon" src={cartImg.src} alt="cart" />
           </Link>
         </div>
@@ -84,7 +91,7 @@ export default function HomePage() {
 
       <p id="line">Find what you need, Sell what you don't</p>
 
-      {/* Search bar */}
+      {/* Search + Category */}
       <input
         type="text"
         placeholder="Search..."
@@ -93,46 +100,46 @@ export default function HomePage() {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
 
-      {/* Category filter */}
       <select
         className="category-filter"
         value={selectedCategory}
         onChange={(e) => setSelectedCategory(e.target.value)}
       >
-        {categories.map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
-          </option>
+        {categories.map(cat => (
+          <option key={cat} value={cat}>{cat}</option>
         ))}
       </select>
 
-      {/* Items */}
+      {/* Item Cards */}
       <div className="items-wrapper">
         <div className="item-container">
           {filteredItems.length > 0 ? (
             filteredItems.map((item) => {
               const isLiked = likedItems.includes(item.id)
               return (
-                <div key={item.id} className="item-card">
-                  <Link href={`/item/${item.id}`}>
-                    <img
-                      className="item-img"
-                      src={item.images[0] || laptopImg.src}
-                      alt={item.name}
-                    />
-                    <h3>{item.name}</h3>
-                    <p>{item.price}</p>
-                    <p className="posted-by">Posted by: {item.postedBy}</p>
-                  </Link>
+                <Link href={`/item/${item.id}`} key={item.id} className="item-card">
+                  <img
+                    className="item-img"
+                    src={item.images[0] || laptopImg.src}
+                    alt={item.name}
+                  />
+                  <h3>{item.name}</h3>
+                  <p>{item.price}</p>
 
-                  {/* Heart button outside the Link */}
+                  {/* Heart Button */}
                   <button
                     className={`heart-btn ${isLiked ? "liked" : ""}`}
-                    onClick={() => toggleLike(item.id)}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      toggleLike(item.id)
+                    }}
                   >
                     ❤️
                   </button>
-                </div>
+
+                  <p className="posted-by">Posted by: {item.postedBy}</p>
+                </Link>
               )
             })
           ) : (
