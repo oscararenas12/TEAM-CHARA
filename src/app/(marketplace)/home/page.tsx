@@ -142,8 +142,8 @@ export default function HomePage() {
                   
                   <div className="item-card-price-like">
                      
-                  <p>{item.name}</p>
-                  <p>{item.price}</p>
+                  <p id="name">{item.name}</p>
+                  <p id="price"> {item.price}</p>
 
                   {/* Heart Button */}
                   

@@ -85,6 +85,7 @@
   width: 3vw;
   padding: 0;
   margin-left: 2%;
+  
 }
 
 .back-button {
@@ -93,6 +94,9 @@
   text-decoration: none;
   color: #333;
   font-weight: bold;
+ 
+
+  
 }
 
 /* Image Carousel */
@@ -113,6 +117,8 @@
   border: none;
   cursor: pointer;
   margin: 0 20px;
+  width: 80px;
+  max-width: 80px;
 }
 
 /* Item Info */
@@ -592,4 +598,17 @@
 
 .heart-icon.liked {
   color: #ff2d55; /* bright pink/red */
+}
+
+
+#name {
+  font-weight: bold;
+
+
+}
+
+#price {
+  color: rgb(202, 161, 10);
+
+
 }
