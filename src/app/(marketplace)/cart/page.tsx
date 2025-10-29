@@ -1,17 +1,14 @@
 "use client";
 
-import React, { useState } from "react"
-import Link from "next/link"
-import backImg from "@/assets/back.png"
-import laptopImg from "@/assets/laptop.jpeg"
-import hatImg from "@/assets/hat.png"
-import deleteImg from "@/assets/delete.png"
-
-
-
+import React, { useState } from "react";
+import Link from "next/link";
+import backImg from "@/assets/back.png";
+import laptopImg from "@/assets/laptop.jpeg";
+import hatImg from "@/assets/hat.png";
+import deleteImg from "@/assets/delete.png";
 
 export default function Cart() {
-// mock items with image arrays (for detail page)
+  // mock items with image arrays (for detail page)
   const [cartItems, setCartItems] = useState([
     {
       id: 1,
@@ -24,7 +21,7 @@ export default function Cart() {
         "https://via.placeholder.com/300x200?text=Laptop+3",
       ],
       description: "Fast and reliable laptop, perfect for students.",
-      condition: "used-like-new"
+      condition: "used-like-new",
     },
     {
       id: 2,
@@ -62,72 +59,56 @@ export default function Cart() {
     },
   ]);
 
-   const removeItem = (id: number) => {
+  const removeItem = (id: number) => {
     setCartItems(cartItems.filter((item) => item.id !== id));
   };
 
-  const total = cartItems.reduce((sum, item) => sum + item.price, 0);
-
-
-   return (
+  return (
     <div className="item-detail">
       <div className="item-detail-head">
         <Link href="/home" className="back-button">
           <img id="backbut" src={backImg.src} alt="gohome" />
         </Link>
       </div>
+
       {/*==cart items==*/}
-
-    
-
-      <Link href="item" className="cart-items">
-      {cartItems.map((item) => (
-
-
+      <div className="cart-items">
+        {cartItems.map((item) => (
           <div className="cart-item" key={item.id}>
-             
-
-          
-
-            <div className="cart-item-info">
-
-           
-
-              <img className="cart-item-img" src={item.image} alt={item.name} />
-              <div>
-
-                <p className="cart-item-name">{item.name}</p>
-                <p className="cart-item-price">{item.price}</p>
-
+            <Link href={`/item/${item.id}`} className="cart-item-link">
+              <div className="cart-item-info">
+                <img
+                  className="cart-item-img"
+                  src={item.images[0]}
+                  alt={item.name}
+                />
+                <div>
+                  <p className="cart-item-name">{item.name}</p>
+                  <p className="cart-item-price">{item.price}</p>
+                </div>
               </div>
+            </Link>
 
-            </div>
             <div className="cart-butts">
-            
-            <button className="remove-btn1" >
-                 Send message</button>
-                 
-            <button className="remove-btn" onClick={() => removeItem(item.id)}>
-              <img className="delete" src={deleteImg.src} alt="delete"></img>
-            </button>
-            </div>
+              <button className="remove-btn1">Send message</button>
 
-            
+              <button
+                className="remove-btn"
+                onClick={() => removeItem(item.id)}
+              >
+                <img className="delete" src={deleteImg.src} alt="delete" />
+              </button>
+            </div>
           </div>
         ))}
-      </Link>
-    
-      
 
-      <div className=" cart-items">
-
+        {cartItems.length === 0 && (
+          <p className="empty-cart">Your cart is empty 🛒</p>
+        )}
       </div>
 
-</div>
 
-
-
-
-
-   )
+    
+    </div>
+  );
 }

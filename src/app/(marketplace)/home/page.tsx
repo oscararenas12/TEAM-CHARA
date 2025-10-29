@@ -6,6 +6,8 @@ import "../styles.css"
 import laptopImg from "@/assets/laptop.jpeg"
 import hatImg from "@/assets/hat.png"
 import cartImg from "@/assets/cart.png"
+import heartemImg from "@/assets/heartempty.png"
+import heartImg from "@/assets/heart.png"
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -123,10 +125,6 @@ export default function HomePage() {
                     src={item.images[0] || laptopImg.src}
                     alt={item.name}
                   />
-                  <h3>{item.name}</h3>
-                  <p>{item.price}</p>
-
-                  {/* Heart Button */}
                   <button
                     className={`heart-btn ${isLiked ? "liked" : ""}`}
                     onClick={(e) => {
@@ -135,8 +133,21 @@ export default function HomePage() {
                       toggleLike(item.id)
                     }}
                   >
-                    ❤️
+                    <img
+                        className="heart-icon"
+                        src={isLiked ? heartImg.src : heartemImg.src}
+                        alt="heart"
+                      />
                   </button>
+                  
+                  <div className="item-card-price-like">
+                     
+                  <p>{item.name}</p>
+                  <p>{item.price}</p>
+
+                  {/* Heart Button */}
+                  
+                  </div>
 
                   <p className="posted-by">Posted by: {item.postedBy}</p>
                 </Link>

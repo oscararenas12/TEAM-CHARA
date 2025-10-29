@@ -534,11 +534,13 @@
 
 }
 
-.remove-btn1 {
+.remove-btn1, .seller-link button {
   background: white;
   border-radius: 5px;
   border: 1px solid rgb(210, 207, 207);
   font-weight: bold;
+  padding: 10px;
+  
 }
 
 .category-filter {
@@ -558,4 +560,36 @@
 .category-filter:focus {
   outline: none;
   border: 2px solid rgb(255, 213, 0);
+}
+
+.heart-btn {
+  background: none;
+  border: none;
+}
+
+.item-card-price-like {
+  display: flex;
+  justify-content: space-between;
+
+  width: 100%;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.heart-icon {
+
+  position: absolute;     
+  top: 14px;  
+  right: 14px;  
+  width: 44px;
+  
+}
+
+.heart-icon:hover {
+  transform: scale(1.2);
+  color: #ff7f7f;
+}
+
+.heart-icon.liked {
+  color: #ff2d55; /* bright pink/red */
 }
