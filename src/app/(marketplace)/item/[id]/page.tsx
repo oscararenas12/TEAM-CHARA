@@ -25,7 +25,8 @@ export default function ItemDetailPage() {
   const itemId = Number(params.id)
 
   const [user] = useState({
-    name: "Alice Johnson",
+    firstName: "Alice",
+    lastName: "Johnson",
     email: "alice@example.com",
     rating: "1.5",
     item_sold: "3",
@@ -153,14 +154,14 @@ export default function ItemDetailPage() {
         <div className="seller-info-box1">
           <div className="seller-info-box3">
             <div className="seller-avatar">
-              {user.name.charAt(0).toUpperCase()}
+              {user.firstName.charAt(0).toUpperCase()}
             </div>
             <div className="seller-info-box2">
-              <p>{user.name}</p>
+              <p>{user.firstName} {user.lastName}</p>
               <p className="rating">★ {user.rating}</p>
             </div>
           </div>
-          <Link href={`/publicprofile/${user.name}`} className="seller-link">
+          <Link href={`/publicprofile/${user.firstName}-${user.lastName}`} className="seller-link">
             <button>View Profile</button>
           </Link>
         </div>

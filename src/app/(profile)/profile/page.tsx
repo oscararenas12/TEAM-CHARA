@@ -17,7 +17,8 @@ interface Item {
 export default function ProfilePage() {
   // Mock logged-in user
   const [user] = useState({
-    name: "Alice Johnson",
+    firstName: "Alice",
+    lastName: "Johnson",
     email: "alice@example.com",
     rating: "1.5",
     item_sold: "3",
@@ -60,7 +61,7 @@ export default function ProfilePage() {
   ])
 
   // Only show items posted by this user
-  const userItems = allItems.filter((item) => item.postedBy === user.name)
+  const userItems = allItems.filter((item) => item.postedBy === `${user.firstName} ${user.lastName}`)
 
   return (
     <div className="profile-page">
@@ -74,10 +75,10 @@ export default function ProfilePage() {
     <div className="profile-pic-info">
       <img
         className="profile-pic"
-        alt={`${user.name} profile`}
+        alt={`${user.firstName} ${user.lastName} profile`}
       />
       <div className="profile-info">
-        <h2>{user.name}</h2>
+        <h2>{user.firstName} {user.lastName}</h2>
         <p>{user.email}</p>
       </div>
     </div>

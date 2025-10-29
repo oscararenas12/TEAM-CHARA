@@ -10,7 +10,8 @@ import communityImg from "@/assets/people.png"
 import "../login/styles.css"
 
 interface SignupCredentials {
-  name: string
+  firstName: string
+  lastName: string
   email: string
   studentId: string
   password: string
@@ -24,7 +25,8 @@ export default function SignupPage() {
   const supabase = createClient()
 
   const [credentials, setCredentials] = useState<SignupCredentials>({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     studentId: "",
     password: "",
@@ -55,7 +57,8 @@ export default function SignupPage() {
         password: credentials.password,
         options: {
           data: {
-            name: credentials.name,
+            first_name: credentials.firstName,
+            last_name: credentials.lastName,
             student_id: credentials.studentId,
           },
         },
@@ -70,7 +73,8 @@ export default function SignupPage() {
         setSuccess("Account created! Please check your email to verify your account.")
         // Clear form
         setCredentials({
-          name: "",
+          firstName: "",
+          lastName: "",
           email: "",
           studentId: "",
           password: "",
@@ -152,12 +156,22 @@ export default function SignupPage() {
         )}
 
         <form onSubmit={handleSignup}>
-          <label htmlFor="name">Name</label>
+          <label htmlFor="firstName">First Name</label>
           <input
-            name="name"
+            name="firstName"
             type="text"
-            placeholder="Name"
-            value={credentials.name}
+            placeholder="First Name"
+            value={credentials.firstName}
+            onChange={handleInputChange}
+            required
+          />{" "}
+          <br />
+          <label htmlFor="lastName">Last Name</label>
+          <input
+            name="lastName"
+            type="text"
+            placeholder="Last Name"
+            value={credentials.lastName}
             onChange={handleInputChange}
             required
           />{" "}
