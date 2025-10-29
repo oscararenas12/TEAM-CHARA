@@ -93,14 +93,6 @@ a:visited {
     text-align: left;
 }
 
-
-#line {
-    margin-left: 25px;
-    margin-bottom: 0;
-    font-size: 1.5rem;
-    color: rgb(136, 132, 116);
-}
-
 /* ===== Search Bar ===== */
 .Search-bar {
     width: 95%;              

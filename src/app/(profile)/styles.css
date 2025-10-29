@@ -49,14 +49,14 @@
   flex-wrap: wrap;
 }
 
-.profile-butts{
+.profile-butts {
   display:flex;
   flex-direction:row;
   gap: 40px;
   
 }
 
-.profile-butts1 {
+.profile-butts1 , .seller-link button{
   padding: 9px 14px;
   border-radius: 10px;
   background: white;

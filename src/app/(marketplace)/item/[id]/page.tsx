@@ -7,7 +7,9 @@ import "../../styles.css"
 import leftImg from "@/assets/left.png"
 import rightImg from "@/assets/right.png"
 import backImg from "@/assets/back.png"
+import messageImg from "@/assets/message.png"
 import laptopImg from "@/assets/laptop.jpeg"
+
 
 interface Item {
   id: number
@@ -16,11 +18,24 @@ interface Item {
   description: string
   images: string[]
   postedBy: string
+  condition: string;
+  category: string;
 }
 
 export default function ItemDetailPage() {
   const params = useParams()
   const itemId = Number(params.id)
+
+  const [user] = useState({
+      name: "Alice Johnson",
+      email: "alice@example.com",
+      rating: "1.5",
+      item_sold: "3",
+      item_listed: "2"
+     
+    });
+  
+
 
   // Mock items (TODO: fetch from Supabase)
   const items: Item[] = [
@@ -35,6 +50,8 @@ export default function ItemDetailPage() {
         "https://via.placeholder.com/300x200?text=Laptop+3",
       ],
       description: "Fast and reliable laptop, perfect for students.",
+      condition: "used-like-new",
+      category: "electronics"
     },
     {
       id: 2,
@@ -46,6 +63,8 @@ export default function ItemDetailPage() {
         "https://via.placeholder.com/300x200?text=Headphones+2",
       ],
       description: "Noise cancelling headphones, great sound quality.",
+      condition: "used-like-new",
+      category: "electronics"
     },
     {
       id: 3,
@@ -57,6 +76,8 @@ export default function ItemDetailPage() {
         "https://via.placeholder.com/300x200?text=Backpack+2",
       ],
       description: "Durable and spacious backpack for daily use.",
+      condition: "used-like-new",
+      category: "electronics"
     },
     {
       id: 4,
@@ -69,6 +90,8 @@ export default function ItemDetailPage() {
         "https://via.placeholder.com/300x200?text=Camera+3",
       ],
       description: "Capture great moments with this professional camera.",
+      condition: "used-like-new",
+      category: "electronics"
     },
   ]
 
@@ -117,10 +140,19 @@ export default function ItemDetailPage() {
         </button>
       </div>
 
+      
+
       {/* Item Info */}
       <div className="item-info-box">
         <p>{item.name}</p>
         <p className="item-price">{item.price}</p>
+      </div>
+
+
+      <div className="box condition">
+        <h3>Condition:</h3>
+        <p id="condition">{item.condition}</p>
+
       </div>
 
       <div className="box description">
@@ -131,33 +163,52 @@ export default function ItemDetailPage() {
       {/* Seller Info */}
       <div className="box seller-info-box">
         <h3>Seller Information</h3>
-        <Link href={`/profile/${item.postedBy}`} className="seller-link">
-          {item.postedBy}'s Profile
-        </Link>
+        <div className="seller-info-box1">
+          <div className="seller-info-box3">
+          <div className="seller-avatar">
+  {user.name.charAt(0).toUpperCase()}
+</div>
+        <div className="seller-info-box2">
+          <p>{user.name}</p>
+        <p className="rating">★ {user.rating}</p></div></div>
+        <Link href="/publicprofile" className="seller-link">
+          <button>View Profile</button>
+     </Link> </div>
+       
       </div>
 
       {/* Quick Questions */}
+       {/* Quick Questions */}
       <div className="box quick-questions-box">
         <h3>Quick Questions</h3>
         <div className="questions">
-          <div className="question">
-            <p>Is this available?</p>
-          </div>
-          <div className="question">
-            <p>Can I pick up tomorrow?</p>
-          </div>
-          <div className="question">
-            <p>What's the condition like?</p>
-          </div>
 
-          <div className="question">
-            <p>Can you send more photos?</p>
-          </div>
+        <div className="question">
+         
+          
+            <p>  <img  src={messageImg.src} alt="message" />Is this available?</p>
+
         </div>
-        <button onClick={handleQuickQuestion} className="quick-question-btn">
-          Send a message to seller
-        </button>
+        <div className="question">
+
+            <p>  <img  src={messageImg.src} alt="message" />Can I pick up tomorrow?</p>
+
+        </div>
+        <div className="question">
+          
+            <p>  <img src={messageImg.src} alt="message" /> What's the condition like?</p>
+
+        </div>
+
+         <div className="question">
+           
+            <p>  <img src={messageImg.src} alt="gohome" /> Can you send more photos?</p>
+
+        </div>
+        </div>
+      
       </div>
     </div>
-  )
-}
+  );
+};
+
