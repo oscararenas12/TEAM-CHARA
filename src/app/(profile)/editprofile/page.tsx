@@ -7,7 +7,8 @@ import "../styles.css"
 export default function EditProfilePage() {
   // Mock user data (in a real app, you'd fetch this from backend)
   const [user, setUser] = useState({
-    name: "Alice Johnson",
+    firstName: "Alice",
+    lastName: "Johnson",
     email: "alice@example.com",
   })
 
@@ -31,7 +32,7 @@ export default function EditProfilePage() {
         <div className="profile-pic-info">
           <img
             className="profile-pic"
-            alt={`${user.name} profile`}
+            alt={`${user.firstName} ${user.lastName} profile`}
             src="https://via.placeholder.com/100" // placeholder pic
           />
           <div className="profile-info">
@@ -46,11 +47,22 @@ export default function EditProfilePage() {
       <div className="infos-edit">
 
         <div className="infos-edit1" style={{ flex: 1 }}>
-          <label>Name</label>
+          <label>First Name</label>
           <input
             type="text"
-            name="name"
-            value={user.name}
+            name="firstName"
+            value={user.firstName}
+            onChange={handleChange}
+            className="profile-input"
+          />
+        </div>
+
+        <div className="infos-edit1" style={{ flex: 1 }}>
+          <label>Last Name</label>
+          <input
+            type="text"
+            name="lastName"
+            value={user.lastName}
             onChange={handleChange}
             className="profile-input"
           />
@@ -66,10 +78,6 @@ export default function EditProfilePage() {
             className="profile-input"
           />
         </div>
-
-
-
-
 
       </div>
 
