@@ -41,8 +41,7 @@ export default function ItemDetailPage() {
       id: 1,
       name: "Laptop",
       price: "$500",
-      postedBy: "Alice Johnson",
-      condition: "Like New",
+      postedBy: "Alice",
       images: [
         laptopImg.src,
         "https://via.placeholder.com/300x200?text=Laptop+2",
@@ -56,8 +55,7 @@ export default function ItemDetailPage() {
       id: 2,
       name: "Headphones",
       price: "$40",
-      postedBy: "Ryan Smith",
-      condition: "Good",
+      postedBy: "Ryan",
       images: [
         "https://via.placeholder.com/300x200?text=Headphones+1",
         "https://via.placeholder.com/300x200?text=Headphones+2",
@@ -70,8 +68,7 @@ export default function ItemDetailPage() {
       id: 3,
       name: "Backpack",
       price: "$30",
-      postedBy: "Sophie Chen",
-      condition: "Excellent",
+      postedBy: "Sophie",
       images: [
         "https://via.placeholder.com/300x200?text=Backpack+1",
         "https://via.placeholder.com/300x200?text=Backpack+2",
@@ -84,8 +81,7 @@ export default function ItemDetailPage() {
       id: 4,
       name: "Camera",
       price: "$250",
-      postedBy: "Daniel Park",
-      condition: "Like New",
+      postedBy: "Daniel",
       images: [
         "https://via.placeholder.com/300x200?text=Camera+1",
         "https://via.placeholder.com/300x200?text=Camera+2",
@@ -155,9 +151,6 @@ export default function ItemDetailPage() {
         <h3>Condition:</h3>
         <p id="condition">{item.condition}</p>
 
-      <div className="box condition">
-        <h3>Condition:</h3>
-        <p id="condition">{item.condition}</p>
       </div>
 
       <div className="box description">
@@ -170,18 +163,16 @@ export default function ItemDetailPage() {
         <h3>Seller Information</h3>
         <div className="seller-info-box1">
           <div className="seller-info-box3">
-            <div className="seller-avatar">
-              {user.firstName.charAt(0).toUpperCase()}
-            </div>
-            <div className="seller-info-box2">
-              <p>{user.firstName} {user.lastName}</p>
-              <p className="rating">★ {user.rating}</p>
-            </div>
-          </div>
-          <Link href={`/publicprofile/${user.firstName}-${user.lastName}`} className="seller-link">
-            <button>View Profile</button>
-          </Link>
-        </div>
+          <div className="seller-avatar">
+  {user.firstName.charAt(0).toUpperCase()}
+</div>
+        <div className="seller-info-box2">
+          <p>{user.firstName} {user.lastName}</p>
+        <p className="rating">★ {user.rating}</p></div></div>
+        <Link href={`/publicprofile/${user.firstName}-${user.lastName}`} className="seller-link">
+          <button>View Profile</button>
+     </Link> </div>
+       
       </div>
 
       {/* Quick Questions */}
@@ -189,31 +180,31 @@ export default function ItemDetailPage() {
       <div className="box quick-questions-box">
         <h3>Quick Questions</h3>
         <div className="questions">
-          <div className="question">
-            <p>
-              <img src={messageImg.src} alt="message" />
-              Is this available?
-            </p>
-          </div>
-          <div className="question">
-            <p>
-              <img src={messageImg.src} alt="message" />
-              Can I pick up tomorrow?
-            </p>
-          </div>
-          <div className="question">
-            <p>
-              <img src={messageImg.src} alt="message" />
-              What's the condition like?
-            </p>
-          </div>
-          <div className="question">
-            <p>
-              <img src={messageImg.src} alt="message" />
-              Can you send more photos?
-            </p>
-          </div>
+
+        <div className="question">
+         
+          
+            <p>  <img  src={messageImg.src} alt="message" />Is this available?</p>
+
         </div>
+        <div className="question">
+
+            <p>  <img  src={messageImg.src} alt="message" />Can I pick up tomorrow?</p>
+
+        </div>
+        <div className="question">
+          
+            <p>  <img src={messageImg.src} alt="message" /> What's the condition like?</p>
+
+        </div>
+
+         <div className="question">
+           
+            <p>  <img src={messageImg.src} alt="gohome" /> Can you send more photos?</p>
+
+        </div>
+        </div>
+      
       </div>
     </div>
   );
