@@ -169,7 +169,7 @@ export default function ItemDetailPage() {
         <div className="seller-info-box2">
           <p>{user.firstName} {user.lastName}</p>
         <p className="rating">★ {user.rating}</p></div></div>
-        <Link href={`/publicprofile/${user.firstName}-${user.lastName}`} className="seller-link">
+        <Link href="/publicprofile" className="seller-link">
           <button>View Profile</button>
      </Link> </div>
        
