@@ -10,6 +10,7 @@ import backImg from "@/assets/back.png"
 import messageImg from "@/assets/message.png"
 import laptopImg from "@/assets/laptop.jpeg"
 
+
 interface Item {
   id: number
   name: string
@@ -17,7 +18,8 @@ interface Item {
   description: string
   images: string[]
   postedBy: string
-  condition: string
+  condition: string;
+  category: string;
 }
 
 export default function ItemDetailPage() {
@@ -47,6 +49,8 @@ export default function ItemDetailPage() {
         "https://via.placeholder.com/300x200?text=Laptop+3",
       ],
       description: "Fast and reliable laptop, perfect for students.",
+      condition: "used-like-new",
+      category: "electronics"
     },
     {
       id: 2,
@@ -59,6 +63,8 @@ export default function ItemDetailPage() {
         "https://via.placeholder.com/300x200?text=Headphones+2",
       ],
       description: "Noise cancelling headphones, great sound quality.",
+      condition: "used-like-new",
+      category: "electronics"
     },
     {
       id: 3,
@@ -71,6 +77,8 @@ export default function ItemDetailPage() {
         "https://via.placeholder.com/300x200?text=Backpack+2",
       ],
       description: "Durable and spacious backpack for daily use.",
+      condition: "used-like-new",
+      category: "electronics"
     },
     {
       id: 4,
@@ -84,6 +92,8 @@ export default function ItemDetailPage() {
         "https://via.placeholder.com/300x200?text=Camera+3",
       ],
       description: "Capture great moments with this professional camera.",
+      condition: "used-like-new",
+      category: "electronics"
     },
   ]
 
@@ -132,11 +142,18 @@ export default function ItemDetailPage() {
         </button>
       </div>
 
+      
+
       {/* Item Info */}
       <div className="item-info-box">
         <p>{item.name}</p>
         <p className="item-price">{item.price}</p>
       </div>
+
+
+      <div className="box condition">
+        <h3>Condition:</h3>
+        <p id="condition">{item.condition}</p>
 
       <div className="box condition">
         <h3>Condition:</h3>
@@ -168,6 +185,7 @@ export default function ItemDetailPage() {
       </div>
 
       {/* Quick Questions */}
+       {/* Quick Questions */}
       <div className="box quick-questions-box">
         <h3>Quick Questions</h3>
         <div className="questions">
@@ -198,5 +216,6 @@ export default function ItemDetailPage() {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
+
