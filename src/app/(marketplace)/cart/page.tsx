@@ -71,11 +71,6 @@ export default function Cart() {
         <Link href="/home" className="back-button">
           <img id="backbut" src={backImg.src} alt="gohome" />
         </Link>
-        {profile && (
-          <p style={{ fontSize: '14px', color: '#666', margin: '0', position: 'absolute', right: '20px' }}>
-            {profile.first_name}'s Cart
-          </p>
-        )}
       </div>
 
       {/*==cart items==*/}
