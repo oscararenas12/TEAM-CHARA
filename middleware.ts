@@ -33,7 +33,7 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Protect routes - redirect to login if not authenticated
-  const protectedRoutes = ['/home', '/messages', '/sell', '/profile']
+  const protectedRoutes = ['/home', '/messages', '/sell', '/profile', '/editprofile', '/publicprofile', '/item']
   const isProtectedRoute = protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))
 
   if (isProtectedRoute && !user) {
@@ -42,8 +42,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Redirect to home if already logged in and trying to access auth pages
-  if ((request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup') && user) {
+  // Check email verification for protected routes
+  if (isProtectedRoute && user && !user.email_confirmed_at) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    url.searchParams.set('error', 'email_not_verified')
+    return NextResponse.redirect(url)
+  }
+
+  // Redirect to home if already logged in and trying to access auth pages (only verified users)
+  if ((request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup') && user && user.email_confirmed_at) {
     const url = request.nextUrl.clone()
     url.pathname = '/home'
     return NextResponse.redirect(url)
@@ -54,6 +62,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
