@@ -8,8 +8,10 @@ import hatImg from "@/assets/hat.png"
 import cartImg from "@/assets/cart.png"
 import heartemImg from "@/assets/heartempty.png"
 import heartImg from "@/assets/heart.png"
+import { useUserProfile } from "@/hooks/useUserProfile"
 
 export default function HomePage() {
+  const { profile } = useUserProfile()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [likedItems, setLikedItems] = useState<number[]>([])
@@ -82,7 +84,14 @@ export default function HomePage() {
       <div className="home-head1">
         <div className="home-head2">
           <img id="hat-home" src={hatImg.src} alt="Hat logo" />
-          <h1 id="page-head">Student Mart</h1>
+          <div>
+            <h1 id="page-head">Student Mart</h1>
+            {profile && (
+              <p style={{ fontSize: '14px', color: '#666', margin: '0' }}>
+                Welcome, {profile.first_name}
+              </p>
+            )}
+          </div>
         </div>
         <div className="icon-cart">
           <Link href="/cart">
