@@ -6,9 +6,9 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function SessionMonitor() {
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
+    const supabase = createClient()
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
         router.push('/login')
@@ -19,7 +19,7 @@ export default function SessionMonitor() {
     })
 
     return () => subscription.unsubscribe()
-  }, [router, supabase])
+  }, [router])
 
   return null // This component doesn't render anything
 }

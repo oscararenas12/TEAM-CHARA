@@ -101,7 +101,7 @@ export default function SignupPage() {
       }
 
       if (data.user) {
-        setSuccess("Account created! Please check your email to verify your account. If you don't receive an email, you may already have an account - try logging in instead.")
+        setSuccess("Account created! Please check your email to verify your account.")
         // Clear form
         setCredentials({
           firstName: "",
