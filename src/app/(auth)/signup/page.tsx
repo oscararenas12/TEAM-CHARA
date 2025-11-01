@@ -13,11 +13,12 @@ interface SignupCredentials {
   firstName: string
   lastName: string
   email: string
-  studentId: string
   password: string
+  confirmPassword: string
 }
 
 const CSULB_EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@student\.csulb\.edu$/
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
 
 export default function SignupPage() {
   const router = useRouter()
@@ -28,8 +29,8 @@ export default function SignupPage() {
     firstName: "",
     lastName: "",
     email: "",
-    studentId: "",
     password: "",
+    confirmPassword: "",
   })
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -44,9 +45,35 @@ export default function SignupPage() {
     setError(null)
     setSuccess(null)
 
+    // Validate first name and last name
+    if (!credentials.firstName.trim() || credentials.firstName.trim().length < 2) {
+      setError("First name must be at least 2 characters")
+      setIsLoading(false)
+      return
+    }
+    if (!credentials.lastName.trim() || credentials.lastName.trim().length < 2) {
+      setError("Last name must be at least 2 characters")
+      setIsLoading(false)
+      return
+    }
+
     // Validate CSULB email
     if (!CSULB_EMAIL_REGEX.test(credentials.email)) {
       setError("Please use your CSULB student email (@student.csulb.edu)")
+      setIsLoading(false)
+      return
+    }
+
+    // Validate password strength
+    if (!PASSWORD_REGEX.test(credentials.password)) {
+      setError("Password must be at least 8 characters with uppercase, lowercase, and number")
+      setIsLoading(false)
+      return
+    }
+
+    // Validate password confirmation
+    if (credentials.password !== credentials.confirmPassword) {
+      setError("Passwords do not match")
       setIsLoading(false)
       return
     }
@@ -59,13 +86,17 @@ export default function SignupPage() {
           data: {
             first_name: credentials.firstName,
             last_name: credentials.lastName,
-            student_id: credentials.studentId,
           },
         },
       })
 
       if (signUpError) {
-        setError(signUpError.message)
+        // Check for specific errors we can show
+        if (signUpError.message.includes('already registered')) {
+          setError("An account with this email already exists")
+        } else {
+          setError("Unable to create account. Please try again.")
+        }
         return
       }
 
@@ -76,12 +107,12 @@ export default function SignupPage() {
           firstName: "",
           lastName: "",
           email: "",
-          studentId: "",
           password: "",
+          confirmPassword: "",
         })
       }
     } catch (err) {
-      setError("Signup failed. Please try again.")
+      setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -186,25 +217,26 @@ export default function SignupPage() {
             required
           />{" "}
           <br />
-          <label htmlFor="studentId">Student ID</label>
-          <input
-            name="studentId"
-            type="text"
-            placeholder="Student ID"
-            value={credentials.studentId}
-            onChange={handleInputChange}
-            required
-          />{" "}
-          <br />
           <label htmlFor="password">Password</label>
           <input
             name="password"
             type="password"
-            placeholder="Password"
+            placeholder="Min 8 chars, uppercase, lowercase, number"
             value={credentials.password}
             onChange={handleInputChange}
             required
-            minLength={6}
+            minLength={8}
+          />{" "}
+          <br />
+          <label htmlFor="confirmPassword">Confirm Password</label>
+          <input
+            name="confirmPassword"
+            type="password"
+            placeholder="Re-enter password"
+            value={credentials.confirmPassword}
+            onChange={handleInputChange}
+            required
+            minLength={8}
           />{" "}
           <br />
           <button type="submit" disabled={isLoading}>

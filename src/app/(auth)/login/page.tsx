@@ -25,9 +25,22 @@ export default function LoginPage() {
   })
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
   const isLoginPage = pathname === "/login"
   const isSignupPage = pathname === "/signup"
+
+  // Check for email verification success or error from URL params
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+
+    if (params.get('verified') === 'true') {
+      setSuccess('Email confirmed! You can now log in.')
+    }
+    if (params.get('error') === 'email_not_verified') {
+      setError('Please verify your email before accessing the app. Check your inbox for the verification link.')
+    }
+  }, [])
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -41,7 +54,8 @@ export default function LoginPage() {
       })
 
       if (signInError) {
-        setError(signInError.message)
+        // Generic message for security - don't reveal if email exists
+        setError("Invalid email or password")
         return
       }
 
@@ -50,7 +64,7 @@ export default function LoginPage() {
         router.refresh()
       }
     } catch (err) {
-      setError("Login failed. Please try again.")
+      setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
     }
@@ -112,6 +126,15 @@ export default function LoginPage() {
             style={{ color: "red", marginBottom: "10px", textAlign: "center" }}
           >
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div
+            className="success-message"
+            style={{ color: "green", marginBottom: "10px", textAlign: "center" }}
+          >
+            {success}
           </div>
         )}
 

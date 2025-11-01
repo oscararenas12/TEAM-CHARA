@@ -9,8 +9,10 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createClient()
     await supabase.auth.exchangeCodeForSession(code)
+    // Sign them out so they can see the success message on login page
+    await supabase.auth.signOut()
   }
 
-  // Redirect to home after email confirmation
-  return NextResponse.redirect(`${origin}/home`)
+  // Redirect to login with success message after email verification
+  return NextResponse.redirect(`${origin}/login?verified=true`)
 }
