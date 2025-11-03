@@ -3,7 +3,7 @@
 import React, { useState } from "react"
 import Link from "next/link"
 import "../styles.css"
-import hatImg from "@/assets/hat.png"
+import laptopImg from "@/assets/laptop.jpeg"
 
 interface Item {
   id: number
@@ -11,126 +11,142 @@ interface Item {
   price: string
   postedBy: string
   images: string[]
-  description: string
+  description?: string
+  postedAt?: string
+  condition?: string
 }
 
 export default function ProfilePage() {
-  // Mock logged-in user
   const [user] = useState({
     firstName: "Alice",
     lastName: "Johnson",
     email: "alice@example.com",
     rating: "1.5",
     item_sold: "3",
-    item_listed: "2"
-
+    item_listed: "2",
   })
 
-  // Mock all items in the marketplace
-  const [allItems] = useState<Item[]>([
+  const [allItems, setAllItems] = useState<Item[]>([
     {
       id: 1,
       name: "Laptop",
       price: "$500",
       postedBy: "Alice Johnson",
+      postedAt: new Date().toISOString(),
       images: [
-        "https://via.placeholder.com/300x200?text=Laptop+1",
+        laptopImg.src,
         "https://via.placeholder.com/300x200?text=Laptop+2",
+        "https://via.placeholder.com/300x200?text=Laptop+3",
       ],
-      description: "Fast and reliable laptop, perfect for students.",
+      condition: "used-like-new",
     },
     {
       id: 2,
       name: "Headphones",
       price: "$40",
-      postedBy: "Ryan Smith",
-      images: ["https://via.placeholder.com/300x200?text=Headphones+1"],
-      description: "Noise cancelling headphones, great sound quality.",
-    },
-    {
-      id: 3,
-      name: "Backpack",
-      price: "$30",
       postedBy: "Alice Johnson",
+      postedAt: new Date().toISOString(),
       images: [
-        "https://via.placeholder.com/300x200?text=Backpack+1",
-        "https://via.placeholder.com/300x200?text=Backpack+2",
+        "https://via.placeholder.com/300x200?text=Headphones+1",
+        "https://via.placeholder.com/300x200?text=Headphones+2",
       ],
-      description: "Durable and spacious backpack for daily use.",
+      condition: "new",
     },
   ])
 
-  // Only show items posted by this user
-  const userItems = allItems.filter((item) => item.postedBy === `${user.firstName} ${user.lastName}`)
+  const userItems = allItems.filter(
+    (item) => item.postedBy === `${user.firstName} ${user.lastName}`
+  )
+
+  // ✅ Remove item without breaking your design
+  const removeItem = (id: number) => {
+    setAllItems((prev) => prev.filter((item) => item.id !== id))
+  }
 
   return (
     <div className="profile-page">
-      {/* Profile Header */}
 
-
-        {/* ===== Profile Header ===== */}
-  <div className="profile-header">
-
-    {/* --- Profile Picture & Info --- */}
-    <div className="profile-pic-info">
-      <img
-        className="profile-pic"
-        alt={`${user.firstName} ${user.lastName} profile`}
-      />
-      <div className="profile-info">
-        <h2>{user.firstName} {user.lastName}</h2>
-        <p>{user.email}</p>
-      </div>
-    </div>
-
-    {/* --- Profile Buttons --- */}
-    <div className="profile-butts">
-       <Link href="/editprofile" className="back-button">
-      <button className="profile-butts1">Edit Profile</button></Link>
-       <Link href="/" className="back-button">
-      <button className="profile-butts1">Log Out</button></Link>
-    </div>
-
-  </div>
-
-  <div className="infos-cont">
-    <div className="infoss">
-      <p className="info2">{user.item_listed}</p>
-      <p className="info3">Items Listed</p>
-    </div>
-    <div className="infoss">
-      <p className="info2">{user.item_sold}</p>
-       <p className="info3">Items Sold</p>
-    </div>
-
-    <div className="infoss">
-      <p className="info2">{user.rating}</p>
-       <p className="info3">Rating</p>
-    </div>
-  </div>
-
-      {/* User Items */}
-      <div className="user-items">
-        <div className="listings">
-        <h3>Your Listings</h3>
-        <Link href="/sell" className="back-button">
-        <button>Create New Listing</button></Link>
+      <div className="profile-header">
+        <div className="profile-pic-info">
+          <img className="profile-pic" alt={`${user.firstName} ${user.lastName}`} />
+          <div className="profile-info">
+            <h2>{user.firstName} {user.lastName}</h2>
+            <p>{user.email}</p>
+          </div>
         </div>
-        <div className="profile-item-cont item-container ">
+
+        <div className="profile-butts">
+          <Link href="/editprofile"><button className="profile-butts1">Edit Profile</button></Link>
+          <Link href="/"><button className="profile-butts1">Log Out</button></Link>
+        </div>
+      </div>
+
+      <div className="infos-cont">
+        <div className="infoss">
+          <p className="info2">{user.item_listed}</p>
+          <p className="info3">Items Listed</p>
+        </div>
+        <div className="infoss">
+          <p className="info2">{user.item_sold}</p>
+          <p className="info3">Items Sold</p>
+        </div>
+        <div className="infoss">
+          <p className="info2">{user.rating}</p>
+          <p className="info3">Rating</p>
+        </div>
+      </div>
+
+      <div className="user-items profile-content-wrapper">
+        <div className="listings">
+          <h3>Your Listings</h3>
+          <Link href="/sell">
+            <button>Create New Listing</button>
+          </Link>
+        </div>
+
+        <div className="profile-item-cont item-container">
           {userItems.length > 0 ? (
             userItems.map((item) => (
-              <Link
-                href={`/item/${item.id}`}
-                key={item.id}
-                className="profile-items"
-              >
-                <img
-                  className="item-img"
-                  src={item.images[0] || "https://via.placeholder.com/300x200"}
-                  alt={item.name}
-                />
-                <h3>{item.name}</h3>
-                <p>{item.price}</p>
+              
+              <Link href={`/item/${item.id}`} key={item.id} className="profile-items">
+
+                <img className="item-img" src={item.images[0]} alt={item.name} />
+
+                <div className="item-card-price-like">
+                  <p id="name">{item.name}</p>
+                  <p id="price">{item.price}</p>
+                </div>
+
+                <p className="condition con2">{item.condition}</p>
+                <hr className="list-divider" />
+
+                <div className="profile-item-last">
+                  <p className="posted-date">
+                    {new Date(item.postedAt!).toLocaleDateString()}
+                  </p>
+
+                  {/* ✅ Prevent link click when pressing buttons */}
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      window.location.href = `/edit-listing`
+                    }}
+                  >
+                    Edit
+                  </button>
+
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      removeItem(item.id)
+                    }}
+                  >
+                    Mark Sold
+                  </button>
+
+                </div>
               </Link>
             ))
           ) : (

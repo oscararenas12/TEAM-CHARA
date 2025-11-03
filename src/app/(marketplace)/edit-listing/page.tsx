@@ -1,26 +1,43 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import "../styles.css";
 
-export default function SellPage() {
-  const [images, setImages] = useState<string[]>([]);
+export default function EditListingPage() {
+  const searchParams = useSearchParams();
+  const listingId = searchParams.get("id");
+
+  // ✅ Mock existing listing — replace with Supabase later
+  const mockListing = {
+    id: listingId,
+    title: "Laptop",
+    description: "Fast and reliable laptop, perfect for students.",
+    price: "500",
+    category: "electronics",
+    condition: "like-new",
+    isbn: "",
+    images: [],
+    postedAt: "2025-01-01T10:00:00Z",
+  };
+
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [condition, setCondition] = useState("");
-  const [isbn, setIsbn] = useState("");
+  const [images, setImages] = useState<string[]>(mockListing.images);
+  const [title, setTitle] = useState(mockListing.title);
+  const [description, setDescription] = useState(mockListing.description);
+  const [price, setPrice] = useState(mockListing.price);
+  const [category, setCategory] = useState(mockListing.category);
+  const [condition, setCondition] = useState(mockListing.condition);
+  const [isbn, setIsbn] = useState(mockListing.isbn);
 
   const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
-    const urls: string[] = Array.from(files).map((f) => URL.createObjectURL(f));
-    setImages((prev) => [...prev, ...urls].slice(0, 6)); // limit previews to 6
 
-    // reset input so same file can be selected again if needed
+    const urls = Array.from(files).map((f) => URL.createObjectURL(f));
+    setImages((prev) => [...prev, ...urls].slice(0, 6));
+
     if (fileRef.current) fileRef.current.value = "";
   };
 
@@ -28,49 +45,30 @@ export default function SellPage() {
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const listing = {
-    title,
-    description,
-    price,
-    category,
-    condition,
-    isbn,
-    images,
-    postedAt: new Date().toISOString(), // ✅ add timestamp
+    const updatedListing = {
+      id: listingId,
+      title,
+      description,
+      price,
+      category,
+      condition,
+      isbn,
+      images,
+      postedAt: mockListing.postedAt, // ✅ keep original timestamp
+      updatedAt: new Date().toISOString(),
+    };
+
+    console.log("✅ Updated Listing:", updatedListing);
+    alert("Listing updated (demo). Check console for payload.");
   };
-
-  console.log(listing);
-  alert("Listing created (demo). Check console for payload.");
-
-  // clear form
-  setTitle("");
-  setDescription("");
-  setPrice("");
-  setCategory("");
-  setCondition("");
-  setIsbn("");
-  images.forEach((url) => URL.revokeObjectURL(url));
-  setImages([]);
-  if (fileRef.current) fileRef.current.value = "";
-};
 
   const handleCancel = () => {
-    // Clear all form fields and revoke object URLs
-    setTitle("");
-    setDescription("");
-    setPrice("");
-    setCategory("");
-    setCondition("");
-    setIsbn("");
-    images.forEach((url) => URL.revokeObjectURL(url));
-    setImages([]);
-    if (fileRef.current) fileRef.current.value = "";
+    history.back();
   };
 
-  // Clear ISBN when user switches away from Books category
   useEffect(() => {
     if (category !== "books") setIsbn("");
   }, [category]);
@@ -78,16 +76,14 @@ export default function SellPage() {
   return (
     <div className="sell-page">
       <div className="create-listing">
-        <h2 id="page-head">Create Listing</h2>
-        <p className="subtext">
-          Share what you're looking to sell with the campus community
-        </p>
+        <h2 id="page-head">Edit Listing</h2>
+        <p className="subtext">Update your item details</p>
       </div>
 
-      {/* Photos Section */}
+      {/* Photos */}
       <div className="photos-wrapper">
         <div className="box photos-see">
-          <h3>Photos (Required)</h3>
+          <h3>Photos</h3>
           <div className="photos-container">
             {images.length > 0 &&
               images.map((src, i) => (
@@ -103,59 +99,50 @@ export default function SellPage() {
                 </div>
               ))}
 
-            {/* Add Photo Tile */}
-            <label className="add-photo-tile" htmlFor="photo-input">
+            {/* Add */}
+            <label className="add-photo-tile">
               <input
-                id="photo-input"
                 ref={fileRef}
                 type="file"
-                accept="image/*"
                 multiple
+                accept="image/*"
                 onChange={handleFiles}
                 style={{ display: "none" }}
               />
-
-              {/* Visible UI for adding photo*/}
               <div className="add-inner">
                 <div className="plus">+</div>
                 <div className="add-text">Add Photos</div>
-                <div className="small-note">
-                  {images.length}/6 photos selected
-                </div>
+                <div className="small-note">{images.length}/6 photos</div>
               </div>
             </label>
           </div>
         </div>
       </div>
 
-      {/* Description Section */}
+      {/* Form */}
       <div className="item-details">
-        <h3>Item Details</h3>
-        <form onSubmit={handleSubmit} className="item-form">
-          {/* Title Input */}
+        <h3>Edit Details</h3>
+        <form onSubmit={handleSave} className="item-form">
           <label className="field">
             <span className="required">Title</span>
             <input
               type="text"
-              placeholder="Short, descriptive title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
             />
           </label>
 
-          {/* Description Input */}
           <label className="field">
             <span className="required">Description</span>
             <textarea
+              rows={5}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe the item, condition, and any important details"
-              rows={5}
               required
             />
           </label>
-          {/* Conindition Input */}
+
           <label className="field">
             <span className="required">Condition</span>
             <select
@@ -163,9 +150,6 @@ export default function SellPage() {
               onChange={(e) => setCondition(e.target.value)}
               required
             >
-              <option value="" disabled>
-                Select condition
-              </option>
               <option value="like-new">Like New</option>
               <option value="good">Good</option>
               <option value="fair">Fair</option>
@@ -173,7 +157,6 @@ export default function SellPage() {
             </select>
           </label>
 
-          {/* Price and Category Inputs */}
           <div className="row">
             <label className="field small">
               <span className="required">Price</span>
@@ -181,7 +164,6 @@ export default function SellPage() {
                 type="text"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                placeholder="$0.00"
                 required
               />
             </label>
@@ -193,9 +175,6 @@ export default function SellPage() {
                 onChange={(e) => setCategory(e.target.value)}
                 required
               >
-                <option value="" disabled>
-                  Select category
-                </option>
                 <option value="electronics">Electronics</option>
                 <option value="books">Books</option>
                 <option value="clothing">Clothing</option>
@@ -205,32 +184,22 @@ export default function SellPage() {
             </label>
           </div>
 
-          {/* Conditionally show ISBN when category is Books */}
           {category === "books" && (
             <label className="field">
-              <span className="required">ISBN (optional)</span>
+              <span>ISBN (optional)</span>
               <input
                 type="text"
                 value={isbn}
                 onChange={(e) => setIsbn(e.target.value)}
-                placeholder="ex: 123-1-123-12345-1"
               />
             </label>
           )}
 
-          <div className="actions">
-            <div className="row">
-              <button type="submit" className="primary">
-                Create Listing
-              </button>
-              <button
-                type="button"
-                className="secondary"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
-            </div>
+          <div className="actions row">
+            <button type="submit" className="primary">Save Changes</button>
+            <button type="button" className="secondary" onClick={handleCancel}>
+              Cancel
+            </button>
           </div>
         </form>
       </div>

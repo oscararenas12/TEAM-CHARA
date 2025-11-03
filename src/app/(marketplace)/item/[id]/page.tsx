@@ -9,6 +9,7 @@ import rightImg from "@/assets/right.png"
 import backImg from "@/assets/back.png"
 import messageImg from "@/assets/message.png"
 import laptopImg from "@/assets/laptop.jpeg"
+import { useRouter } from "next/navigation";
 
 
 interface Item {
@@ -25,6 +26,10 @@ interface Item {
 export default function ItemDetailPage() {
   const params = useParams()
   const itemId = Number(params.id)
+  const router = useRouter();
+  const sendQuickMessage = (text:string) => {
+  router.push(`/inbox?autoMessage=${encodeURIComponent(text)}`);
+};
 
   const [user] = useState({
     firstName: "Alice",
@@ -147,9 +152,9 @@ export default function ItemDetailPage() {
       </div>
 
 
-      <div className="box condition">
+      <div className="box condition1">
         <h3>Condition:</h3>
-        <p id="condition">{item.condition}</p>
+        <p className="condition">{item.condition}</p>
 
       </div>
 
@@ -179,32 +184,29 @@ export default function ItemDetailPage() {
        {/* Quick Questions */}
       <div className="box quick-questions-box">
         <h3>Quick Questions</h3>
-        <div className="questions">
+<div className="questions">
 
-        <div className="question">
-         
-          
-            <p>  <img  src={messageImg.src} alt="message" />Is this available?</p>
+  <div className="question" onClick={() => sendQuickMessage("Is this available?")}>
+    <p><img src={messageImg.src} /> Is this available?</p>
+  </div>
 
-        </div>
-        <div className="question">
+  <div className="question" onClick={() => sendQuickMessage("Can I pick up tomorrow?")}>
+    <p><img src={messageImg.src} /> Can I pick up tomorrow?</p>
+  </div>
 
-            <p>  <img  src={messageImg.src} alt="message" />Can I pick up tomorrow?</p>
+  <div className="question" onClick={() => sendQuickMessage("What's the condition like?")}>
+    <p><img src={messageImg.src} /> What's the condition like?</p>
+  </div>
 
-        </div>
-        <div className="question">
-          
-            <p>  <img src={messageImg.src} alt="message" /> What's the condition like?</p>
+  <div className="question" onClick={() => sendQuickMessage("Can you send more photos?")}>
+    <p><img src={messageImg.src} /> Can you send more photos?</p>
+  </div>
+  <Link href="/inbox">
+  <button className="question-send " >Send Message</button>
+</Link>
 
-        </div>
+</div>
 
-         <div className="question">
-           
-            <p>  <img src={messageImg.src} alt="gohome" /> Can you send more photos?</p>
-
-        </div>
-        </div>
-      
       </div>
     </div>
   );

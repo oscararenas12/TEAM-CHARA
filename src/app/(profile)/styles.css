@@ -11,12 +11,10 @@
 
 .user-items {
   display: flex;
-  justify-content: center; /* center the container horizontally */
-  width: 100%;
-  margin-top: 30px;
   flex-direction: column;
+  width: 100%;
+  margin: 0; /* <— remove extra margins */
 }
-
 
 .profile-pic {
   width: 100px;         
@@ -66,7 +64,8 @@
 }
 
 .profile-item-cont {
-     gap: 100px; 
+  gap: 100px; 
+
 }
 
 .profile-items {
@@ -87,6 +86,15 @@
     transform: scale(1.05);
     box-shadow: 0 0.4vh 1vh rgba(0, 0, 0, 0.15);
 }
+
+
+.profile-content-wrapper {
+  width: 100%;
+  margin: 20px ; /* matches profile-header & infos-cont */
+}
+
+
+
 
 .infos-cont {
   display: flex;
@@ -152,4 +160,22 @@
 
 .public-butts {
   justify-content: center;
+}
+.profile-item-last {
+  display: flex;
+  gap: 10px;
+  justify-content: space-evenly;
+  width: 95%;
+  align-items: center;
+  
+}
+.profile-item-last button {
+  background: none;
+  border: none;
+  font-weight: bold;
+  color:grey;
+}
+
+.profile-item-last button:hover {
+  color: rgb(208, 209, 193);
 }

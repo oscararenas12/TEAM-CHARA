@@ -14,6 +14,7 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [likedItems, setLikedItems] = useState<number[]>([])
 
+
   const items = [
     {
       id: 1,
@@ -21,11 +22,14 @@ export default function HomePage() {
       category: "Electronics",
       price: "$500",
       postedBy: "Alice",
+      postedAt: new Date().toISOString(),
       images: [
         laptopImg.src,
         "https://via.placeholder.com/300x200?text=Laptop+2",
         "https://via.placeholder.com/300x200?text=Laptop+3",
       ],
+      condition: "used-like-new"
+      
     },
     {
       id: 2,
@@ -33,10 +37,12 @@ export default function HomePage() {
       category: "Electronics",
       price: "$40",
       postedBy: "Ryan",
+      postedAt: new Date().toISOString(),
       images: [
         "https://via.placeholder.com/300x200?text=Headphones+1",
         "https://via.placeholder.com/300x200?text=Headphones+2",
       ],
+      condition: "new"
     },
     {
       id: 3,
@@ -44,10 +50,12 @@ export default function HomePage() {
       category: "Accessories",
       price: "$30",
       postedBy: "Sophie",
+      postedAt: new Date().toISOString(),
       images: [
         "https://via.placeholder.com/300x200?text=Backpack+1",
         "https://via.placeholder.com/300x200?text=Backpack+2",
       ],
+      condition: "used-like-new"
     },
     {
       id: 4,
@@ -55,10 +63,12 @@ export default function HomePage() {
       category: "Electronics",
       price: "$250",
       postedBy: "Daniel",
+      postedAt: new Date().toISOString(),
       images: [
         "https://via.placeholder.com/300x200?text=Camera+1",
         "https://via.placeholder.com/300x200?text=Camera+2",
       ],
+      condition: "used"
     },
   ]
 
@@ -148,8 +158,19 @@ export default function HomePage() {
                   {/* Heart Button */}
                   
                   </div>
+                  <p className="condition con2"> {item.condition}</p>
+                  <hr className="list-divider" />
+                 <div className="listed-item-sec">
+                  <div className="item-av">
+                    <div className="seller-avatar av2">
+  {item.postedBy.charAt(0).toUpperCase()}
+</div>
+                    <p className="posted-by">{item.postedBy}</p></div>
+                  <p className="posted-date">
+  {new Date(item.postedAt).toLocaleDateString()}
+</p>
 
-                  <p className="posted-by">Posted by: {item.postedBy}</p>
+                  </div>
                 </Link>
               )
             })
