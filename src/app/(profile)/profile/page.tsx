@@ -10,8 +10,14 @@ export default function ProfilePage() {
   const { profile, loading, error } = useUserProfile()
 
   const handleLogout = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
+    try {
+      const supabase = createClient()
+      await supabase.auth.signOut()
+      // SessionMonitor will automatically redirect to /login
+    } catch (error) {
+      console.error('Logout failed:', error)
+      alert('Failed to log out. Please try again.')
+    }
   }
 
   if (loading) {
@@ -47,7 +53,9 @@ export default function ProfilePage() {
         <img
           className="profile-pic"
           src={profile.avatar_url}
-          alt={`${profile.first_name} ${profile.last_name} profile`}
+          alt={profile.first_name || profile.last_name
+            ? `${profile.first_name || ''} ${profile.last_name || ''} profile`.trim()
+            : 'User profile'}
         />
       ) : (
         <div className="profile-pic profile-pic-placeholder">
@@ -55,7 +63,11 @@ export default function ProfilePage() {
         </div>
       )}
       <div className="profile-info">
-        <h2>{profile.first_name} {profile.last_name}</h2>
+        <h2>
+          {profile.first_name || profile.last_name
+            ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim()
+            : 'Anonymous User'}
+        </h2>
         <p>{profile.email}</p>
       </div>
     </div>
