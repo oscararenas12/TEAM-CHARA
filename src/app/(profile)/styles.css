@@ -17,14 +17,26 @@
 }
 
 .profile-pic {
-  width: 100px;         
-  height: 100px;        
-  border-radius: 50%;  
-  object-fit: cover;     
-  border: 2px solid #ccc; 
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
   margin-bottom: 7%;
   margin-top: 5%;
   
+}
+
+.profile-pic-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  user-select: none;
 }
 
 .profile-info {

@@ -32,6 +32,83 @@ export default function HomePage() {
       .filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
       .sort((a, b) => new Date(b.postedAt || Date.now()).getTime() - new Date(a.postedAt || Date.now()).getTime());
   }, [items, searchTerm, selectedCategory]);
+import React, { useState } from "react"
+import Link from "next/link"
+import "../styles.css"
+import laptopImg from "@/assets/laptop.jpeg"
+import hatImg from "@/assets/hat.png"
+import cartImg from "@/assets/cart.png"
+import heartemImg from "@/assets/heartempty.png"
+import heartImg from "@/assets/heart.png"
+import { useUserProfile } from "@/hooks/useUserProfile"
+
+export default function HomePage() {
+  const { profile } = useUserProfile()
+  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("All")
+  const [likedItems, setLikedItems] = useState<number[]>([])
+
+  const items = [
+    {
+      id: 1,
+      name: "Laptop",
+      category: "Electronics",
+      price: "$500",
+      postedBy: "Alice",
+      images: [
+        laptopImg.src,
+        "https://via.placeholder.com/300x200?text=Laptop+2",
+        "https://via.placeholder.com/300x200?text=Laptop+3",
+      ],
+    },
+    {
+      id: 2,
+      name: "Headphones",
+      category: "Electronics",
+      price: "$40",
+      postedBy: "Ryan",
+      images: [
+        "https://via.placeholder.com/300x200?text=Headphones+1",
+        "https://via.placeholder.com/300x200?text=Headphones+2",
+      ],
+    },
+    {
+      id: 3,
+      name: "Backpack",
+      category: "Accessories",
+      price: "$30",
+      postedBy: "Sophie",
+      images: [
+        "https://via.placeholder.com/300x200?text=Backpack+1",
+        "https://via.placeholder.com/300x200?text=Backpack+2",
+      ],
+    },
+    {
+      id: 4,
+      name: "Camera",
+      category: "Electronics",
+      price: "$250",
+      postedBy: "Daniel",
+      images: [
+        "https://via.placeholder.com/300x200?text=Camera+1",
+        "https://via.placeholder.com/300x200?text=Camera+2",
+      ],
+    },
+  ]
+
+  const categories = ["All", ...new Set(items.map(item => item.category))]
+
+  const filteredItems = items.filter(item => {
+    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    return matchesCategory && matchesSearch
+  })
+
+  const toggleLike = (itemId: number) => {
+    setLikedItems(prev =>
+      prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]
+    )
+  }
 
   return (
     <div className="homepage-wrapper">
@@ -39,7 +116,14 @@ export default function HomePage() {
       <div className="home-head1">
         <div className="home-head2">
           <img id="hat-home" src={hatImg.src} alt="Hat logo" />
-          <h1 id="page-head">Student Mart</h1>
+          <div>
+            <h1 id="page-head">Student Mart</h1>
+            {profile && (
+              <p style={{ fontSize: '14px', color: '#666', margin: '0' }}>
+                Welcome, {profile.first_name || 'Guest'}
+              </p>
+            )}
+          </div>
         </div>
         <div className="icon-cart">
           <Link href="/cart">
