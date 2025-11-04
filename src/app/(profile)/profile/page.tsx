@@ -43,11 +43,17 @@ export default function ProfilePage() {
 
     {/* --- Profile Picture & Info --- */}
     <div className="profile-pic-info">
-      <img
-        className="profile-pic"
-        src={profile.avatar_url || undefined}
-        alt={`${profile.first_name} ${profile.last_name} profile`}
-      />
+      {profile.avatar_url ? (
+        <img
+          className="profile-pic"
+          src={profile.avatar_url}
+          alt={`${profile.first_name} ${profile.last_name} profile`}
+        />
+      ) : (
+        <div className="profile-pic profile-pic-placeholder">
+          {profile.first_name?.[0]}{profile.last_name?.[0]}
+        </div>
+      )}
       <div className="profile-info">
         <h2>{profile.first_name} {profile.last_name}</h2>
         <p>{profile.email}</p>
