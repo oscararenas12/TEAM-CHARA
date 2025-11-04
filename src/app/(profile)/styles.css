@@ -23,16 +23,20 @@
   object-fit: cover;     
   border: 2px solid #ccc; 
   margin-bottom: 7%;
+  margin-top: 5%;
+  
 }
 
 .profile-info {
   margin: 0 20px 0 40px;
+  
   
 }
 
 .profile-pic-info {
   display:flex;
   flex-direction: row;
+
 }
 
 .profile-header {
@@ -178,4 +182,24 @@
 
 .profile-item-last button:hover {
   color: rgb(208, 209, 193);
+}
+
+.profile-pic {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.fallback-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 36px;
+  color: white;
 }

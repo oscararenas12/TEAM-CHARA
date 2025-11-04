@@ -1,11 +1,13 @@
-"use client";
+'use client';
 
 import React, { useRef, useState, useEffect } from "react";
 import "../styles.css";
+import { useListingStore } from "@/lib/useListingsStore"; // ✅ global store
 
 export default function SellPage() {
   const [images, setImages] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const user = useListingStore((state) => state.user);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -14,51 +16,39 @@ export default function SellPage() {
   const [condition, setCondition] = useState("");
   const [isbn, setIsbn] = useState("");
 
-  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-    const urls: string[] = Array.from(files).map((f) => URL.createObjectURL(f));
-    setImages((prev) => [...prev, ...urls].slice(0, 6)); // limit previews to 6
+  // ✅ access global store method to add a new listing
+  const addListing = useListingStore((state) => state.addListing);
 
-    // reset input so same file can be selected again if needed
-    if (fileRef.current) fileRef.current.value = "";
-  };
+
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const listing = {
-    title,
+  const newListing = {
+    id: Date.now(), 
+    name: title,
     description,
     price,
     category,
     condition,
     isbn,
     images,
-    postedAt: new Date().toISOString(), // ✅ add timestamp
+    postedAt: new Date().toISOString(),
+    postedBy: {
+      name: `${user.firstName} ${user.lastName}`,
+      profilePic: user.profilePic || "",
+    },
   };
 
-  console.log(listing);
-  alert("Listing created (demo). Check console for payload.");
+    addListing(newListing); // add to global state
 
-  // clear form
-  setTitle("");
-  setDescription("");
-  setPrice("");
-  setCategory("");
-  setCondition("");
-  setIsbn("");
-  images.forEach((url) => URL.revokeObjectURL(url));
-  setImages([]);
-  if (fileRef.current) fileRef.current.value = "";
-};
+    alert("Listing added! You will see it on the homepage.");
 
-  const handleCancel = () => {
-    // Clear all form fields and revoke object URLs
+    // clear form
     setTitle("");
     setDescription("");
     setPrice("");
@@ -70,7 +60,35 @@ export default function SellPage() {
     if (fileRef.current) fileRef.current.value = "";
   };
 
-  // Clear ISBN when user switches away from Books category
+  const handleCancel = () => {
+    setTitle("");
+    setDescription("");
+    setPrice("");
+    setCategory("");
+    setCondition("");
+    setIsbn("");
+    images.forEach((url) => URL.revokeObjectURL(url));
+    setImages([]);
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const readFileAsDataURL = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+const handleFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (!files) return;
+  const urls = await Promise.all(Array.from(files).map((f) => readFileAsDataURL(f)));
+  setImages((prev) => [...prev, ...urls].slice(0, 6));
+  if (fileRef.current) fileRef.current.value = "";
+};
+
+
   useEffect(() => {
     if (category !== "books") setIsbn("");
   }, [category]);
@@ -114,8 +132,6 @@ export default function SellPage() {
                 onChange={handleFiles}
                 style={{ display: "none" }}
               />
-
-              {/* Visible UI for adding photo*/}
               <div className="add-inner">
                 <div className="plus">+</div>
                 <div className="add-text">Add Photos</div>
@@ -155,7 +171,8 @@ export default function SellPage() {
               required
             />
           </label>
-          {/* Conindition Input */}
+
+          {/* Condition Input */}
           <label className="field">
             <span className="required">Condition</span>
             <select
@@ -163,9 +180,7 @@ export default function SellPage() {
               onChange={(e) => setCondition(e.target.value)}
               required
             >
-              <option value="" disabled>
-                Select condition
-              </option>
+              <option value="" disabled>Select condition</option>
               <option value="like-new">Like New</option>
               <option value="good">Good</option>
               <option value="fair">Fair</option>
@@ -193,9 +208,7 @@ export default function SellPage() {
                 onChange={(e) => setCategory(e.target.value)}
                 required
               >
-                <option value="" disabled>
-                  Select category
-                </option>
+                <option value="" disabled>Select category</option>
                 <option value="electronics">Electronics</option>
                 <option value="books">Books</option>
                 <option value="clothing">Clothing</option>
@@ -205,7 +218,7 @@ export default function SellPage() {
             </label>
           </div>
 
-          {/* Conditionally show ISBN when category is Books */}
+          {/* ISBN Input */}
           {category === "books" && (
             <label className="field">
               <span className="required">ISBN (optional)</span>
@@ -220,16 +233,8 @@ export default function SellPage() {
 
           <div className="actions">
             <div className="row">
-              <button type="submit" className="primary">
-                Create Listing
-              </button>
-              <button
-                type="button"
-                className="secondary"
-                onClick={handleCancel}
-              >
-                Cancel
-              </button>
+              <button type="submit" className="primary">Create Listing</button>
+              <button type="button" className="secondary" onClick={handleCancel}>Cancel</button>
             </div>
           </div>
         </form>
