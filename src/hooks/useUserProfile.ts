@@ -28,6 +28,7 @@ export function useUserProfile() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    let isMounted = true
     const supabase = createClient()
 
     async function loadUserProfile() {
@@ -37,11 +38,11 @@ export function useUserProfile() {
 
         if (authError) throw authError
         if (!authUser) {
-          setLoading(false)
+          if (isMounted) setLoading(false)
           return
         }
 
-        setUser(authUser)
+        if (isMounted) setUser(authUser)
 
         // Fetch profile from public.profiles table
         const { data: profileData, error: profileError } = await supabase
@@ -52,15 +53,19 @@ export function useUserProfile() {
 
         if (profileError) throw profileError
 
-        setProfile(profileData)
+        if (isMounted) setProfile(profileData)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load profile')
+        if (isMounted) setError(err instanceof Error ? err.message : 'Failed to load profile')
       } finally {
-        setLoading(false)
+        if (isMounted) setLoading(false)
       }
     }
 
     loadUserProfile()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   return { profile, user, loading, error }

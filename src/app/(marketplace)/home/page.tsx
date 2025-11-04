@@ -88,7 +88,7 @@ export default function HomePage() {
             <h1 id="page-head">Student Mart</h1>
             {profile && (
               <p style={{ fontSize: '14px', color: '#666', margin: '0' }}>
-                Welcome, {profile.first_name}
+                Welcome, {profile.first_name || 'Guest'}
               </p>
             )}
           </div>
