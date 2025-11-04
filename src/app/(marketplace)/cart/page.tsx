@@ -6,8 +6,10 @@ import backImg from "@/assets/back.png";
 import laptopImg from "@/assets/laptop.jpeg";
 import hatImg from "@/assets/hat.png";
 import deleteImg from "@/assets/delete.png";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 export default function Cart() {
+  const { profile } = useUserProfile();
   // mock items with image arrays (for detail page)
   const [cartItems, setCartItems] = useState([
     {

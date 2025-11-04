@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react"
 import { Message, User } from "@/types"
 import hatImg from "@/assets/hat.png"
 import "./styles.css"
+import { useUserProfile } from "@/hooks/useUserProfile"
 
 interface MockChat {
   id: string
@@ -15,6 +16,7 @@ interface MockChat {
 }
 
 export default function MessagesPage() {
+  const { profile } = useUserProfile()
   const [selectedChat, setSelectedChat] = useState<MockChat | null>(null)
   const [messageText, setMessageText] = useState<string>("")
   const [messages, setMessages] = useState<Message[]>([])
@@ -134,6 +136,11 @@ export default function MessagesPage() {
     <div className="messages-page">
       <div className="messages-head">
         <h1 id="page-head">Messages</h1>
+        {profile && (
+          <p style={{ fontSize: '14px', color: '#666', margin: '0', position: 'absolute', right: '20px' }}>
+            {profile.first_name} {profile.last_name}
+          </p>
+        )}
       </div>
 
       <div className="chat-container">

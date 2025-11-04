@@ -1,67 +1,43 @@
 'use client'
 
-import React, { useState } from "react"
+import React from "react"
 import Link from "next/link"
 import "../styles.css"
-import hatImg from "@/assets/hat.png"
-
-interface Item {
-  id: number
-  name: string
-  price: string
-  postedBy: string
-  images: string[]
-  description: string
-}
+import { useUserProfile } from "@/hooks/useUserProfile"
+import { createClient } from "@/lib/supabase/client"
 
 export default function ProfilePage() {
-  // Mock logged-in user
-  const [user] = useState({
-    firstName: "Alice",
-    lastName: "Johnson",
-    email: "alice@example.com",
-    rating: "1.5",
-    item_sold: "3",
-    item_listed: "2"
+  const { profile, loading, error } = useUserProfile()
 
-  })
+  const handleLogout = async () => {
+    try {
+      const supabase = createClient()
+      await supabase.auth.signOut()
+      // SessionMonitor will automatically redirect to /login
+    } catch (error) {
+      console.error('Logout failed:', error)
+      alert('Failed to log out. Please try again.')
+    }
+  }
 
-  // Mock all items in the marketplace
-  const [allItems] = useState<Item[]>([
-    {
-      id: 1,
-      name: "Laptop",
-      price: "$500",
-      postedBy: "Alice Johnson",
-      images: [
-        "https://via.placeholder.com/300x200?text=Laptop+1",
-        "https://via.placeholder.com/300x200?text=Laptop+2",
-      ],
-      description: "Fast and reliable laptop, perfect for students.",
-    },
-    {
-      id: 2,
-      name: "Headphones",
-      price: "$40",
-      postedBy: "Ryan Smith",
-      images: ["https://via.placeholder.com/300x200?text=Headphones+1"],
-      description: "Noise cancelling headphones, great sound quality.",
-    },
-    {
-      id: 3,
-      name: "Backpack",
-      price: "$30",
-      postedBy: "Alice Johnson",
-      images: [
-        "https://via.placeholder.com/300x200?text=Backpack+1",
-        "https://via.placeholder.com/300x200?text=Backpack+2",
-      ],
-      description: "Durable and spacious backpack for daily use.",
-    },
-  ])
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p>Loading profile...</p>
+      </div>
+    )
+  }
 
-  // Only show items posted by this user
-  const userItems = allItems.filter((item) => item.postedBy === `${user.firstName} ${user.lastName}`)
+  if (error || !profile) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p>Error loading profile: {error || 'Profile not found'}</p>
+      </div>
+    )
+  }
+
+  // TODO: Fetch user's items from Supabase items table
+  const userItems: any[] = []
 
   return (
     <div className="profile-page">
@@ -73,13 +49,26 @@ export default function ProfilePage() {
 
     {/* --- Profile Picture & Info --- */}
     <div className="profile-pic-info">
-      <img
-        className="profile-pic"
-        alt={`${user.firstName} ${user.lastName} profile`}
-      />
+      {profile.avatar_url ? (
+        <img
+          className="profile-pic"
+          src={profile.avatar_url}
+          alt={profile.first_name || profile.last_name
+            ? `${profile.first_name || ''} ${profile.last_name || ''} profile`.trim()
+            : 'User profile'}
+        />
+      ) : (
+        <div className="profile-pic profile-pic-placeholder">
+          {profile.first_name?.[0]}{profile.last_name?.[0]}
+        </div>
+      )}
       <div className="profile-info">
-        <h2>{user.firstName} {user.lastName}</h2>
-        <p>{user.email}</p>
+        <h2>
+          {profile.first_name || profile.last_name
+            ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim()
+            : 'Anonymous User'}
+        </h2>
+        <p>{profile.email}</p>
       </div>
     </div>
 
@@ -87,24 +76,23 @@ export default function ProfilePage() {
     <div className="profile-butts">
        <Link href="/editprofile" className="back-button">
       <button className="profile-butts1">Edit Profile</button></Link>
-       <Link href="/" className="back-button">
-      <button className="profile-butts1">Log Out</button></Link>
+      <button className="profile-butts1" onClick={handleLogout}>Log Out</button>
     </div>
 
   </div>
 
   <div className="infos-cont">
     <div className="infoss">
-      <p className="info2">{user.item_listed}</p>
+      <p className="info2">{profile.items_listed}</p>
       <p className="info3">Items Listed</p>
     </div>
     <div className="infoss">
-      <p className="info2">{user.item_sold}</p>
+      <p className="info2">{profile.items_sold}</p>
        <p className="info3">Items Sold</p>
     </div>
 
     <div className="infoss">
-      <p className="info2">{user.rating}</p>
+      <p className="info2">{profile.rating.toFixed(1)}</p>
        <p className="info3">Rating</p>
     </div>
   </div>
