@@ -184,26 +184,31 @@ export default function ItemDetailPage() {
         <div className="questions">
           <div className="question">
             <p>
+              {" "}
               <img src={messageImg.src} alt="message" />
               Is this available?
             </p>
           </div>
           <div className="question">
             <p>
+              {" "}
               <img src={messageImg.src} alt="message" />
               Can I pick up tomorrow?
             </p>
           </div>
           <div className="question">
             <p>
-              <img src={messageImg.src} alt="message" />
-              What's the condition like?
+              {" "}
+              <img src={messageImg.src} alt="message" /> What's the condition
+              like?
             </p>
           </div>
+
           <div className="question">
             <p>
-              <img src={messageImg.src} alt="message" />
-              Can you send more photos?
+              {" "}
+              <img src={messageImg.src} alt="gohome" /> Can you send more
+              photos?
             </p>
           </div>
         </div>
