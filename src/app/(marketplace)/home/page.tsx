@@ -1,37 +1,5 @@
 'use client';
 
-import React, { useState, useMemo } from "react";
-import Link from "next/link";
-import "../styles.css";
-import laptopImg from "@/assets/laptop.jpeg";
-import hatImg from "@/assets/hat.png";
-import cartImg from "@/assets/cart.png";
-import heartemImg from "@/assets/heartempty.png";
-import heartImg from "@/assets/heart.png";
-import { useListingStore } from "@/lib/useListingsStore";
-
-export default function HomePage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-
-  // ✅ Zustand global state
-  const items = useListingStore((state) => state.items);
-  const toggleLike = useListingStore((state) => state.toggleLike);
-  const addToCart = useListingStore((state) => state.addToCart);
-
-  // Categories
-  const categories = useMemo(
-    () => ["All", ...Array.from(new Set(items.map((i) => i.category)))],
-    [items]
-  );
-
-  // Filter and sort items
-  const filteredItems = useMemo(() => {
-    return items
-      .filter((item) => selectedCategory === "All" || item.category === selectedCategory)
-      .filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
-      .sort((a, b) => new Date(b.postedAt || Date.now()).getTime() - new Date(a.postedAt || Date.now()).getTime());
-  }, [items, searchTerm, selectedCategory]);
 import React, { useState } from "react"
 import Link from "next/link"
 import "../styles.css"
@@ -54,7 +22,9 @@ export default function HomePage() {
       name: "Laptop",
       category: "Electronics",
       price: "$500",
-      postedBy: "Alice",
+      condition: "like-new",
+      postedBy: { name: "Alice Johnson", profilePic: "" },
+      postedAt: "2025-01-10T10:00:00",
       images: [
         laptopImg.src,
         "https://via.placeholder.com/300x200?text=Laptop+2",
@@ -66,7 +36,9 @@ export default function HomePage() {
       name: "Headphones",
       category: "Electronics",
       price: "$40",
-      postedBy: "Ryan",
+      condition: "good",
+      postedBy: { name: "Ryan Smith", profilePic: "" },
+      postedAt: "2025-01-09T14:30:00",
       images: [
         "https://via.placeholder.com/300x200?text=Headphones+1",
         "https://via.placeholder.com/300x200?text=Headphones+2",
@@ -77,7 +49,9 @@ export default function HomePage() {
       name: "Backpack",
       category: "Accessories",
       price: "$30",
-      postedBy: "Sophie",
+      condition: "fair",
+      postedBy: { name: "Sophie Chen", profilePic: "" },
+      postedAt: "2025-01-08T09:15:00",
       images: [
         "https://via.placeholder.com/300x200?text=Backpack+1",
         "https://via.placeholder.com/300x200?text=Backpack+2",
@@ -88,7 +62,9 @@ export default function HomePage() {
       name: "Camera",
       category: "Electronics",
       price: "$250",
-      postedBy: "Daniel",
+      condition: "like-new",
+      postedBy: { name: "Daniel Lee", profilePic: "" },
+      postedAt: "2025-01-07T16:45:00",
       images: [
         "https://via.placeholder.com/300x200?text=Camera+1",
         "https://via.placeholder.com/300x200?text=Camera+2",
@@ -160,7 +136,7 @@ export default function HomePage() {
         <div className="item-container">
           {filteredItems.length > 0 ? (
             filteredItems.map((item) => {
-              const isLiked = !!item.liked;
+              const isLiked = likedItems.includes(item.id);
 
               return (
                 <Link href={`/item/${item.id}`} key={item.id} className="item-card">
@@ -172,7 +148,6 @@ export default function HomePage() {
                       e.preventDefault();
                       e.stopPropagation();
                       toggleLike(item.id);
-                      if (!isLiked) addToCart(item); // optional
                     }}
                   >
                     <img className="heart-icon" src={isLiked ? heartImg.src : heartemImg.src} alt="heart" />
