@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
 import React, { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import "../../styles.css";
 import leftImg from "@/assets/left.png";
 import rightImg from "@/assets/right.png";
@@ -16,7 +16,10 @@ interface Item {
   price: string;
   description: string;
   images: string[];
-  postedBy: string;
+  postedBy: {
+    name: string;
+    profilePic?: string;
+  };
   condition: string;
   category: string;
 }
@@ -24,130 +27,95 @@ interface Item {
 export default function ItemDetailPage() {
   const params = useParams();
   const itemId = Number(params.id);
+  const router = useRouter();
 
-  const [user] = useState({
-    firstName: "Alice",
-    lastName: "Johnson",
-    email: "alice@example.com",
-    rating: "1.5",
-    item_sold: "3",
-    item_listed: "2",
-  });
-
-  // Mock items (TODO: fetch from Supabase)
+  // Mock data
   const items: Item[] = [
     {
       id: 1,
       name: "Laptop",
       price: "$500",
-      postedBy: "Alice Johnson",
-      condition: "used-like-new",
+      postedBy: {
+        name: "Alice Johnson",
+        profilePic: "",
+      },
       images: [
         laptopImg.src,
         "https://via.placeholder.com/300x200?text=Laptop+2",
         "https://via.placeholder.com/300x200?text=Laptop+3",
       ],
       description: "Fast and reliable laptop, perfect for students.",
+      condition: "used-like-new",
       category: "electronics",
     },
     {
       id: 2,
       name: "Headphones",
       price: "$40",
-      postedBy: "Ryan Smith",
-      condition: "used-like-new",
+      postedBy: {
+        name: "Ryan Smith",
+        profilePic: "",
+      },
       images: [
         "https://via.placeholder.com/300x200?text=Headphones+1",
         "https://via.placeholder.com/300x200?text=Headphones+2",
       ],
       description: "Noise cancelling headphones, great sound quality.",
-      category: "electronics",
-    },
-    {
-      id: 3,
-      name: "Backpack",
-      price: "$30",
-      postedBy: "Sophie Chen",
       condition: "used-like-new",
-      images: [
-        "https://via.placeholder.com/300x200?text=Backpack+1",
-        "https://via.placeholder.com/300x200?text=Backpack+2",
-      ],
-      description: "Durable and spacious backpack for daily use.",
-      category: "electronics",
-    },
-    {
-      id: 4,
-      name: "Camera",
-      price: "$250",
-      postedBy: "Daniel Park",
-      condition: "used-like-new",
-      images: [
-        "https://via.placeholder.com/300x200?text=Camera+1",
-        "https://via.placeholder.com/300x200?text=Camera+2",
-        "https://via.placeholder.com/300x200?text=Camera+3",
-      ],
-      description: "Capture great moments with this professional camera.",
       category: "electronics",
     },
   ];
 
   const item = items.find((i) => i.id === itemId);
-
-  // For image carousel
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   if (!item) return <p>Item not found!</p>;
 
-  const nextImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === item.images.length - 1 ? 0 : prev + 1
-    );
-  };
+  const nextImage = () =>
+    setCurrentImageIndex((prev) => (prev === item.images.length - 1 ? 0 : prev + 1));
 
-  const prevImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? item.images.length - 1 : prev - 1
-    );
-  };
+  const prevImage = () =>
+    setCurrentImageIndex((prev) => (prev === 0 ? item.images.length - 1 : prev - 1));
 
-  const handleQuickQuestion = () => {
-    alert(`Message sent to ${item.postedBy}!`);
+  const sendQuickMessage = (text: string) => {
+    router.push(
+      `/inbox?autoMessage=${encodeURIComponent(text)}&to=${encodeURIComponent(item.postedBy.name)}`
+    );
   };
 
   return (
     <div className="item-detail">
+      {/* Back button */}
       <div className="item-detail-head">
         <Link href="/home" className="back-button">
-          <img id="backbut" src={backImg.src} alt="gohome" />
+          <img id="backbut" src={backImg.src} alt="Go home" />
         </Link>
       </div>
 
-      {/* Image Carousel */}
+      {/* Image carousel */}
       <div className="box item-images-box">
         <button onClick={prevImage}>
-          <img src={leftImg.src} alt="goleft" />
+          <img src={leftImg.src} alt="Go left" />
         </button>
-        <img
-          src={item.images[currentImageIndex]}
-          alt={`${item.name} ${currentImageIndex + 1}`}
-        />
+        <img src={item.images[currentImageIndex]} alt={`${item.name} ${currentImageIndex + 1}`} />
         <button onClick={nextImage}>
-          <img src={rightImg.src} alt="goright" />
+          <img src={rightImg.src} alt="Go right" />
         </button>
       </div>
 
-      {/* Item Info */}
+      {/* Item info */}
       <div className="item-info-box">
         <p>{item.name}</p>
         <p className="item-price">{item.price}</p>
       </div>
 
-      <div className="box condition">
+      {/* Condition */}
+      <div className="box condition1">
         <h3>Condition:</h3>
-        <p id="condition">{item.condition}</p>
+        <p className="condition">{item.condition}</p>
       </div>
 
+      {/* Description */}
       <div className="box description">
         <h3>Description</h3>
         <p className="item-description">{item.description}</p>
@@ -159,58 +127,32 @@ export default function ItemDetailPage() {
         <div className="seller-info-box1">
           <div className="seller-info-box3">
             <div className="seller-avatar">
-              {user.firstName.charAt(0).toUpperCase()}
+              {item.postedBy.profilePic
+                ? <img src={item.postedBy.profilePic} alt={item.postedBy.name} />
+                : item.postedBy.name.charAt(0).toUpperCase()}
             </div>
             <div className="seller-info-box2">
-              <p>
-                {user.firstName} {user.lastName}
-              </p>
-              <p className="rating">★ {user.rating}</p>
+              <p>{item.postedBy.name}</p>
             </div>
           </div>
-          <Link
-            href={`/publicprofile/${user.firstName}-${user.lastName}`}
-            className="seller-link"
-          >
+          <Link href="/publicprofile" className="seller-link">
             <button>View Profile</button>
           </Link>
         </div>
       </div>
 
       {/* Quick Questions */}
-      {/* Quick Questions */}
       <div className="box quick-questions-box">
         <h3>Quick Questions</h3>
         <div className="questions">
-          <div className="question">
-            <p>
-              {" "}
-              <img src={messageImg.src} alt="message" />
-              Is this available?
-            </p>
-          </div>
-          <div className="question">
-            <p>
-              {" "}
-              <img src={messageImg.src} alt="message" />
-              Can I pick up tomorrow?
-            </p>
-          </div>
-          <div className="question">
-            <p>
-              {" "}
-              <img src={messageImg.src} alt="message" /> What's the condition
-              like?
-            </p>
-          </div>
-
-          <div className="question">
-            <p>
-              {" "}
-              <img src={messageImg.src} alt="gohome" /> Can you send more
-              photos?
-            </p>
-          </div>
+          {["Is this available?", "Can I pick up tomorrow?", "What's the condition like?", "Can you send more photos?"].map((q, i) => (
+            <div key={i} className="question" onClick={() => sendQuickMessage(q)}>
+              <p><img src={messageImg.src} /> {q}</p>
+            </div>
+          ))}
+          <Link href={`/inbox?to=${encodeURIComponent(item.postedBy.name)}`}>
+            <button className="question-send">Send Message</button>
+          </Link>
         </div>
       </div>
     </div>
