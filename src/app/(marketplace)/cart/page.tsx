@@ -47,6 +47,11 @@ export default function Cart() {
 
               <div className="cart-butts">
                 <button
+                  className="remove-btn1"
+                  onClick={() => handleSendMessage(item.postedBy?.name || "Unknown")}
+                >
+                  Send message
+                </button>
 
                 <button
                   className="remove-btn"
