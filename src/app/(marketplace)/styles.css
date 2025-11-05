@@ -187,8 +187,13 @@
 }
 
 .photos-wrapper {
-  margin-top: 20px;
+    display: flex;
+  justify-content: center; /* center horizontally */
+  width: 100%;
 }
+  
+
+
 
 .photos-container {
   display: flex;
@@ -196,6 +201,9 @@
   gap: 12px;
   align-items: flex-start;
   justify-content: flex-start; /* ensure tiles start at left edge */
+  
+
+ 
 }
 
 .photo-preview {
@@ -213,6 +221,7 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  
 }
 
 .remove-photo {
@@ -244,6 +253,7 @@
   background: #fff;
   text-decoration: none;
   color: inherit;
+  
 }
 
 .add-photo-tile:focus {
@@ -375,9 +385,6 @@
   margin: 10px; 
 }
 
- 
-
-
 
 .question p img {
   width: 2vw;
@@ -397,8 +404,22 @@
   transform: scale(1.03);
 }
 
+.question-send {
+  background: #ffd900;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin: 15px auto;
+}
 
-#condition {
+.question-send:hover {
+  opacity: 0.85;
+}
+
+
+.condition {
   border: 1px solid transparent;
   border-radius: 8px;
   background: rgba(255, 236, 143, 0.72);
@@ -409,6 +430,14 @@
   display: inline-block;
   width: fit-content;        /* keeps background just around text */
  
+}
+
+.con2 {
+ 
+  margin: 2px 0;
+  font-size: 0.8rem;
+
+  
 }
 
 .rating {
@@ -579,14 +608,6 @@
   border: none;
 }
 
-.item-card-price-like {
-  display: flex;
-  justify-content: space-between;
-
-  width: 100%;
-  padding: 15px;
-  box-sizing: border-box;
-}
 
 .heart-icon {
 
@@ -617,4 +638,54 @@
   color: rgb(202, 161, 10);
 
 
+}
+
+
+.list-divider {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 8px 0;
+  width: 100%;
+}
+
+#name {
+  font-size: 16px;
+  font-weight: bold;
+ 
+}
+
+#price {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.posted-by{
+  font-size: 15px;
+  opacity: 0.75;
+  font-weight: 600;
+}
+
+.posted-date {
+  font-size: 12px;
+  opacity: 0.75;
+}
+
+
+.listed-item-sec, .item-card-price-like {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px;
+}
+
+.item-av {
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+}
+.av2 {
+  width: 29px;
+  height: 29px;
 }

@@ -1,16 +1,18 @@
-"use client";
+'use client';
 
 import React, { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import "../styles.css";
+import { useListingStore } from "@/lib/useListingsStore"; // ✅ global store
 
 export default function SellPage() {
   const router = useRouter();
   const { profile, loading: profileLoading } = useUserProfile();
   const [images, setImages] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const user = useListingStore((state) => state.user);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -32,9 +34,6 @@ export default function SellPage() {
     setImages((prev) => [...prev, ...urls].slice(0, 6)); // limit previews to 6
     setActualFiles((prev) => [...prev, ...filesArray].slice(0, 6)); // store actual files
 
-    // reset input so same file can be selected again if needed
-    if (fileRef.current) fileRef.current.value = "";
-  };
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
@@ -155,7 +154,6 @@ export default function SellPage() {
   };
 
   const handleCancel = () => {
-    // Clear all form fields and revoke object URLs
     setTitle("");
     setDescription("");
     setPrice("");
@@ -170,7 +168,23 @@ export default function SellPage() {
     if (fileRef.current) fileRef.current.value = "";
   };
 
-  // Clear ISBN when user switches away from Books category
+  const readFileAsDataURL = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+const handleFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (!files) return;
+  const urls = await Promise.all(Array.from(files).map((f) => readFileAsDataURL(f)));
+  setImages((prev) => [...prev, ...urls].slice(0, 6));
+  if (fileRef.current) fileRef.current.value = "";
+};
+
+
   useEffect(() => {
     if (category !== "books") setIsbn("");
   }, [category]);
@@ -224,8 +238,6 @@ export default function SellPage() {
                 onChange={handleFiles}
                 style={{ display: "none" }}
               />
-
-              {/* Visible UI for adding photo*/}
               <div className="add-inner">
                 <div className="plus">+</div>
                 <div className="add-text">Add Photos</div>
@@ -265,7 +277,8 @@ export default function SellPage() {
               required
             />
           </label>
-          {/* Conindition Input */}
+
+          {/* Condition Input */}
           <label className="field">
             <span className="required">Condition</span>
             <select
@@ -273,9 +286,7 @@ export default function SellPage() {
               onChange={(e) => setCondition(e.target.value)}
               required
             >
-              <option value="" disabled>
-                Select condition
-              </option>
+              <option value="" disabled>Select condition</option>
               <option value="like-new">Like New</option>
               <option value="good">Good</option>
               <option value="fair">Fair</option>
@@ -303,9 +314,7 @@ export default function SellPage() {
                 onChange={(e) => setCategory(e.target.value)}
                 required
               >
-                <option value="" disabled>
-                  Select category
-                </option>
+                <option value="" disabled>Select category</option>
                 <option value="electronics">Electronics</option>
                 <option value="books">Books</option>
                 <option value="clothing">Clothing</option>
@@ -315,7 +324,7 @@ export default function SellPage() {
             </label>
           </div>
 
-          {/* Conditionally show ISBN when category is Books */}
+          {/* ISBN Input */}
           {category === "books" && (
             <label className="field">
               <span className="required">ISBN (optional)</span>
