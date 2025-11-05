@@ -5,14 +5,12 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import "../styles.css";
-import { useListingStore } from "@/lib/useListingsStore"; // ✅ global store
 
 export default function SellPage() {
   const router = useRouter();
   const { profile, loading: profileLoading } = useUserProfile();
   const [images, setImages] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const user = useListingStore((state) => state.user);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -24,16 +22,6 @@ export default function SellPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [actualFiles, setActualFiles] = useState<File[]>([]);
-
-  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-    const filesArray = Array.from(files);
-    const urls: string[] = filesArray.map((f) => URL.createObjectURL(f));
-
-    setImages((prev) => [...prev, ...urls].slice(0, 6)); // limit previews to 6
-    setActualFiles((prev) => [...prev, ...filesArray].slice(0, 6)); // store actual files
-
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
@@ -168,21 +156,18 @@ export default function SellPage() {
     if (fileRef.current) fileRef.current.value = "";
   };
 
-  const readFileAsDataURL = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const filesArray = Array.from(files);
+    const urls: string[] = filesArray.map((f) => URL.createObjectURL(f));
 
-const handleFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const files = e.target.files;
-  if (!files) return;
-  const urls = await Promise.all(Array.from(files).map((f) => readFileAsDataURL(f)));
-  setImages((prev) => [...prev, ...urls].slice(0, 6));
-  if (fileRef.current) fileRef.current.value = "";
-};
+    setImages((prev) => [...prev, ...urls].slice(0, 6)); // limit previews to 6
+    setActualFiles((prev) => [...prev, ...filesArray].slice(0, 6)); // store actual files
+
+    // reset input so same file can be selected again if needed
+    if (fileRef.current) fileRef.current.value = "";
+  };
 
 
   useEffect(() => {
