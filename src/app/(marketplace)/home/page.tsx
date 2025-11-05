@@ -1,105 +1,74 @@
 'use client';
 
-import React, { useState } from "react"
-import Link from "next/link"
-import "../styles.css"
-import laptopImg from "@/assets/laptop.jpeg"
-import hatImg from "@/assets/hat.png"
-import cartImg from "@/assets/cart.png"
-import heartemImg from "@/assets/heartempty.png"
-import heartImg from "@/assets/heart.png"
-import { useUserProfile } from "@/hooks/useUserProfile"
+import React, { useState, useMemo } from "react";
+import Link from "next/link";
+import "../styles.css";
+import laptopImg from "@/assets/laptop.jpeg";
+import hatImg from "@/assets/hat.png";
+import cartImg from "@/assets/cart.png";
+import heartemImg from "@/assets/heartempty.png";
+import heartImg from "@/assets/heart.png";
+import { useListingStore } from "@/lib/useListingsStore";
+
+interface Listing {
+  id: number;
+  name: string;
+  category: string;
+  price: string;
+  postedBy: {
+    name: string;
+    profilePic?: string;
+  };
+  postedAt: string;
+  images: string[];
+  condition: string;
+  liked?: boolean;
+}
 
 export default function HomePage() {
-  const { profile } = useUserProfile()
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("All")
-  const [likedItems, setLikedItems] = useState<number[]>([])
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const items = [
-    {
-      id: 1,
-      name: "Laptop",
-      category: "Electronics",
-      price: "$500",
-      condition: "like-new",
-      postedBy: { name: "Alice Johnson", profilePic: "" },
-      postedAt: "2025-01-10T10:00:00",
-      images: [
-        laptopImg.src,
-        "https://via.placeholder.com/300x200?text=Laptop+2",
-        "https://via.placeholder.com/300x200?text=Laptop+3",
-      ],
-    },
-    {
-      id: 2,
-      name: "Headphones",
-      category: "Electronics",
-      price: "$40",
-      condition: "good",
-      postedBy: { name: "Ryan Smith", profilePic: "" },
-      postedAt: "2025-01-09T14:30:00",
-      images: [
-        "https://via.placeholder.com/300x200?text=Headphones+1",
-        "https://via.placeholder.com/300x200?text=Headphones+2",
-      ],
-    },
-    {
-      id: 3,
-      name: "Backpack",
-      category: "Accessories",
-      price: "$30",
-      condition: "fair",
-      postedBy: { name: "Sophie Chen", profilePic: "" },
-      postedAt: "2025-01-08T09:15:00",
-      images: [
-        "https://via.placeholder.com/300x200?text=Backpack+1",
-        "https://via.placeholder.com/300x200?text=Backpack+2",
-      ],
-    },
-    {
-      id: 4,
-      name: "Camera",
-      category: "Electronics",
-      price: "$250",
-      condition: "like-new",
-      postedBy: { name: "Daniel Lee", profilePic: "" },
-      postedAt: "2025-01-07T16:45:00",
-      images: [
-        "https://via.placeholder.com/300x200?text=Camera+1",
-        "https://via.placeholder.com/300x200?text=Camera+2",
-      ],
-    },
-  ]
+  const itemsFromStore = useListingStore((state) => state.items) || [];
+  const toggleLike = useListingStore((state) => state.toggleLike);
 
-  const categories = ["All", ...new Set(items.map(item => item.category))]
+  // Normalize postedBy
+  const items = useMemo(() => {
+    return itemsFromStore.map((item) => ({
+      ...item,
+      postedBy: item.postedBy
+        ? typeof item.postedBy === "string"
+          ? { name: item.postedBy, profilePic: "" }
+          : {
+              name: item.postedBy.name || "Unknown",
+              profilePic: item.postedBy.profilePic || "",
+            }
+        : { name: "Unknown", profilePic: "" },
+    }));
+  }, [itemsFromStore]);
 
-  const filteredItems = items.filter(item => {
-    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    return matchesCategory && matchesSearch
-  })
+  const categories = useMemo(
+    () => ["All", ...Array.from(new Set(items.map((i) => i.category)))],
+    [items]
+  );
 
-  const toggleLike = (itemId: number) => {
-    setLikedItems(prev =>
-      prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]
-    )
-  }
+  const filteredItems = useMemo(() => {
+    return items
+      .filter((item) => selectedCategory === "All" || item.category === selectedCategory)
+      .filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      .sort(
+        (a, b) =>
+          new Date(b.postedAt || Date.now()).getTime() -
+          new Date(a.postedAt || Date.now()).getTime()
+      );
+  }, [items, searchTerm, selectedCategory]);
 
   return (
     <div className="homepage-wrapper">
-      {/* Header */}
       <div className="home-head1">
         <div className="home-head2">
           <img id="hat-home" src={hatImg.src} alt="Hat logo" />
-          <div>
-            <h1 id="page-head">Student Mart</h1>
-            {profile && (
-              <p style={{ fontSize: '14px', color: '#666', margin: '0' }}>
-                Welcome, {profile.first_name || 'Guest'}
-              </p>
-            )}
-          </div>
+          <h1 id="page-head">Student Mart</h1>
         </div>
         <div className="icon-cart">
           <Link href="/cart">
@@ -110,7 +79,6 @@ export default function HomePage() {
 
       <p id="line">Find what you need, Sell what you don't</p>
 
-      {/* Search + Category */}
       <input
         type="text"
         placeholder="Search..."
@@ -131,16 +99,23 @@ export default function HomePage() {
         ))}
       </select>
 
-      {/* Item Cards */}
       <div className="items-wrapper">
         <div className="item-container">
           {filteredItems.length > 0 ? (
             filteredItems.map((item) => {
-              const isLiked = likedItems.includes(item.id);
+              const isLiked = item.liked === true;
 
               return (
-                <Link href={`/item/${item.id}`} key={item.id} className="item-card">
-                  <img className="item-img" src={item.images[0] || laptopImg.src} alt={item.name} />
+                <Link
+                  href={`/item/${item.id}`}
+                  key={item.id}
+                  className="item-card"
+                >
+                  <img
+                    className="item-img"
+                    src={item.images[0] || laptopImg.src}
+                    alt={item.name}
+                  />
 
                   <button
                     className={`heart-btn ${isLiked ? "liked" : ""}`}
@@ -150,7 +125,11 @@ export default function HomePage() {
                       toggleLike(item.id);
                     }}
                   >
-                    <img className="heart-icon" src={isLiked ? heartImg.src : heartemImg.src} alt="heart" />
+                    <img
+                      className="heart-icon"
+                      src={isLiked ? heartImg.src : heartemImg.src}
+                      alt="heart"
+                    />
                   </button>
 
                   <div className="item-card-price-like">
@@ -164,14 +143,25 @@ export default function HomePage() {
                   <div className="listed-item-sec">
                     <div className="item-av">
                       {item.postedBy.profilePic ? (
-                        <img className="seller-avatar av2" src={item.postedBy.profilePic} alt={item.postedBy.name} />
+                        <img
+                          className="seller-avatar av2"
+                          src={item.postedBy.profilePic}
+                          alt={item.postedBy.name}
+                        />
                       ) : (
-                        <div className="seller-avatar av2">{item.postedBy.name.charAt(0).toUpperCase()}</div>
+                        <div className="seller-avatar av2">
+                          {item.postedBy.name.charAt(0).toUpperCase()}
+                        </div>
                       )}
                       <p className="posted-by">{item.postedBy.name}</p>
                     </div>
 
-                    <p className="posted-date"> {new Date(item.postedAt).toLocaleDateString()} </p>
+                    <p className="posted-date">
+  {item.postedAt
+    ? new Date(item.postedAt).toLocaleDateString()
+    : "Just now"}
+</p>
+
                   </div>
                 </Link>
               );
