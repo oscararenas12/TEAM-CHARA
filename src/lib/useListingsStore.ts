@@ -16,12 +16,12 @@ interface Listing {
   category: string;
   price: string;
   postedBy: {
-    name: string;          // seller full name
-    profilePic?: string;    // optional avatar
+    name: string;
+    profilePic?: string;
   };
   images: string[];
   condition?: string;
-  description?: string;  // ← add this
+  description?: string;
   isbn?: string; 
   postedAt?: string;
   liked?: boolean;
@@ -35,13 +35,12 @@ interface Store {
   setItems: (items: Listing[]) => void;
   toggleLike: (id: number) => void;
   removeListing: (id: number) => void;
+  addListing: (item: Listing) => void;
 
   cart: Listing[];
   addToCart: (item: Listing) => void;
   removeFromCart: (id: number) => void;
   toggleCart: (item: Listing) => void;
-  addListing: (item: Listing) => void;
-
 }
 
 export const useListingStore = create<Store>((set) => ({
@@ -60,28 +59,46 @@ export const useListingStore = create<Store>((set) => ({
   // ✅ Items
   items: [],
   setItems: (items) => set({ items }),
-  toggleLike: (id) =>
-    set((state) => ({
-      items: state.items.map((item) =>
-        item.id === id ? { ...item, liked: !item.liked } : item
-      ),
-    })),
-  removeListing: (id) =>
-    set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
   addListing: (item: Listing) =>
-  set((state) => ({ items: [...state.items, item] })),
+    set((state) => ({ items: [...state.items, item] })),
+  removeListing: (id: number) =>
+    set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
+
+  // ❤️ Like = Add/Remove from cart
+  toggleLike: (id: number) =>
+    set((state) => {
+      const updatedItems = state.items.map((item) =>
+        item.id === id ? { ...item, liked: !item.liked } : item
+      );
+
+      const likedItem = updatedItems.find((i) => i.id === id);
+
+      let updatedCart = state.cart;
+
+      if (likedItem?.liked) {
+        // Add to cart when liked
+        if (!state.cart.find((i) => i.id === id)) {
+          updatedCart = [...state.cart, likedItem];
+        }
+      } else {
+        // Remove from cart when unliked
+        updatedCart = state.cart.filter((i) => i.id !== id);
+      }
+
+      return { items: updatedItems, cart: updatedCart };
+    }),
 
   // ✅ Cart
   cart: [],
-  addToCart: (item) =>
+  addToCart: (item: Listing) =>
     set((state) =>
       state.cart.find((i) => i.id === item.id)
         ? state
         : { cart: [...state.cart, item] }
     ),
-  removeFromCart: (id) =>
+  removeFromCart: (id: number) =>
     set((state) => ({ cart: state.cart.filter((i) => i.id !== id) })),
-  toggleCart: (item) =>
+  toggleCart: (item: Listing) =>
     set((state) =>
       state.cart.find((i) => i.id === item.id)
         ? { cart: state.cart.filter((i) => i.id !== item.id) }

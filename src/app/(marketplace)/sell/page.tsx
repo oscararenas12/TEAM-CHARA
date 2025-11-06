@@ -1,13 +1,16 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { useUserProfile } from "@/hooks/useUserProfile";
 import "../styles.css";
-import { useListingStore } from "@/lib/useListingsStore"; // ✅ global store
 
 export default function SellPage() {
+  const router = useRouter();
+  const { profile, loading: profileLoading } = useUserProfile();
   const [images, setImages] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const user = useListingStore((state) => state.user);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -15,49 +18,130 @@ export default function SellPage() {
   const [category, setCategory] = useState("");
   const [condition, setCondition] = useState("");
   const [isbn, setIsbn] = useState("");
-
-  // ✅ access global store method to add a new listing
-  const addListing = useListingStore((state) => state.addListing);
-
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [actualFiles, setActualFiles] = useState<File[]>([]);
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
+    setActualFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(null);
 
-  const newListing = {
-    id: Date.now(), 
-    name: title,
-    description,
-    price,
-    category,
-    condition,
-    isbn,
-    images,
-    postedAt: new Date().toISOString(),
-    postedBy: {
-      name: `${user.firstName} ${user.lastName}`,
-      profilePic: user.profilePic || "",
-    },
-  };
+    // Validation
+    if (!profile) {
+      setError("You must be logged in to create a listing");
+      return;
+    }
 
-    addListing(newListing); // add to global state
+    if (actualFiles.length === 0) {
+      setError("Please add at least one photo");
+      return;
+    }
 
-    alert("Listing added! You will see it on the homepage.");
+    setIsSubmitting(true);
 
-    // clear form
-    setTitle("");
-    setDescription("");
-    setPrice("");
-    setCategory("");
-    setCondition("");
-    setIsbn("");
-    images.forEach((url) => URL.revokeObjectURL(url));
-    setImages([]);
-    if (fileRef.current) fileRef.current.value = "";
+    try {
+      const supabase = createClient();
+
+      // 1. Get category ID from category name
+      const { data: categoryData, error: categoryError } = await supabase
+        .from('categories')
+        
+        .select('id')
+        .ilike('name', category)
+        .single();
+
+      if (categoryError) {
+        throw new Error(`Category not found: ${category}`);
+      }
+
+      // 2. Create the item
+      const { data: itemData, error: itemError } = await supabase
+        .from('items')
+        .insert({
+          seller_id: profile.id,
+          category_id: categoryData.id,
+          name: title,
+          description,
+          price: parseFloat(price.replace(/[^0-9.]/g, '')), // remove $ and other chars
+          condition,
+          is_available: true,
+          created_at: new Date().toISOString(),
+        })
+        
+        .select()
+        .single();
+
+      if (itemError) throw itemError;
+
+      // 3. Upload images to Supabase Storage and create item_images records
+      const imageUploadPromises = actualFiles.map(async (file, index) => {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${itemData.id}/${Date.now()}-${index}.${fileExt}`;
+
+        // Upload to storage
+        const { error: uploadError } = await supabase.storage
+          .from('item-images')
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('item-images')
+          .getPublicUrl(fileName);
+
+        // Insert into item_images table
+        const { error: imageError } = await supabase
+          .from('item_images')
+          .insert({
+            item_id: itemData.id,
+            image_url: publicUrl,
+            display_order: index,
+          });
+
+        if (imageError) throw imageError;
+      });
+
+      await Promise.all(imageUploadPromises);
+
+      // 4. If ISBN provided, add as tag
+      if (isbn) {
+        await supabase.from('item_tags').insert({
+          item_id: itemData.id,
+          tag: `ISBN: ${isbn}`,
+        });
+      }
+
+      // Success! Show message and clear form
+      setSuccess("Listing created successfully! Redirecting to your profile...");
+      setTitle("");
+      setDescription("");
+      setPrice("");
+      setCategory("");
+      setCondition("");
+      setIsbn("");
+      images.forEach((url) => URL.revokeObjectURL(url));
+      setImages([]);
+      setActualFiles([]);
+      if (fileRef.current) fileRef.current.value = "";
+
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        router.push('/profile');
+      }, 2000);
+
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create listing');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
@@ -67,26 +151,26 @@ export default function SellPage() {
     setCategory("");
     setCondition("");
     setIsbn("");
+    setError(null);
+    setSuccess(null);
     images.forEach((url) => URL.revokeObjectURL(url));
     setImages([]);
+    setActualFiles([]);
     if (fileRef.current) fileRef.current.value = "";
   };
 
-  const readFileAsDataURL = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const filesArray = Array.from(files);
+    const urls: string[] = filesArray.map((f) => URL.createObjectURL(f));
 
-const handleFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const files = e.target.files;
-  if (!files) return;
-  const urls = await Promise.all(Array.from(files).map((f) => readFileAsDataURL(f)));
-  setImages((prev) => [...prev, ...urls].slice(0, 6));
-  if (fileRef.current) fileRef.current.value = "";
-};
+    setImages((prev) => [...prev, ...urls].slice(0, 6)); // limit previews to 6
+    setActualFiles((prev) => [...prev, ...filesArray].slice(0, 6)); // store actual files
+
+    // reset input so same file can be selected again if needed
+    if (fileRef.current) fileRef.current.value = "";
+  };
 
 
   useEffect(() => {
@@ -100,6 +184,16 @@ const handleFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
         <p className="subtext">
           Share what you're looking to sell with the campus community
         </p>
+        {error && (
+          <div style={{ color: 'red', padding: '10px', backgroundColor: '#ffebee', borderRadius: '5px', marginTop: '10px' }}>
+            {error}
+          </div>
+        )}
+        {success && (
+          <div style={{ color: 'green', padding: '10px', backgroundColor: '#e8f5e9', borderRadius: '5px', marginTop: '10px' }}>
+            {success}
+          </div>
+        )}
       </div>
 
       {/* Photos Section */}
@@ -233,8 +327,17 @@ const handleFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
           <div className="actions">
             <div className="row">
-              <button type="submit" className="primary">Create Listing</button>
-              <button type="button" className="secondary" onClick={handleCancel}>Cancel</button>
+              <button type="submit" className="primary" disabled={isSubmitting}>
+                {isSubmitting ? 'Creating Listing...' : 'Create Listing'}
+              </button>
+              <button
+                type="button"
+                className="secondary"
+                onClick={handleCancel}
+                disabled={isSubmitting}
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </form>
