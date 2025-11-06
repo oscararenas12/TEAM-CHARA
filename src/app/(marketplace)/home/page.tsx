@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import "../styles.css";
 import laptopImg from "@/assets/laptop.jpeg";
@@ -9,9 +9,10 @@ import cartImg from "@/assets/cart.png";
 import heartemImg from "@/assets/heartempty.png";
 import heartImg from "@/assets/heart.png";
 import { useListingStore } from "@/lib/useListingsStore";
+import { createClient } from "@/lib/supabase/client";
 
 interface Listing {
-  id: number;
+  id: string;
   name: string;
   category: string;
   price: string;
@@ -28,9 +29,80 @@ interface Listing {
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
 
   const itemsFromStore = useListingStore((state) => state.items) || [];
+  const setItems = useListingStore((state) => state.setItems);
   const toggleLike = useListingStore((state) => state.toggleLike);
+
+  // Fetch items from Supabase on mount
+  useEffect(() => {
+    async function fetchItems() {
+      try {
+        const supabase = createClient();
+
+        // Fetch items with seller profile and images
+        const { data: items, error } = await supabase
+          .from('items')
+          .select(`
+            id,
+            name,
+            description,
+            price,
+            condition,
+            created_at,
+            profiles:seller_id (
+              first_name,
+              last_name,
+              avatar_url
+            ),
+            categories:category_id (
+              name
+            ),
+            item_images (
+              image_url,
+              display_order
+            )
+          `)
+          .eq('is_available', true)
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching items:', error);
+          return;
+        }
+
+        // Transform Supabase data to match our Listing interface
+        const transformedItems: Listing[] = (items || []).map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          description: item.description || '',
+          price: `$${parseFloat(item.price).toFixed(2)}`,
+          category: item.categories?.name || 'Other',
+          condition: item.condition || 'good',
+          postedAt: item.created_at,
+          postedBy: {
+            name: item.profiles
+              ? `${item.profiles.first_name} ${item.profiles.last_name}`
+              : 'Unknown',
+            profilePic: item.profiles?.avatar_url || '',
+          },
+          images: item.item_images
+            ?.sort((a: any, b: any) => a.display_order - b.display_order)
+            .map((img: any) => img.image_url) || [],
+          liked: false,
+        }));
+
+        setItems(transformedItems);
+      } catch (err) {
+        console.error('Unexpected error fetching items:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchItems();
+  }, [setItems]);
 
   // Normalize postedBy
   const items = useMemo(() => {
@@ -101,7 +173,9 @@ export default function HomePage() {
 
       <div className="items-wrapper">
         <div className="item-container">
-          {filteredItems.length > 0 ? (
+          {loading ? (
+            <p className="no-items">Loading items...</p>
+          ) : filteredItems.length > 0 ? (
             filteredItems.map((item) => {
               const isLiked = item.liked === true;
 
