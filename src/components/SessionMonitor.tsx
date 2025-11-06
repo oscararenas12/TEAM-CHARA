@@ -9,13 +9,31 @@ export default function SessionMonitor() {
 
   useEffect(() => {
     const supabase = createClient()
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+
+    // Check initial session and clear if invalid
+    supabase.auth.getSession().catch(async (error) => {
+      console.error('Session error:', error)
+      await supabase.auth.signOut()
+      router.push('/login')
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_OUT') {
         router.push('/login')
       }
 
-      // Supabase automatically refreshes tokens
-      // You can add a toast notification here for better UX
+      // Handle token refresh errors
+      if (event === 'TOKEN_REFRESHED' && !session) {
+        console.error('Token refresh failed')
+        await supabase.auth.signOut()
+        router.push('/login')
+      }
+
+      // Handle user deleted or unauthorized
+      if (event === 'USER_DELETED') {
+        await supabase.auth.signOut()
+        router.push('/login')
+      }
     })
 
     return () => subscription.unsubscribe()
