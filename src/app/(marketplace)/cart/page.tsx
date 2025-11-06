@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import backImg from "@/assets/back.png";
 import deleteImg from "@/assets/delete.png";
@@ -35,7 +35,7 @@ export default function Cart() {
                 <div className="cart-item-info">
                   <img
                     className="cart-item-img"
-                    src={item.images?.[0] || laptopImg.src}
+                    src={item.images[0]}
                     alt={item.name}
                   />
                   <div>

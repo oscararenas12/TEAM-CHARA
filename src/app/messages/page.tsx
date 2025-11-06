@@ -1,25 +1,25 @@
-'use client'
+"use client";
 
 // Mock messaging system
-import React, { useState, useEffect } from "react"
-import { Message, User } from "@/types"
-import hatImg from "@/assets/hat.png"
-import "./styles.css"
-import { useUserProfile } from "@/hooks/useUserProfile"
+import React, { useState, useEffect } from "react";
+import { Message, User } from "@/types";
+import hatImg from "@/assets/hat.png";
+import "./styles.css";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 interface MockChat {
-  id: string
-  name: string
-  lastMessage: string
-  timestamp: string
-  unreadCount: number
+  id: string;
+  name: string;
+  lastMessage: string;
+  timestamp: string;
+  unreadCount: number;
 }
 
 export default function MessagesPage() {
-  const { profile } = useUserProfile()
-  const [selectedChat, setSelectedChat] = useState<MockChat | null>(null)
-  const [messageText, setMessageText] = useState<string>("")
-  const [messages, setMessages] = useState<Message[]>([])
+  const { profile } = useUserProfile();
+  const [selectedChat, setSelectedChat] = useState<MockChat | null>(null);
+  const [messageText, setMessageText] = useState<string>("");
+  const [messages, setMessages] = useState<Message[]>([]);
 
   // Mock chat data for demonstration Line 18 - 97
   const mockChats: MockChat[] = [
@@ -44,7 +44,7 @@ export default function MessagesPage() {
       timestamp: "12:45 PM",
       unreadCount: 1,
     },
-  ]
+  ];
 
   const mockMessages: { [key: string]: Message[] } = {
     "1": [
@@ -100,16 +100,16 @@ export default function MessagesPage() {
         isRead: true,
       },
     ],
-  }
+  };
 
   // Once backend is ready, replace with API call(s)
   const handleChatSelect = (chat: MockChat) => {
-    setSelectedChat(chat)
-    setMessages(mockMessages[chat.id] || [])
-  }
+    setSelectedChat(chat);
+    setMessages(mockMessages[chat.id] || []);
+  };
 
   const handleSendMessage = () => {
-    if (!messageText.trim() || !selectedChat) return
+    if (!messageText.trim() || !selectedChat) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
@@ -119,37 +119,29 @@ export default function MessagesPage() {
       timestamp: new Date(),
       messageType: "text",
       isRead: true,
-    }
+    };
 
-    setMessages((prev) => [...prev, newMessage])
-    setMessageText("")
-  }
+    setMessages((prev) => [...prev, newMessage]);
+    setMessageText("");
+  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
+      e.preventDefault();
+      handleSendMessage();
     }
-  }
+  };
 
   return (
     <div className="messages-page">
       <div className="messages-head">
         <h1 id="page-head">Messages</h1>
-        {profile && (
-          <p style={{ fontSize: '14px', color: '#666', margin: '0', position: 'absolute', right: '20px' }}>
-            {profile.first_name} {profile.last_name}
-          </p>
-        )}
+        <p className="subtext">Connect with buyers and sellers</p>
       </div>
 
       <div className="chat-container">
         {/* Chat List */}
         <div className="chat-list">
-          <div className="chat-header">
-            <img src={hatImg.src} alt="Student Mart" className="chat-header-logo" />
-            <span id="conversation">Conversations</span>
-          </div>
           {mockChats.map((chat) => (
             <div
               key={chat.id}
@@ -231,5 +223,5 @@ export default function MessagesPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
