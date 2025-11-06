@@ -1,18 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import backImg from "@/assets/back.png";
 import deleteImg from "@/assets/delete.png";
 import { useListingStore } from "@/lib/useListingsStore";
-
-export default function Cart() {
-  const cartItems = useListingStore((state) => state.cart);
-  const removeFromCart = useListingStore((state) => state.removeFromCart);
 import { useUserProfile } from "@/hooks/useUserProfile";
 
 export default function Cart() {
   const { profile } = useUserProfile();
+  const removeFromCart = useListingStore((state) => state.removeFromCart);
+
   // mock items with image arrays (for detail page)
   const [cartItems, setCartItems] = useState([
     {
@@ -84,7 +82,11 @@ export default function Cart() {
             <div className="cart-item" key={item.id}>
               <Link href={`/item/${item.id}`} className="cart-item-link">
                 <div className="cart-item-info">
-                  <img className="cart-item-img" src={item.images[0]} alt={item.name} />
+                  <img
+                    className="cart-item-img"
+                    src={item.images[0]}
+                    alt={item.name}
+                  />
                   <div>
                     <p className="cart-item-name">{item.name}</p>
                     <p className="cart-item-price">{item.price}</p>
@@ -94,11 +96,11 @@ export default function Cart() {
 
               <div className="cart-butts">
                 <button
-  className="remove-btn1"
-  onClick={() => handleSendMessage(item.postedBy.name)}
->
-  Send message
-</button>
+                  className="remove-btn1"
+                  onClick={() => handleSendMessage(item.postedBy)}
+                >
+                  Send message
+                </button>
 
                 <button
                   className="remove-btn"
