@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
-import "../styles.css" // make sure this includes the updated CSS
+import "../styles.css"
 
 export default function EditProfilePage() {
 
@@ -11,6 +11,8 @@ export default function EditProfilePage() {
     lastName: "Johnson",
     email: "alice@example.com",
   })
+
+  const [photo, setPhoto] = useState("https://via.placeholder.com/120")
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -26,29 +28,50 @@ export default function EditProfilePage() {
     window.location.href = "/profile"
   }
 
+  // ✅ New function for photo upload
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = () => {
+        setPhoto(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   return (
     <div className="edit-profile-container">
 
       {/* ✅ Header */}
       <div className="edit-profile-header">
+        <div>
+          <h2>Edit Profile</h2>
+          <p>Update your information below</p>
+        </div>
         <div className="edit-profile-img-wrapper">
           <img
             className="edit-profile-img"
             alt={`${user.firstName} ${user.lastName}`}
-            src="https://via.placeholder.com/120"
+            src={photo}
           />
-          <span className="change-photo-btn">Change photo</span>
-        </div>
-
-        <div>
-          <h2>Edit Profile</h2>
-          <p>Update your information below</p>
+          
+          {/* ✅ Hidden file input + clickable label */}
+          <label htmlFor="photo-upload" className="change-photo-btn">
+            Change photo
+          </label>
+          <input
+            id="photo-upload"
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handlePhotoChange}
+          />
         </div>
       </div>
 
       {/* ✅ Form */}
       <div className="edit-form">
-
         <div>
           <label>First Name</label>
           <input

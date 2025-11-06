@@ -52,6 +52,7 @@ export default function SellPage() {
       // 1. Get category ID from category name
       const { data: categoryData, error: categoryError } = await supabase
         .from('categories')
+        
         .select('id')
         .ilike('name', category)
         .single();
@@ -71,7 +72,9 @@ export default function SellPage() {
           price: parseFloat(price.replace(/[^0-9.]/g, '')), // remove $ and other chars
           condition,
           is_available: true,
+          created_at: new Date().toISOString(),
         })
+        
         .select()
         .single();
 

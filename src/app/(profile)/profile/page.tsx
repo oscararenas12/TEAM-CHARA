@@ -34,6 +34,13 @@ export default function ProfilePage() {
     (item) => item.postedBy.name === `${profile.first_name} ${profile.last_name}`
   )
 
+  // Sort user's items by most recent first
+  const sortedUserItems = [...userItems].sort((a, b) => {
+    const dateA = new Date(a.postedAt ?? 0).getTime()
+    const dateB = new Date(b.postedAt ?? 0).getTime()
+    return dateB - dateA // latest first
+  })
+
   return (
     <div className="profile-page">
 
@@ -53,8 +60,8 @@ export default function ProfilePage() {
           )}
 
           <div className="profile-info">
-            <h2>{profile.first_name} {profile.last_name}</h2>
-            <p>{profile.email}</p>
+            <p className="profile-name">{profile.first_name} {profile.last_name}</p>
+            <p className="profile-email">{profile.email}</p>
           </div>
         </div>
 
@@ -92,8 +99,8 @@ export default function ProfilePage() {
         </div>
 
         <div className="profile-item-cont item-container">
-          {userItems.length > 0 ? (
-            userItems.map((item) => (
+          {sortedUserItems.length > 0 ? (
+            sortedUserItems.map((item) => (
               <div key={item.id} className="profile-items">
                 <img className="item-img" src={item.images[0]} alt={item.name} />
                 <div className="item-card-price-like">
@@ -104,7 +111,7 @@ export default function ProfilePage() {
                 <hr className="list-divider" />
                 <div className="profile-item-last">
                   <p className="posted-date">
-                    {item.postedAt ? new Date(item.postedAt).toLocaleDateString() : ""}
+                    {item.postedAt ? new Date(item.postedAt).toLocaleString() : ""}
                   </p>
                   <button onClick={() => window.location.href = `/edit-listing/${item.id}`}>Edit</button>
                   <button onClick={() => removeListing(item.id)}>Mark Sold</button>

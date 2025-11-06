@@ -1,142 +1,113 @@
 'use client'
 
-import React, { useState } from "react"
-import Link from "next/link"
+import React from "react"
 import "../styles.css"
-import hatImg from "@/assets/hat.png"
-
-interface Item {
-  id: number
-  name: string
-  price: string
-  postedBy: string
-  images: string[]
-  description: string
-}
+import { useListingStore } from "@/lib/useListingsStore"
+import { useUserProfile } from "@/hooks/useUserProfile"
+import { useParams } from "next/navigation"
+import Link from "next/link"
 
 export default function PublicProfilePage() {
-  // Mock logged-in user
-  const [user] = useState({
-    firstName: "Alice",
-    lastName: "Johnson",
-    email: "alice@example.com",
-    rating: "1.5",
-    item_sold: "3",
-    item_listed: "2"
+  const { userId } = useParams() // assume URL is /public-profile/[userId]
+  
+  // Global store for items
+  const items = useListingStore((state) => state.items)
 
+  // Fetch user profile by userId
+  const { profile, loading, error } = useUserProfile(userId)
+
+  if (loading) return <p>Loading profile...</p>
+  if (error || !profile) return <p>Error loading profile: {error || 'Profile not found'}</p>
+
+  // Filter user's items from store
+  const userItems = items.filter(
+    (item) => item.postedBy.name === `${profile.first_name} ${profile.last_name}`
+  )
+
+  // Sort user's items by most recent first
+  const sortedUserItems = [...userItems].sort((a, b) => {
+    const dateA = new Date(a.postedAt ?? 0).getTime()
+    const dateB = new Date(b.postedAt ?? 0).getTime()
+    return dateB - dateA
   })
 
-  // Mock all items in the marketplace
-  const [allItems] = useState<Item[]>([
-    {
-      id: 1,
-      name: "Laptop",
-      price: "$500",
-      postedBy: "Alice Johnson",
-      images: [
-        "https://via.placeholder.com/300x200?text=Laptop+1",
-        "https://via.placeholder.com/300x200?text=Laptop+2",
-      ],
-      description: "Fast and reliable laptop, perfect for students.",
-    },
-    {
-      id: 2,
-      name: "Headphones",
-      price: "$40",
-      postedBy: "Ryan Smith",
-      images: ["https://via.placeholder.com/300x200?text=Headphones+1"],
-      description: "Noise cancelling headphones, great sound quality.",
-    },
-    {
-      id: 3,
-      name: "Backpack",
-      price: "$30",
-      postedBy: "Alice Johnson",
-      images: [
-        "https://via.placeholder.com/300x200?text=Backpack+1",
-        "https://via.placeholder.com/300x200?text=Backpack+2",
-      ],
-      description: "Durable and spacious backpack for daily use.",
-    },
-  ])
-
-  // Only show items posted by this user
-  const userItems = allItems.filter((item) => item.postedBy === `${user.firstName} ${user.lastName}`)
-
   return (
-    <div className="profile-page public-profile">
+    <div className="profile-page">
       {/* Profile Header */}
+      <div className="profile-header">
+        <div className="profile-pic-info">
+          {profile.avatar_url ? (
+            <img
+              className="profile-pic"
+              src={profile.avatar_url}
+              alt={`${profile.first_name} ${profile.last_name}`}
+            />
+          ) : (
+            <div className="profile-pic profile-pic-placeholder">
+              {profile.first_name?.[0]}{profile.last_name?.[0]}
+            </div>
+          )}
+          <div className="profile-info">
+            <p className="profile-name">{profile.first_name} {profile.last_name}</p>
+            {profile.bio && <p className="profile-email">{profile.bio}</p>}
+          </div>
+        </div>
 
-
-        {/* ===== Profile Header ===== */}
-  <div className="profile-header public-profile-header">
-
-    {/* --- Profile Picture & Info --- */}
-    <div className="profile-pic-info">
-      <img
-        className="profile-pic"
-        alt={`${user.firstName} ${user.lastName} profile`}
-      />
-      <div className="profile-info">
-        <h2>{user.firstName} {user.lastName}</h2>
-        <p>{user.email}</p>
+        {/* Send Message Button */}
+        <div className="profile-butts">
+          <Link href={`/messages/${profile.id}`}>
+            <button className="profile-butts1">Send Message</button>
+          </Link>
+        </div>
       </div>
 
+      {/* Profile Stats */}
+      <div className="infos-cont">
+        <div className="infoss">
+          <p className="info2">{profile.items_listed}</p>
+          <p className="info3">Items Listed</p>
+        </div>
+        <div className="infoss">
+          <p className="info2">{profile.items_sold}</p>
+          <p className="info3">Items Sold</p>
+        </div>
+        <div className="infoss">
+          <p className="info2">{profile.rating.toFixed(1)}</p>
+          <p className="info3">Rating</p>
+        </div>
+      </div>
 
-    </div>
+      {/* Public Listings */}
+      <div className="user-items profile-content-wrapper">
+        <div className="listings">
+          <h3>{profile.first_name}'s Listings</h3>
+        </div>
 
-
-{/* --- Profile Buttons --- */}
-            <div className="profile-butts public-butts">
-             <Link href="/editprofile" className="back-button">
-            <button className="profile-butts1">Send Message</button></Link>
-          </div>
-
-
-  </div>
-
-
-
-  <div className="infos-cont">
-    <div className="infoss">
-      <p className="info2">{user.item_listed}</p>
-      <p className="info3">Items Listed</p>
-    </div>
-    <div className="infoss">
-      <p className="info2">{user.item_sold}</p>
-       <p className="info3">Items Sold</p>
-    </div>
-
-    <div className="infoss">
-      <p className="info2">{user.rating}</p>
-       <p className="info3">Rating</p>
-    </div>
-  </div>
-
-      {/* User Items */}
-      <div className="user-items">
-
-        <h3>Listings</h3>
-
-        <div className="profile-item-cont item-container ">
-          {userItems.length > 0 ? (
-            userItems.map((item) => (
-              <Link
-                href={`/item/${item.id}`}
-                key={item.id}
-                className="profile-items"
-              >
-                <img
-                  className="item-img"
-                  src={item.images[0] || "https://via.placeholder.com/300x200"}
-                  alt={item.name}
-                />
-                <h3>{item.name}</h3>
-                <p>{item.price}</p>
-              </Link>
+        <div className="profile-item-cont item-container">
+          {sortedUserItems.length > 0 ? (
+            sortedUserItems.map((item) => (
+              <div key={item.id} className="profile-items">
+                <img className="item-img" src={item.images[0]} alt={item.name} />
+                <div className="item-card-price-like">
+                  <p id="name">{item.name}</p>
+                  <p id="price">{item.price}</p>
+                </div>
+                <p className="condition con2">{item.condition}</p>
+                <p className="posted-date">
+                  {item.postedAt ? new Date(item.postedAt).toLocaleString() : ""}
+                </p>
+                <div className="profile-butts">
+                  <Link href={`/listing/${item.id}`}>
+                    <button className="profile-butts1">View Item</button>
+                  </Link>
+                  <Link href={`/messages/${profile.id}`}>
+                    <button className="profile-butts1">Send Message</button>
+                  </Link>
+                </div>
+              </div>
             ))
           ) : (
-            <p>No items listed yet</p>
+            <p>No listings available</p>
           )}
         </div>
       </div>
