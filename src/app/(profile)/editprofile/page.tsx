@@ -68,6 +68,13 @@ export default function EditProfilePage() {
     setPhone(formatted);
   };
 
+  const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setBio(e.target.value);
+    // Auto-resize textarea
+    e.target.style.height = "auto";
+    e.target.style.height = e.target.scrollHeight + "px";
+  };
+
   const handleSave = async () => {
     setError(null);
     setSuccess(null);
@@ -261,7 +268,7 @@ export default function EditProfilePage() {
           <textarea
             name="bio"
             value={bio}
-            onChange={(e) => setBio(e.target.value)}
+            onChange={handleBioChange}
             placeholder="Tell us about yourself..."
             rows={4}
           />

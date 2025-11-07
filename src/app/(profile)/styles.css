@@ -286,7 +286,8 @@
   color: #333;
 }
 
-.edit-form input {
+.edit-form input,
+.edit-form textarea {
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -294,10 +295,18 @@
   width: 70%;              /* nicer width for balance */
   max-width: 350px;        /* prevent overly wide inputs */
   transition: border-color 0.2s ease;
+  font-family: inherit;    /* match font with rest of page */
+}
+
+.edit-form textarea {
+  resize: none;            /* prevent manual resizing */
+  overflow: hidden;        /* hide scrollbar */
+  min-height: 100px;       /* minimum height */
 }
 
 
-.edit-form input:focus {
+.edit-form input:focus,
+.edit-form textarea:focus {
   border-color: #ffbf1c;
   outline: none;
 }
