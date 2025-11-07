@@ -334,3 +334,11 @@
 .profile-email {
   color: grey;
 }
+
+.profile-bio {
+  color: #555;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  font-style: italic;
+  max-width: 400px;
+}

@@ -27,10 +27,23 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Refresh session if needed
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // Refresh session if needed - handle invalid refresh tokens
+  let user = null
+  try {
+    const { data, error } = await supabase.auth.getUser()
+
+    // If there's an error refreshing the token, sign out to clear invalid session
+    if (error) {
+      await supabase.auth.signOut()
+      user = null
+    } else {
+      user = data.user
+    }
+  } catch (error) {
+    // If getUser fails, clear the session
+    await supabase.auth.signOut()
+    user = null
+  }
 
   // Protect routes - redirect to login if not authenticated
   const protectedRoutes = ['/home', '/messages', '/sell', '/profile', '/editprofile', '/publicprofile', '/item']

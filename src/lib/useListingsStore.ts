@@ -11,7 +11,7 @@ interface User {
 }
 
 interface Listing {
-  id: number;
+  id: string; // Changed to string (UUID from Supabase)
   name: string;
   category: string;
   price: string;
@@ -22,7 +22,7 @@ interface Listing {
   images: string[];
   condition?: string;
   description?: string;
-  isbn?: string; 
+  isbn?: string;
   postedAt?: string;
   liked?: boolean;
 }
@@ -33,13 +33,13 @@ interface Store {
 
   items: Listing[];
   setItems: (items: Listing[]) => void;
-  toggleLike: (id: number) => void;
-  removeListing: (id: number) => void;
+  toggleLike: (id: string) => void;
+  removeListing: (id: string) => void;
   addListing: (item: Listing) => void;
 
   cart: Listing[];
   addToCart: (item: Listing) => void;
-  removeFromCart: (id: number) => void;
+  removeFromCart: (id: string) => void;
   toggleCart: (item: Listing) => void;
 }
 
@@ -61,11 +61,11 @@ export const useListingStore = create<Store>((set) => ({
   setItems: (items) => set({ items }),
   addListing: (item: Listing) =>
     set((state) => ({ items: [...state.items, item] })),
-  removeListing: (id: number) =>
+  removeListing: (id: string) =>
     set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
 
   // ❤️ Like = Add/Remove from cart
-  toggleLike: (id: number) =>
+  toggleLike: (id: string) =>
     set((state) => {
       const updatedItems = state.items.map((item) =>
         item.id === id ? { ...item, liked: !item.liked } : item
@@ -96,14 +96,8 @@ export const useListingStore = create<Store>((set) => ({
         ? state
         : { cart: [...state.cart, item] }
     ),
-  removeFromCart: (id: number) =>
-  set((state) => {
-    const updatedItems = state.items.map((item) =>
-      item.id === id ? { ...item, liked: false } : item
-    );
-    const updatedCart = state.cart.filter((i) => i.id !== id);
-    return { items: updatedItems, cart: updatedCart };
-  }),
+  removeFromCart: (id: string) =>
+    set((state) => ({ cart: state.cart.filter((i) => i.id !== id) })),
   toggleCart: (item: Listing) =>
     set((state) =>
       state.cart.find((i) => i.id === item.id)
