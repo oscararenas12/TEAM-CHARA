@@ -163,9 +163,10 @@
    ========================== */
 .sell-page {
   margin: 0;
-  padding: 0;
+  padding: 0 0 100px 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   color: #222;
+  min-height: 100vh;
 }
 
 .sell-page > *:not(.create-listing) {
@@ -327,6 +328,8 @@
 
 .actions {
   margin-top: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
 }
 .primary {
   background: rgb(255, 204, 0);
