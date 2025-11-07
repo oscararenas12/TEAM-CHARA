@@ -16,6 +16,7 @@ interface Listing {
   category: string;
   price: string;
   postedBy: {
+    id: string;
     name: string;
     profilePic?: string;
   };

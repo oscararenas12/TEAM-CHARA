@@ -128,7 +128,9 @@ export default function PublicProfilePage() {
             <img
               className="profile-pic"
               src={profile.avatar_url}
-              alt={`${profile.first_name} ${profile.last_name}`}
+              alt={profile.first_name && profile.last_name
+                ? `${profile.first_name} ${profile.last_name}`
+                : "Profile picture"}
             />
           ) : (
             <div className="profile-pic profile-pic-placeholder">

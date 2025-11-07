@@ -51,7 +51,9 @@ export default function HomePage() {
             price,
             condition,
             created_at,
+            seller_id,
             profiles:seller_id (
+              id,
               first_name,
               last_name,
               avatar_url
@@ -87,8 +89,9 @@ export default function HomePage() {
             condition: item.condition || 'good',
             postedAt: item.created_at,
             postedBy: {
+              id: item.seller_id || '',
               name: profile
-                ? `${profile.first_name} ${profile.last_name}`
+                ? `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim() || 'Unknown'
                 : 'Unknown',
               profilePic: profile?.avatar_url || '',
             },

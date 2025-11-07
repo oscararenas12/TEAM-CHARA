@@ -84,6 +84,13 @@ export default function ItemDetailPage() {
         const profile = Array.isArray(data.profiles) ? data.profiles[0] : data.profiles;
         const category = Array.isArray(data.categories) ? data.categories[0] : data.categories;
 
+        // Validate seller_id exists
+        if (!data.seller_id) {
+          console.error('Missing seller_id for item:', data.id);
+          setError('Invalid item data');
+          return;
+        }
+
         const transformedItem: Item = {
           id: data.id,
           name: data.name,
@@ -92,9 +99,9 @@ export default function ItemDetailPage() {
           category: category?.name || 'Other',
           condition: data.condition || 'good',
           postedBy: {
-            id: data.seller_id || '',
+            id: data.seller_id,
             name: profile
-              ? `${profile.first_name} ${profile.last_name}`
+              ? `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim() || 'Unknown'
               : 'Unknown',
             profilePic: profile?.avatar_url || '',
           },
@@ -126,7 +133,7 @@ export default function ItemDetailPage() {
 
   const sendQuickMessage = (text: string) => {
     router.push(
-      `/messages?autoMessage=${encodeURIComponent(text)}&to=${encodeURIComponent(item.postedBy.name)}`
+      `/messages?autoMessage=${encodeURIComponent(text)}&to=${encodeURIComponent(item.postedBy.id)}`
     );
   };
 
@@ -197,7 +204,7 @@ export default function ItemDetailPage() {
               <p><img src={messageImg.src} /> {q}</p>
             </div>
           ))}
-          <Link href={`/messages?to=${encodeURIComponent(item.postedBy.name)}`}>
+          <Link href={`/messages?to=${encodeURIComponent(item.postedBy.id)}`}>
             <button className="question-send">Send Message</button>
           </Link>
         </div>

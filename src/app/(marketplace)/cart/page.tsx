@@ -14,8 +14,8 @@ export default function Cart() {
   const removeFromCart = useListingStore((state) => state.removeFromCart);
 
   // Placeholder for future Send Message functionality
-  const handleSendMessage = (sellerName: string) => {
-    window.location.href = `/messages?seller=${encodeURIComponent(sellerName)}`;
+  const handleSendMessage = (sellerId: string) => {
+    window.location.href = `/messages?to=${encodeURIComponent(sellerId)}`;
   };
 
   return (
@@ -48,7 +48,7 @@ export default function Cart() {
               <div className="cart-butts">
                 <button
                   className="remove-btn1"
-                  onClick={() => handleSendMessage(item.postedBy?.name || "Unknown")}
+                  onClick={() => handleSendMessage(item.postedBy?.id || "")}
                 >
                   Send message
                 </button>
