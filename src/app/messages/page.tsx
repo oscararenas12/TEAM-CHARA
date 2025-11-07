@@ -136,8 +136,9 @@ export default function MessagesPage() {
     <div className="messages-page">
       <div className="messages-head">
         <h1 id="page-head">Messages</h1>
-        <p className="subtext">Connect with buyers and sellers</p>
+        
       </div>
+      <p className="subtext">Connect with buyers and sellers</p>
 
       <div className="chat-container">
         {/* Chat List */}

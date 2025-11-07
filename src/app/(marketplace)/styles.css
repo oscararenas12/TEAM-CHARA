@@ -670,3 +670,14 @@
   width: 29px;
   height: 29px;
 }
+
+
+.subtext {
+  font-size: 1.3rem;
+  color: #dfc064;
+  margin-left: 20px;
+}
+
+#page-head {
+  font-size: 2rem;
+}

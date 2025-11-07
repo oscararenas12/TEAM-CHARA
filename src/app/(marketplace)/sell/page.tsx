@@ -181,13 +181,12 @@ export default function SellPage() {
     <div className="sell-page">
       <div className="create-listing">
         <h2 id="page-head">Create Listing</h2>
-        <p className="subtext">
-          Share what you're looking to sell with the campus community
-        </p>
+        
         {error && (
           <div style={{ color: 'red', padding: '10px', backgroundColor: '#ffebee', borderRadius: '5px', marginTop: '10px' }}>
             {error}
           </div>
+          
         )}
         {success && (
           <div style={{ color: 'green', padding: '10px', backgroundColor: '#e8f5e9', borderRadius: '5px', marginTop: '10px' }}>
@@ -195,6 +194,9 @@ export default function SellPage() {
           </div>
         )}
       </div>
+      <p className="subtext">
+          Share what you're looking to sell with the campus community
+        </p>
 
       {/* Photos Section */}
       <div className="photos-wrapper">
