@@ -97,7 +97,13 @@ export const useListingStore = create<Store>((set) => ({
         : { cart: [...state.cart, item] }
     ),
   removeFromCart: (id: number) =>
-    set((state) => ({ cart: state.cart.filter((i) => i.id !== id) })),
+  set((state) => {
+    const updatedItems = state.items.map((item) =>
+      item.id === id ? { ...item, liked: false } : item
+    );
+    const updatedCart = state.cart.filter((i) => i.id !== id);
+    return { items: updatedItems, cart: updatedCart };
+  }),
   toggleCart: (item: Listing) =>
     set((state) =>
       state.cart.find((i) => i.id === item.id)
