@@ -68,6 +68,13 @@ export default function EditProfilePage() {
     setPhone(formatted);
   };
 
+  const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setBio(e.target.value);
+    // Auto-resize textarea
+    e.target.style.height = "auto";
+    e.target.style.height = e.target.scrollHeight + "px";
+  };
+
   const handleSave = async () => {
     setError(null);
     setSuccess(null);
