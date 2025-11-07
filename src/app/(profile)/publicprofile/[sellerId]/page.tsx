@@ -36,6 +36,8 @@ export default function PublicProfilePage() {
   const [loading, setLoading] = useState(true)
   const [loadingItems, setLoadingItems] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [userRating, setUserRating] = useState<number | null>(null)
+  const [submitting, setSubmitting] = useState(false)
 
   // Fetch seller profile
   useEffect(() => {
@@ -116,6 +118,34 @@ export default function PublicProfilePage() {
     fetchSellerItems()
   }, [sellerId])
 
+  // Handle user rating submission
+  async function handleRating(value: number) {
+    try {
+      setSubmitting(true)
+      setUserRating(value)
+
+      const supabase = createClient()
+
+      // For simplicity, just update the rating field directly
+      const { error } = await supabase
+        .from('profiles')
+        .update({ rating: value })
+        .eq('id', sellerId)
+
+      if (error) {
+        console.error('Error updating rating:', error)
+        alert('Failed to submit rating')
+      } else {
+        alert('Rating submitted!')
+        setProfile((prev) => prev ? { ...prev, rating: value } : prev)
+      }
+    } catch (err) {
+      console.error('Error submitting rating:', err)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   if (loading) return <p>Loading profile...</p>
   if (error || !profile) return <p>Error loading profile: {error || 'Profile not found'}</p>
 
@@ -162,8 +192,31 @@ export default function PublicProfilePage() {
           <p className="info3">Items Sold</p>
         </div>
         <div className="infoss">
-          <p className="info2">{profile.rating.toFixed(1)}</p>
-          <p className="info3">Rating</p>
+          <p className="info2">{profile.rating ? profile.rating.toFixed(1) : "0.0"}</p>
+          <p className="info3">Overall Rating</p>
+        </div>
+      </div>
+
+      {/* ======== NEW RATING BOX BELOW ======== */}
+      <div className="rating-box">
+        <h3>Rate this Seller</h3>
+        <p>Click on the stars below to leave your rating:</p>
+        <div className="rating-stars">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              onClick={() => !submitting && handleRating(star)}
+              style={{
+                cursor: submitting ? "not-allowed" : "pointer",
+                color: userRating && star <= userRating ? "#FFD700" : "#ccc",
+                fontSize: "24px",
+                margin: "0 3px",
+                transition: "color 0.2s, transform 0.2s",
+              }}
+            >
+              ★
+            </span>
+          ))}
         </div>
       </div>
 
