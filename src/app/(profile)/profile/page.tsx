@@ -61,7 +61,7 @@ export default function ProfilePage() {
           condition: item.condition || 'good',
           postedAt: item.created_at,
           images: item.item_images
-            ?.sort((a: any, b: any) => a.display_order - b.display_order)
+            ?.toSorted((a: any, b: any) => a.display_order - b.display_order)
             .map((img: any) => img.image_url) || [],
         }))
 

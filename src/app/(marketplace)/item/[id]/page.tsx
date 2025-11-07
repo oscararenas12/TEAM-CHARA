@@ -91,7 +91,7 @@ export default function ItemDetailPage() {
             profilePic: data.profiles?.avatar_url || '',
           },
           images: data.item_images
-            ?.sort((a: any, b: any) => a.display_order - b.display_order)
+            ?.toSorted((a: any, b: any) => a.display_order - b.display_order)
             .map((img: any) => img.image_url) || [laptopImg.src],
         };
 

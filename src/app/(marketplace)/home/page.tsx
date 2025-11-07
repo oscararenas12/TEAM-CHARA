@@ -88,7 +88,7 @@ export default function HomePage() {
             profilePic: item.profiles?.avatar_url || '',
           },
           images: item.item_images
-            ?.sort((a: any, b: any) => a.display_order - b.display_order)
+            ?.toSorted((a: any, b: any) => a.display_order - b.display_order)
             .map((img: any) => img.image_url) || [],
           liked: false,
         }));
@@ -128,7 +128,7 @@ export default function HomePage() {
     return items
       .filter((item) => selectedCategory === "All" || item.category === selectedCategory)
       .filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
-      .sort(
+      .toSorted(
         (a, b) =>
           new Date(b.postedAt || Date.now()).getTime() -
           new Date(a.postedAt || Date.now()).getTime()
