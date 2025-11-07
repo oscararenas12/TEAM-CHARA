@@ -55,7 +55,6 @@ export default function ProfilePage() {
           console.error("Error fetching user listings:", error);
           return;
         }
-
         const transformedListings: UserListing[] = (items || []).map(
           (item: any) => ({
             id: item.id,
@@ -65,7 +64,7 @@ export default function ProfilePage() {
             postedAt: item.created_at,
             images:
               item.item_images
-                ?.sort((a: any, b: any) => a.display_order - b.display_order)
+                ?.toSorted((a: any, b: any) => a.display_order - b.display_order)
                 .map((img: any) => img.image_url) || [],
           })
         );

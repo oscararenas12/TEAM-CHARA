@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import "../../styles.css";
@@ -9,14 +9,16 @@ import rightImg from "@/assets/right.png";
 import backImg from "@/assets/back.png";
 import messageImg from "@/assets/message.png";
 import laptopImg from "@/assets/laptop.jpeg";
+import { createClient } from "@/lib/supabase/client";
 
 interface Item {
-  id: number;
+  id: string;
   name: string;
   price: string;
   description: string;
   images: string[];
   postedBy: {
+    id: string;
     name: string;
     profilePic?: string;
   };
@@ -26,50 +28,102 @@ interface Item {
 
 export default function ItemDetailPage() {
   const params = useParams();
-  const itemId = Number(params.id);
+  const itemId = params.id as string;
   const router = useRouter();
 
-  // Mock data
-  const items: Item[] = [
-    {
-      id: 1,
-      name: "Laptop",
-      price: "$500",
-      postedBy: {
-        name: "Alice Johnson",
-        profilePic: "",
-      },
-      images: [
-        laptopImg.src,
-        "https://via.placeholder.com/300x200?text=Laptop+2",
-        "https://via.placeholder.com/300x200?text=Laptop+3",
-      ],
-      description: "Fast and reliable laptop, perfect for students.",
-      condition: "used-like-new",
-      category: "electronics",
-    },
-    {
-      id: 2,
-      name: "Headphones",
-      price: "$40",
-      postedBy: {
-        name: "Ryan Smith",
-        profilePic: "",
-      },
-      images: [
-        "https://via.placeholder.com/300x200?text=Headphones+1",
-        "https://via.placeholder.com/300x200?text=Headphones+2",
-      ],
-      description: "Noise cancelling headphones, great sound quality.",
-      condition: "used-like-new",
-      category: "electronics",
-    },
-  ];
-
-  const item = items.find((i) => i.id === itemId);
+  const [item, setItem] = useState<Item | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  if (!item) return <p>Item not found!</p>;
+  // Fetch item from Supabase
+  useEffect(() => {
+    async function fetchItem() {
+      try {
+        const supabase = createClient();
+
+        const { data, error } = await supabase
+          .from('items')
+          .select(`
+            id,
+            name,
+            description,
+            price,
+            condition,
+            seller_id,
+            profiles:seller_id (
+              id,
+              first_name,
+              last_name,
+              avatar_url
+            ),
+            categories:category_id (
+              name
+            ),
+            item_images (
+              image_url,
+              display_order
+            )
+          `)
+          .eq('id', itemId)
+          .single();
+
+        if (error) {
+          console.error('Error fetching item:', error);
+          setError('Item not found');
+          return;
+        }
+
+        if (!data) {
+          setError('Item not found');
+          return;
+        }
+
+        // Transform Supabase data to Item interface
+        // Handle profiles - can be object or array depending on query
+        const profile = Array.isArray(data.profiles) ? data.profiles[0] : data.profiles;
+        const category = Array.isArray(data.categories) ? data.categories[0] : data.categories;
+
+        // Validate seller_id exists
+        if (!data.seller_id) {
+          console.error('Missing seller_id for item:', data.id);
+          setError('Invalid item data');
+          return;
+        }
+
+        const transformedItem: Item = {
+          id: data.id,
+          name: data.name,
+          description: data.description || 'No description provided',
+          price: `$${parseFloat(data.price).toFixed(2)}`,
+          category: category?.name || 'Other',
+          condition: data.condition || 'good',
+          postedBy: {
+            id: data.seller_id,
+            name: profile
+              ? `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim() || 'Unknown'
+              : 'Unknown',
+            profilePic: profile?.avatar_url || '',
+          },
+          images: data.item_images
+            ?.toSorted((a: any, b: any) => a.display_order - b.display_order)
+            .map((img: any) => img.image_url) || [laptopImg.src],
+        };
+
+        setItem(transformedItem);
+      } catch (err) {
+        console.error('Unexpected error fetching item:', err);
+        setError('Failed to load item');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchItem();
+  }, [itemId]);
+
+  if (loading) return <p className="no-items">Loading item...</p>;
+  if (error || !item) return <p className="no-items">{error || 'Item not found!'}</p>;
 
   const nextImage = () =>
     setCurrentImageIndex((prev) => (prev === item.images.length - 1 ? 0 : prev + 1));
@@ -79,7 +133,7 @@ export default function ItemDetailPage() {
 
   const sendQuickMessage = (text: string) => {
     router.push(
-      `/inbox?autoMessage=${encodeURIComponent(text)}&to=${encodeURIComponent(item.postedBy.name)}`
+      `/messages?autoMessage=${encodeURIComponent(text)}&to=${encodeURIComponent(item.postedBy.id)}`
     );
   };
 
@@ -135,7 +189,7 @@ export default function ItemDetailPage() {
               <p>{item.postedBy.name}</p>
             </div>
           </div>
-          <Link href="/publicprofile" className="seller-link">
+          <Link href={`/publicprofile/${item.postedBy.id}`} className="seller-link">
             <button>View Profile</button>
           </Link>
         </div>
@@ -150,7 +204,7 @@ export default function ItemDetailPage() {
               <p><img src={messageImg.src} /> {q}</p>
             </div>
           ))}
-          <Link href={`/inbox?to=${encodeURIComponent(item.postedBy.name)}`}>
+          <Link href={`/messages?to=${encodeURIComponent(item.postedBy.id)}`}>
             <button className="question-send">Send Message</button>
           </Link>
         </div>
