@@ -18,6 +18,7 @@ interface Item {
   description: string;
   images: string[];
   postedBy: {
+    id: string;
     name: string;
     profilePic?: string;
   };
@@ -49,7 +50,9 @@ export default function ItemDetailPage() {
             description,
             price,
             condition,
+            seller_id,
             profiles:seller_id (
+              id,
               first_name,
               last_name,
               avatar_url
@@ -77,18 +80,23 @@ export default function ItemDetailPage() {
         }
 
         // Transform Supabase data to Item interface
+        // Handle profiles - can be object or array depending on query
+        const profile = Array.isArray(data.profiles) ? data.profiles[0] : data.profiles;
+        const category = Array.isArray(data.categories) ? data.categories[0] : data.categories;
+
         const transformedItem: Item = {
           id: data.id,
           name: data.name,
           description: data.description || 'No description provided',
           price: `$${parseFloat(data.price).toFixed(2)}`,
-          category: data.categories?.name || 'Other',
+          category: category?.name || 'Other',
           condition: data.condition || 'good',
           postedBy: {
-            name: data.profiles
-              ? `${data.profiles.first_name} ${data.profiles.last_name}`
+            id: data.seller_id || '',
+            name: profile
+              ? `${profile.first_name} ${profile.last_name}`
               : 'Unknown',
-            profilePic: data.profiles?.avatar_url || '',
+            profilePic: profile?.avatar_url || '',
           },
           images: data.item_images
             ?.toSorted((a: any, b: any) => a.display_order - b.display_order)
@@ -174,7 +182,7 @@ export default function ItemDetailPage() {
               <p>{item.postedBy.name}</p>
             </div>
           </div>
-          <Link href="/publicprofile" className="seller-link">
+          <Link href={`/publicprofile/${item.postedBy.id}`} className="seller-link">
             <button>View Profile</button>
           </Link>
         </div>

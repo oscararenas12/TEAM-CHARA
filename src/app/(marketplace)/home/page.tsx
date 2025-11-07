@@ -73,25 +73,31 @@ export default function HomePage() {
         }
 
         // Transform Supabase data to match our Listing interface
-        const transformedItems: Listing[] = (items || []).map((item: any) => ({
-          id: item.id,
-          name: item.name,
-          description: item.description || '',
-          price: `$${parseFloat(item.price).toFixed(2)}`,
-          category: item.categories?.name || 'Other',
-          condition: item.condition || 'good',
-          postedAt: item.created_at,
-          postedBy: {
-            name: item.profiles
-              ? `${item.profiles.first_name} ${item.profiles.last_name}`
-              : 'Unknown',
-            profilePic: item.profiles?.avatar_url || '',
-          },
-          images: item.item_images
-            ?.toSorted((a: any, b: any) => a.display_order - b.display_order)
-            .map((img: any) => img.image_url) || [],
-          liked: false,
-        }));
+        const transformedItems: Listing[] = (items || []).map((item: any) => {
+          // Handle profiles - can be object or array depending on query
+          const profile = Array.isArray(item.profiles) ? item.profiles[0] : item.profiles;
+          const category = Array.isArray(item.categories) ? item.categories[0] : item.categories;
+
+          return {
+            id: item.id,
+            name: item.name,
+            description: item.description || '',
+            price: `$${parseFloat(item.price).toFixed(2)}`,
+            category: category?.name || 'Other',
+            condition: item.condition || 'good',
+            postedAt: item.created_at,
+            postedBy: {
+              name: profile
+                ? `${profile.first_name} ${profile.last_name}`
+                : 'Unknown',
+              profilePic: profile?.avatar_url || '',
+            },
+            images: item.item_images
+              ?.toSorted((a: any, b: any) => a.display_order - b.display_order)
+              .map((img: any) => img.image_url) || [],
+            liked: false,
+          };
+        });
 
         setItems(transformedItems);
       } catch (err) {
