@@ -1,0 +1,366 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.landing-page {
+  text-align: center;
+  width: 100%;
+}
+
+/* === HERO SECTION === */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  padding: 0 10px;
+  border-bottom: 1px solid rgb(205, 202, 202);
+  width: 100%;
+  position: relative;
+}
+
+.landing-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px; /* tighter spacing */
+  flex-wrap: wrap;
+}
+
+.landing-butt {
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgb(244, 180, 43);
+  border: 1px solid #ccc;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.landing-butt:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.verified-text {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* keeps it centered under buttons */
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #555;
+  margin-top: 8px;
+}
+
+#verified {
+  width: 22px;
+  height: 22px;
+}
+
+.words {
+  margin-top: 8px;
+  margin-bottom: 20px;
+  font-size: 3.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+  width: 100%;
+}
+
+.landing-butt2 button {
+  padding: 14px 24px;
+  height: 50px;
+}
+
+.landing-butt2 {
+  margin: 30px;
+}
+
+#sign-in {
+  background: white;
+  border: 0.6px solid rgb(192, 187, 187);
+  border-radius: 8px;
+  font-weight: bold;
+  margin: 0 20px;
+}
+
+.hero-paragraph {
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: 0.88rem;
+  color: #8d8888;
+  line-height: 1.5;
+  padding: 0 10px;
+}
+
+.val {
+  font-weight: bold;
+}
+
+.landing-bottoms {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-around;
+  margin-top: 10%;
+}
+
+/* ==== FEATURES SECTION ==== */
+
+#about {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 10px;
+  background: white;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Grid ---------- */
+.features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.25rem;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 10px;
+}
+
+@media (max-width: 980px) {
+  .features {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .features {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Card ---------- */
+.feature {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.1rem 1.1rem 1.25rem;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+
+.feat-head {
+  background: #fff4e0;
+  border-radius: 8px;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  align-items: center;
+}
+
+.feat-head img {
+  width: 25px;
+  margin: 11px 17px;
+}
+
+.feature-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 1.4rem 0 0.35rem;
+}
+
+.feature-text {
+  color: #4b5563;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-align: left;
+  color: grey;
+  padding: 10px;
+}
+
+.features--compact .feature {
+  padding: 0.9rem 0.95rem 1.05rem;
+}
+
+.features--compact .feature::before {
+  height: 56px;
+}
+
+/* === HOW SECTION === */
+#how {
+  background: rgb(255, 249, 242);
+  min-height: 55vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 10px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.hows {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 30px;
+    margin: 5%;
+    width: 100%
+
+
+}
+
+.circle {
+      background: rgb(255, 174, 0);
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;             
+  justify-content: center;   
+  align-items: center;   
+  font-size: 1rem;                  
+  font-weight: bold;
+  margin: 25px auto;  
+}
+
+.how1 {
+    font-weight: bold;
+}
+
+
+
+.how {
+    width: 27%;
+}
+
+/*=== Categories ===*/
+
+#category {
+  min-height: 55vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 10px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+.cat-boxes {
+    width:100%;
+    display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 0 10px;
+}
+.cat-box {
+    width: 17vw;
+    height: 80px;
+    border: 1px solid rgb(226, 221, 221);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+#v2 {
+    width: 50px;
+}
+
+#safety {
+      background: rgb(255, 249, 242);
+  min-height: 55vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 10px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.bullets {
+    margin-top: 5%;
+}
+
+.check {
+    width: 25px;
+    height: 25px;
+}
+.s1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.s1 p {
+    font-weight:bold;
+}
+.s2 {
+    text-align: left;
+    margin-left:20px;
+}
+
+/*=== Last section ===*/
+
+#last {
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 10px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+#last-h2 {
+    margin-bottom: 50px;
+}
+.last-butt {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    
+}
+/* === FOOTER === */
+.footer {
+  padding: 20px;
+  font-size: 0.9rem;
+  color: #555;
+  border-top: 1px solid #eee;
+  background-color: #fff;
+  text-align: center;
+  width: 100%;
+}
+
+.foot {
+    color: grey;
+    line-height: 30px;
+}
