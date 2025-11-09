@@ -31,9 +31,9 @@ export default function LandingPage() {
 
         <div className="landing-butt2">
           <Link href="/login">
-            <button className="landing-butt">Get Started &gt;</button>
+            <button className="landing-butt">Get Started</button>
           </Link>
-          <Link href="/login">
+          <Link href="/signup">
             <button id="sign-in">Sign in</button>
           </Link>
         </div>
