@@ -17,6 +17,7 @@ interface Listing {
   category: string;
   price: string;
   postedBy: {
+    id: string;
     name: string;
     profilePic?: string;
   };
@@ -30,6 +31,7 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const itemsFromStore = useListingStore((state) => state.items) || [];
   const setItems = useListingStore((state) => state.setItems);
@@ -113,18 +115,33 @@ export default function HomePage() {
     fetchItems();
   }, [setItems]);
 
+  // Fetch current user ID
+  useEffect(() => {
+    async function getCurrentUser() {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        setCurrentUserId(user?.id || null);
+      } catch (err) {
+        console.error('Error fetching current user:', err);
+      }
+    }
+    getCurrentUser();
+  }, []);
+
   // Normalize postedBy
   const items = useMemo(() => {
     return itemsFromStore.map((item) => ({
       ...item,
       postedBy: item.postedBy
         ? typeof item.postedBy === "string"
-          ? { name: item.postedBy, profilePic: "" }
+          ? { id: "", name: item.postedBy, profilePic: "" }
           : {
+              id: item.postedBy.id || "",
               name: item.postedBy.name || "Unknown",
               profilePic: item.postedBy.profilePic || "",
             }
-        : { name: "Unknown", profilePic: "" },
+        : { id: "", name: "Unknown", profilePic: "" },
     }));
   }, [itemsFromStore]);
 
@@ -143,6 +160,35 @@ export default function HomePage() {
           new Date(a.postedAt || Date.now()).getTime()
       );
   }, [items, searchTerm, selectedCategory]);
+
+  const handleMarkSold = async (itemId: string) => {
+    if (!confirm("Are you sure you want to mark this item as sold?")) {
+      return;
+    }
+
+    try {
+      const supabase = createClient();
+
+      const { error } = await supabase
+        .from("items")
+        .update({ is_available: false })
+        .eq("id", itemId);
+
+      if (error) {
+        console.error("Error marking item as sold:", error);
+        alert("Failed to mark item as sold");
+        return;
+      }
+
+      // Remove from local state
+      const updatedItems = items.filter((item) => item.id !== itemId);
+      setItems(updatedItems);
+      alert("Item marked as sold!");
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      alert("Failed to mark item as sold");
+    }
+  };
 
   return (
     <div className="homepage-wrapper">
@@ -187,6 +233,7 @@ export default function HomePage() {
           ) : filteredItems.length > 0 ? (
             filteredItems.map((item) => {
               const isLiked = item.liked === true;
+              const isOwnItem = currentUserId && item.postedBy.id === currentUserId;
 
               return (
                 <Link
@@ -239,12 +286,34 @@ export default function HomePage() {
                       <p className="posted-by">{item.postedBy.name}</p>
                     </div>
 
-                    <p className="posted-date">
-  {item.postedAt
-    ? new Date(item.postedAt).toLocaleDateString()
-    : "Just now"}
-</p>
+                    {isOwnItem && (
+                      <div className="own-item-actions">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.location.href = `/edit-listing/${item.id}`;
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleMarkSold(item.id);
+                          }}
+                        >
+                          Mark Sold
+                        </button>
+                      </div>
+                    )}
 
+                    <p className="posted-date">
+                      {item.postedAt
+                        ? new Date(item.postedAt).toLocaleDateString()
+                        : "Just now"}
+                    </p>
                   </div>
                 </Link>
               );

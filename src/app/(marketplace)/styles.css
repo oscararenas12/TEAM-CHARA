@@ -483,6 +483,13 @@
   text-transform: uppercase;
   margin-right: 10px;
   margin-left: 0;
+  overflow: hidden;
+}
+
+.seller-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .box {
@@ -669,8 +676,37 @@
 .av2 {
   width: 29px;
   height: 29px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.av2 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.own-item-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.own-item-actions button {
+  background: none;
+  border: none;
+  font-weight: bold;
+  color: grey;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.own-item-actions button:hover {
+  color: rgb(208, 209, 193);
+}
 
 .subtext {
   font-size: 1.3rem;
