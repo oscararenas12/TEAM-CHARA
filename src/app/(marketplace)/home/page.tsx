@@ -161,6 +161,35 @@ export default function HomePage() {
       );
   }, [items, searchTerm, selectedCategory]);
 
+  const handleMarkSold = async (itemId: string) => {
+    if (!confirm("Are you sure you want to mark this item as sold?")) {
+      return;
+    }
+
+    try {
+      const supabase = createClient();
+
+      const { error } = await supabase
+        .from("items")
+        .update({ is_available: false })
+        .eq("id", itemId);
+
+      if (error) {
+        console.error("Error marking item as sold:", error);
+        alert("Failed to mark item as sold");
+        return;
+      }
+
+      // Remove from local state
+      const updatedItems = items.filter((item) => item.id !== itemId);
+      setItems(updatedItems);
+      alert("Item marked as sold!");
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      alert("Failed to mark item as sold");
+    }
+  };
+
   return (
     <div className="homepage-wrapper">
       <div className="home-head1">
@@ -233,32 +262,6 @@ export default function HomePage() {
                     />
                   </button>
 
-                  {isOwnItem && (
-                    <button
-                      className="edit-btn"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        window.location.href = `/edit-listing/${item.id}`;
-                      }}
-                      style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '10px',
-                        background: 'rgba(255, 255, 255, 0.9)',
-                        border: '1px solid #ddd',
-                        borderRadius: '4px',
-                        padding: '6px 12px',
-                        fontSize: '12px',
-                        cursor: 'pointer',
-                        fontWeight: '500',
-                        zIndex: 2,
-                      }}
-                    >
-                      Edit
-                    </button>
-                  )}
-
                   <div className="item-card-price-like">
                     <p id="name">{item.name}</p>
                     <p id="price">{item.price}</p>
@@ -283,12 +286,34 @@ export default function HomePage() {
                       <p className="posted-by">{item.postedBy.name}</p>
                     </div>
 
-                    <p className="posted-date">
-  {item.postedAt
-    ? new Date(item.postedAt).toLocaleDateString()
-    : "Just now"}
-</p>
+                    {isOwnItem && (
+                      <div className="own-item-actions">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.location.href = `/edit-listing/${item.id}`;
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleMarkSold(item.id);
+                          }}
+                        >
+                          Mark Sold
+                        </button>
+                      </div>
+                    )}
 
+                    <p className="posted-date">
+                      {item.postedAt
+                        ? new Date(item.postedAt).toLocaleDateString()
+                        : "Just now"}
+                    </p>
                   </div>
                 </Link>
               );

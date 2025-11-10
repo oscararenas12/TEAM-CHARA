@@ -689,6 +689,24 @@
   object-fit: cover;
 }
 
+.own-item-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.own-item-actions button {
+  background: none;
+  border: none;
+  font-weight: bold;
+  color: grey;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.own-item-actions button:hover {
+  color: rgb(208, 209, 193);
+}
 
 .subtext {
   font-size: 1.3rem;
