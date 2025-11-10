@@ -17,6 +17,7 @@ interface Listing {
   category: string;
   price: string;
   postedBy: {
+    id: string;
     name: string;
     profilePic?: string;
   };
@@ -30,6 +31,7 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const itemsFromStore = useListingStore((state) => state.items) || [];
   const setItems = useListingStore((state) => state.setItems);
@@ -113,18 +115,33 @@ export default function HomePage() {
     fetchItems();
   }, [setItems]);
 
+  // Fetch current user ID
+  useEffect(() => {
+    async function getCurrentUser() {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        setCurrentUserId(user?.id || null);
+      } catch (err) {
+        console.error('Error fetching current user:', err);
+      }
+    }
+    getCurrentUser();
+  }, []);
+
   // Normalize postedBy
   const items = useMemo(() => {
     return itemsFromStore.map((item) => ({
       ...item,
       postedBy: item.postedBy
         ? typeof item.postedBy === "string"
-          ? { name: item.postedBy, profilePic: "" }
+          ? { id: "", name: item.postedBy, profilePic: "" }
           : {
+              id: item.postedBy.id || "",
               name: item.postedBy.name || "Unknown",
               profilePic: item.postedBy.profilePic || "",
             }
-        : { name: "Unknown", profilePic: "" },
+        : { id: "", name: "Unknown", profilePic: "" },
     }));
   }, [itemsFromStore]);
 
@@ -187,6 +204,7 @@ export default function HomePage() {
           ) : filteredItems.length > 0 ? (
             filteredItems.map((item) => {
               const isLiked = item.liked === true;
+              const isOwnItem = currentUserId && item.postedBy.id === currentUserId;
 
               return (
                 <Link
@@ -214,6 +232,32 @@ export default function HomePage() {
                       alt="heart"
                     />
                   </button>
+
+                  {isOwnItem && (
+                    <button
+                      className="edit-btn"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.location.href = `/edit-listing/${item.id}`;
+                      }}
+                      style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        background: 'rgba(255, 255, 255, 0.9)',
+                        border: '1px solid #ddd',
+                        borderRadius: '4px',
+                        padding: '6px 12px',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        fontWeight: '500',
+                        zIndex: 2,
+                      }}
+                    >
+                      Edit
+                    </button>
+                  )}
 
                   <div className="item-card-price-like">
                     <p id="name">{item.name}</p>
