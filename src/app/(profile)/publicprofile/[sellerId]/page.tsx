@@ -38,6 +38,22 @@ export default function PublicProfilePage() {
   const [error, setError] = useState<string | null>(null)
   const [userRating, setUserRating] = useState<number | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [ratingMessage, setRatingMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+
+  // Fetch current user ID
+  useEffect(() => {
+    async function fetchCurrentUser() {
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        setCurrentUserId(user?.id || null)
+      } catch (err) {
+        // Silent fail - user can still view profile
+      }
+    }
+    fetchCurrentUser()
+  }, [])
 
   // Fetch seller profile
   useEffect(() => {
@@ -58,7 +74,6 @@ export default function PublicProfilePage() {
 
         setProfile(data)
       } catch (err) {
-        console.error('Error fetching profile:', err)
         setError('Failed to load profile')
       } finally {
         setLoading(false)
@@ -92,7 +107,6 @@ export default function PublicProfilePage() {
           .order('created_at', { ascending: false })
 
         if (error) {
-          console.error('Error fetching seller items:', error)
           return
         }
 
@@ -109,7 +123,7 @@ export default function PublicProfilePage() {
 
         setSellerItems(transformedItems)
       } catch (err) {
-        console.error('Error fetching items:', err)
+        // Silent fail - items section will show empty
       } finally {
         setLoadingItems(false)
       }
@@ -118,29 +132,145 @@ export default function PublicProfilePage() {
     fetchSellerItems()
   }, [sellerId])
 
+  // Fetch user's existing rating for this seller
+  useEffect(() => {
+    async function fetchUserRating() {
+      if (!currentUserId || !sellerId) return
+
+      try {
+        const supabase = createClient()
+
+        const { data, error } = await supabase
+          .from('reviews')
+          .select('rating')
+          .eq('reviewer_id', currentUserId)
+          .eq('reviewee_id', sellerId)
+          .maybeSingle()
+
+        if (error && error.code !== 'PGRST116') {
+          return
+        }
+
+        if (data) {
+          setUserRating(data.rating)
+        }
+      } catch (err) {
+        // Silent fail - rating will show as unrated
+      }
+    }
+
+    fetchUserRating()
+  }, [currentUserId, sellerId])
+
   // Handle user rating submission
   async function handleRating(value: number) {
+    // Clear previous messages
+    setRatingMessage(null)
+
+    // Validation
+    if (!currentUserId) {
+      setRatingMessage({ type: 'error', text: 'You must be logged in to rate' })
+      return
+    }
+
+    if (currentUserId === sellerId) {
+      setRatingMessage({ type: 'error', text: 'You cannot rate yourself!' })
+      return
+    }
+
+    // Optimistic UI update - update stars immediately
+    const previousRating = userRating
+    setUserRating(value)
+
     try {
       setSubmitting(true)
-      setUserRating(value)
-
       const supabase = createClient()
 
-      // For simplicity, just update the rating field directly
-      const { error } = await supabase
+      // Check if user already rated this seller
+      const { data: existingReview } = await supabase
+        .from('reviews')
+        .select('id')
+        .eq('reviewer_id', currentUserId)
+        .eq('reviewee_id', sellerId)
+        .maybeSingle()
+
+      if (existingReview) {
+        // Update existing review
+        const { data: updateData, error: updateError, count } = await supabase
+          .from('reviews')
+          .update({ rating: value })
+          .eq('id', existingReview.id)
+          .select()
+
+        if (updateError) {
+          setUserRating(previousRating) // Revert on error
+          setRatingMessage({ type: 'error', text: `Failed to update rating: ${updateError.message}` })
+          return
+        }
+
+        if (!updateData || updateData.length === 0) {
+          setUserRating(previousRating) // Revert on error
+          setRatingMessage({ type: 'error', text: 'Failed to update rating: No rows updated' })
+          return
+        }
+      } else {
+        // Insert new review
+        const { error: insertError } = await supabase
+          .from('reviews')
+          .insert({
+            reviewer_id: currentUserId,
+            reviewee_id: sellerId,
+            rating: value,
+          })
+
+        if (insertError) {
+          setUserRating(previousRating) // Revert on error
+          setRatingMessage({ type: 'error', text: 'Failed to submit rating' })
+          return
+        }
+      }
+
+      // Calculate new average rating
+      const { data: allReviews, error: reviewsError } = await supabase
+        .from('reviews')
+        .select('rating')
+        .eq('reviewee_id', sellerId)
+
+      if (reviewsError) {
+        setUserRating(previousRating) // Revert on error
+        setRatingMessage({ type: 'error', text: 'Rating submitted but failed to update average' })
+        return
+      }
+
+      // Calculate average
+      const totalRatings = allReviews?.length || 0
+      const sumRatings = allReviews?.reduce((sum, review) => sum + review.rating, 0) || 0
+      const averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0
+
+      // Update profile with new average rating
+      const { error: profileError } = await supabase
         .from('profiles')
-        .update({ rating: value })
+        .update({ rating: averageRating })
         .eq('id', sellerId)
 
-      if (error) {
-        console.error('Error updating rating:', error)
-        alert('Failed to submit rating')
-      } else {
-        alert('Rating submitted!')
-        setProfile((prev) => prev ? { ...prev, rating: value } : prev)
+      if (profileError) {
+        setUserRating(previousRating) // Revert on error
+        setRatingMessage({ type: 'error', text: 'Rating submitted but failed to update profile' })
+        return
       }
+
+      // Update profile with new average (userRating already updated optimistically)
+      setProfile((prev) => prev ? { ...prev, rating: averageRating } : prev)
+      setRatingMessage({
+        type: 'success',
+        text: existingReview ? 'Rating updated successfully!' : 'Rating submitted successfully!'
+      })
+
+      // Auto-dismiss after 3 seconds
+      setTimeout(() => setRatingMessage(null), 3000)
     } catch (err) {
-      console.error('Error submitting rating:', err)
+      setUserRating(previousRating) // Revert on error
+      setRatingMessage({ type: 'error', text: 'Failed to submit rating' })
     } finally {
       setSubmitting(false)
     }
@@ -197,28 +327,58 @@ export default function PublicProfilePage() {
         </div>
       </div>
 
-      {/* ======== NEW RATING BOX BELOW ======== */}
-      <div className="rating-box">
-        <h3>Rate this Seller</h3>
-        <p>Click on the stars below to leave your rating:</p>
-        <div className="rating-stars">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <span
-              key={star}
-              onClick={() => !submitting && handleRating(star)}
+      {/* ======== RATING BOX (Only show if not viewing own profile) ======== */}
+      {currentUserId && currentUserId !== sellerId && (
+        <div className="rating-box">
+          <h3>{userRating ? 'Update Your Rating' : 'Rate this Seller'}</h3>
+          <p>
+            {userRating
+              ? `You rated this seller ${userRating} star${userRating > 1 ? 's' : ''}. Click to update:`
+              : 'Click on the stars below to leave your rating:'}
+          </p>
+          <div className="rating-stars">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                onClick={() => !submitting && handleRating(star)}
+                style={{
+                  cursor: submitting ? "not-allowed" : "pointer",
+                  color: userRating && star <= userRating ? "#FFD700" : "#ccc",
+                  fontSize: "24px",
+                  margin: "0 3px",
+                  transition: "color 0.2s, transform 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  if (!submitting) {
+                    e.currentTarget.style.transform = "scale(1.2)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+          {ratingMessage && (
+            <p
               style={{
-                cursor: submitting ? "not-allowed" : "pointer",
-                color: userRating && star <= userRating ? "#FFD700" : "#ccc",
-                fontSize: "24px",
-                margin: "0 3px",
-                transition: "color 0.2s, transform 0.2s",
+                marginTop: '10px',
+                padding: '10px',
+                borderRadius: '5px',
+                backgroundColor: ratingMessage.type === 'success' ? '#d4edda' : '#f8d7da',
+                color: ratingMessage.type === 'success' ? '#155724' : '#721c24',
+                border: `1px solid ${ratingMessage.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`,
+                fontSize: '14px',
+                textAlign: 'center',
               }}
             >
-              ★
-            </span>
-          ))}
+              {ratingMessage.text}
+            </p>
+          )}
         </div>
-      </div>
+      )}
 
       {/* Public Listings */}
       <div className="user-items profile-content-wrapper">

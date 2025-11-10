@@ -119,6 +119,16 @@ export default function SellPage() {
         });
       }
 
+      // 5. Increment items_listed count in profile
+      const { error: profileError } = await supabase.rpc('increment_items_listed', {
+        user_id: profile.id
+      });
+
+      if (profileError) {
+        // Log error but don't fail the entire operation
+        console.error('Failed to update items_listed count:', profileError);
+      }
+
       // Success! Show message and clear form
       setSuccess("Listing created successfully! Redirecting to your profile...");
       setTitle("");

@@ -92,6 +92,8 @@ export default function ProfilePage() {
   };
 
   const handleMarkSold = async (itemId: string) => {
+    if (!profile?.id) return;
+
     try {
       const supabase = createClient();
 
@@ -104,6 +106,16 @@ export default function ProfilePage() {
         console.error("Error marking item as sold:", error);
         alert("Failed to mark item as sold");
         return;
+      }
+
+      // Update profile counts: increment items_sold, decrement items_listed
+      const { error: profileError } = await supabase.rpc('mark_item_sold', {
+        user_id: profile.id
+      });
+
+      if (profileError) {
+        console.error("Error updating profile counts:", profileError);
+        // Don't fail the operation, item is already marked as sold
       }
 
       // Remove from local state
