@@ -21,17 +21,14 @@ export default function ProfilePage() {
   const [userListings, setUserListings] = useState<UserListing[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
 
-  // Fetch user profile
   const { profile, loading, error } = useUserProfile();
 
-  // Fetch user's listings from Supabase
   useEffect(() => {
     async function fetchUserListings() {
       if (!profile?.id) return;
 
       try {
         const supabase = createClient();
-
         const { data: items, error } = await supabase
           .from("items")
           .select(
@@ -55,6 +52,7 @@ export default function ProfilePage() {
           console.error("Error fetching user listings:", error);
           return;
         }
+
         const transformedListings: UserListing[] = (items || []).map(
           (item: any) => ({
             id: item.id,
@@ -84,7 +82,6 @@ export default function ProfilePage() {
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
-      // SessionMonitor will handle redirect to /login
     } catch (err) {
       console.error("Logout failed:", err);
       alert("Failed to log out. Please try again.");
@@ -94,7 +91,6 @@ export default function ProfilePage() {
   const handleMarkSold = async (itemId: string) => {
     try {
       const supabase = createClient();
-
       const { error } = await supabase
         .from("items")
         .update({ is_available: false })
@@ -106,7 +102,6 @@ export default function ProfilePage() {
         return;
       }
 
-      // Remove from local state
       setUserListings(userListings.filter((item) => item.id !== itemId));
       alert("Item marked as sold!");
     } catch (err) {
@@ -207,6 +202,12 @@ export default function ProfilePage() {
                       ? new Date(item.postedAt).toLocaleDateString()
                       : ""}
                   </p>
+
+                  {/* 👇 NEW BUTTON ADDED HERE */}
+                  <Link href={`/item/${item.id}`}>
+                    <button>View Item</button>
+                  </Link>
+
                   <button
                     onClick={() =>
                       (window.location.href = `/edit-listing/${item.id}`)

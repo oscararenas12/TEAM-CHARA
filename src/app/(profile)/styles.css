@@ -66,18 +66,51 @@
 .profile-butts {
   display:flex;
   flex-direction:row;
-  gap: 40px;
+  gap: 20px;
   
 }
 
-.profile-butts1 , .seller-link button{
+.profile-butts button {
+  transition: all 0.1s ease; /* smooth hover animation */
+}
+
+.profile-butts button:hover{
+  transform: scale(1.05); /* slightly enlarges the button */
+
+}
+
+.profile-butts1{
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #ccc; 
+  font-weight: bold;
+  font-size: 0.8rem;
+  color:rgb(67, 64, 64);
+  height: 40px;
+  width: 100px;
+}
+.profile-butts2,  .seller-link button{
   padding: 9px 14px;
   border-radius: 10px;
   background: white;
   border: 1px solid #ccc; 
   font-weight: bold;
   height: 40px;
+  width: 130px;
 }
+.profile-butts3{
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #ccc; 
+  font-weight: bold;
+  font-size: 0.8rem;
+  color:rgb(67, 64, 64);
+  height: 40px;
+  width: 120px;
+}
+
 
 .profile-item-cont {
   gap: 100px; 
@@ -225,6 +258,7 @@
   padding: 25px;
   background: #fff;
   border-radius: 12px;
+  
   
 }
 
@@ -386,4 +420,170 @@
 .rating-stars span:hover {
   color: #ffb400;
   transform: scale(1.2);
+}
+
+
+
+
+
+
+
+
+/* === Responsive === */
+
+
+
+/* 🖥 Tablet (≤ 1024px) */
+@media (max-width: 1024px) {
+  .profile-header,
+  .infos-cont,
+  .rating-box {
+    margin: 20px 10%;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .infoss {
+    max-width: 300px;
+    width: 80%;
+    margin: 10px 0;
+  }
+
+  .profile-items {
+    width: 35vw;
+    min-width: 200px;
+  }
+
+  .profile-pic-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-info {
+    margin: 10px 0 0 0;
+    text-align: center;
+  }
+}
+
+/* 📱 Mobile (≤ 768px) */
+@media (max-width: 768px) {
+  .profile-page {
+    margin: 0 5% 40px;
+    padding: 20px 10px;
+  }
+
+  .profile-header,
+  .infos-cont,
+  .rating-box {
+    margin: 15px 5%;
+    padding: 15px 20px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-butts {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .profile-butts1,
+  .profile-butts2,
+  .profile-butts3 {
+    width: 90%;
+  }
+
+  .infoss {
+    max-width: 100%;
+    margin: 10px 0;
+    padding: 15px 20px;
+  }
+
+  .profile-items {
+    width: 80vw;
+    margin: 10px auto;
+  }
+
+  .profile-item-last {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .profile-name {
+    font-size: 1.2rem;
+  }
+
+  .info2 {
+    font-size: 1.5rem;
+  }
+
+  .listings button {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .edit-profile-container {
+    width: 95%;
+    margin: 20px auto;
+    padding: 15px;
+  }
+
+  .edit-form > div {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .edit-form label {
+    text-align: left;
+    margin: 0 0 8px 0;
+  }
+
+  .edit-form input,
+  .edit-form textarea {
+    width: 100%;
+  }
+}
+
+/* 📱 Small Mobile (≤ 480px) */
+@media (max-width: 480px) {
+  .profile-pic {
+    width: 70px;
+    height: 70px;
+  }
+
+  .profile-info {
+    font-size: 0.9rem;
+  }
+
+  .infoss {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .info2 {
+    font-size: 1.2rem;
+  }
+
+  .profile-items {
+    width: 90%;
+  }
+
+  .listings button {
+    font-size: 0.9rem;
+    height: 40px;
+  }
+}
+
+
+
+
+/* Prevent navbar overlap on Edit Profile page */
+.edit-profile-container {
+  padding-bottom: 120px; /* Enough space for navbar height */
+}
+
+/* Also make sure the page can scroll fully */
+.edit-profile {
+  min-height: 100vh;
+  overflow-y: auto;
 }
