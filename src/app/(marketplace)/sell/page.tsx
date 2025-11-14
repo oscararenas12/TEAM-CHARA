@@ -306,9 +306,10 @@ export default function SellPage() {
               >
                 <option value="" disabled>Select category</option>
                 <option value="electronics">Electronics</option>
-                <option value="books">Books</option>
+                <option value="Books">Books</option>
                 <option value="clothing">Clothing</option>
                 <option value="furniture">Furniture</option>
+                <option value="Sport-Equipment">Sport & Outdoors</option>
                 <option value="other">Other</option>
               </select>
             </label>
