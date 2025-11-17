@@ -35,52 +35,81 @@ a:visited {
   color: inherit;
 }
 
-/* ===== Bottom Navigation Bar ===== */
+/* ===== Bottom Navigation Bar (Pill Style) ===== */
 .bottom-navbar {
   position: fixed;
   bottom: 0;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  height: 5%;
+  height: auto;
   background: white;
-  padding: 10px 0;
+  padding: 12px 20px;
   width: 100%;
   border-top: solid 1px rgb(207, 204, 204);
   z-index: 1000;
+  gap: 8px;
 }
 
 .bottom-navbar a {
   text-decoration: none;
-  color: black;
+  color: #666;
   font-size: 0.9rem;
   font-family: Arial, Helvetica, sans-serif;
+  transition: all 0.3s ease;
 }
 
 .Nav-icon {
   width: 20px;
-  margin: 5px;
+  height: 20px;
+  margin-right: 8px;
+  filter: grayscale(100%);
+  transition: all 0.3s ease;
 }
 
 .nav-col {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
 }
 
 .nav-col a {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
   text-decoration: none;
+  color: #666;
+  padding: 10px 16px;
+  border-radius: 50px;
+  background: transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.nav-col a:hover {
+  background-color: rgba(255, 209, 2, 0.1);
   color: #333;
+}
+
+.nav-col a:hover .Nav-icon {
+  filter: grayscale(0%);
+  transform: scale(1.1);
 }
 
 .nav-col a.active {
   background-color: rgb(255, 209, 2);
-  border-radius: 4px;
-  padding: 2px 8px;
-  width: 60px;
+  color: #000;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 209, 2, 0.3);
+}
+
+.nav-col a.active .Nav-icon {
+  filter: grayscale(0%);
+}
+
+.bar-text {
+  font-size: 0.9rem;
 }
 
 /* ===== Home Page Header ===== */
