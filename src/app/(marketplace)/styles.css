@@ -646,6 +646,14 @@
   opacity: 0.75;
 }
 
+.isbn-preview {
+  width: 90%;
+  font-size: 13px;
+  opacity: 0.8;
+  margin: 5px 0;
+  text-align: left;
+}
+
 .listed-item-sec, .item-card-price-like {
   width: 90%;
   display: flex;
