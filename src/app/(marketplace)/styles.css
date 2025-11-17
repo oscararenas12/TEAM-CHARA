@@ -580,23 +580,45 @@
   padding: 10px;
 }
 
-.category-filter {
-  margin: 10px 3%;
-  padding: 8px 20px 8px 12px; /* reduce right padding to bring arrow inside */
-  border-radius: 8px;
-  background: rgb(245, 244, 244);
-  border: 0;
-  width: 150px;
-  appearance: none; /* remove native arrow */
-  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 10px center; /* moves arrow closer */
-  background-size: 12px;
+/* Pill Navigation for Category Filter */
+.category-pill-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 3%;
+  padding: 8px 0;
 }
 
-.category-filter:focus {
-  outline: none;
-  border: 2px solid rgb(255, 213, 0);
+.category-pill {
+  padding: 8px 20px;
+  border-radius: 50px;
+  background: rgb(245, 244, 244);
+  border: none;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.category-pill:hover {
+  background: rgba(255, 209, 2, 0.15);
+  color: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.category-pill.active {
+  background: rgb(255, 209, 2);
+  color: #000;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 209, 2, 0.3);
+}
+
+.category-pill.active:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 209, 2, 0.4);
 }
 
 .heart-btn {
