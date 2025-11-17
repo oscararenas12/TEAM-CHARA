@@ -276,17 +276,19 @@ export default function HomePage() {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
 
-      <select
-        className="category-filter"
-        value={selectedCategory}
-        onChange={(e) => setSelectedCategory(e.target.value)}
-      >
+      <div className="category-pill-nav">
         {categories.map((cat) => (
-          <option key={cat} value={cat}>
+          <button
+            key={cat}
+            className={`category-pill ${
+              selectedCategory === cat ? "active" : ""
+            }`}
+            onClick={() => setSelectedCategory(cat)}
+          >
             {cat}
-          </option>
+          </button>
         ))}
-      </select>
+      </div>
 
       <div className="items-wrapper">
         <div className="item-container">
