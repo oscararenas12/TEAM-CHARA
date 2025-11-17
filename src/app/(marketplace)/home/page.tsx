@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
@@ -45,8 +45,9 @@ export default function HomePage() {
 
         // Fetch items with seller profile and images
         const { data: items, error } = await supabase
-          .from('items')
-          .select(`
+          .from("items")
+          .select(
+            `
             id,
             name,
             description,
@@ -67,46 +68,56 @@ export default function HomePage() {
               image_url,
               display_order
             )
-          `)
-          .eq('is_available', true)
-          .order('created_at', { ascending: false });
+          `
+          )
+          .eq("is_available", true)
+          .order("created_at", { ascending: false });
 
         if (error) {
-          console.error('Error fetching items:', error);
+          console.error("Error fetching items:", error);
           return;
         }
 
         // Transform Supabase data to match our Listing interface
         const transformedItems: Listing[] = (items || []).map((item: any) => {
           // Handle profiles - can be object or array depending on query
-          const profile = Array.isArray(item.profiles) ? item.profiles[0] : item.profiles;
-          const category = Array.isArray(item.categories) ? item.categories[0] : item.categories;
+          const profile = Array.isArray(item.profiles)
+            ? item.profiles[0]
+            : item.profiles;
+          const category = Array.isArray(item.categories)
+            ? item.categories[0]
+            : item.categories;
 
           return {
             id: item.id,
             name: item.name,
-            description: item.description || '',
+            description: item.description || "",
             price: `$${parseFloat(item.price).toFixed(2)}`,
-            category: category?.name || 'Other',
-            condition: item.condition || 'good',
+            category: category?.name || "Other",
+            condition: item.condition || "good",
             postedAt: item.created_at,
             postedBy: {
-              id: item.seller_id || '',
+              id: item.seller_id || "",
               name: profile
-                ? `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim() || 'Unknown'
-                : 'Unknown',
-              profilePic: profile?.avatar_url || '',
+                ? `${profile.first_name ?? ""} ${
+                    profile.last_name ?? ""
+                  }`.trim() || "Unknown"
+                : "Unknown",
+              profilePic: profile?.avatar_url || "",
             },
-            images: item.item_images
-              ?.toSorted((a: any, b: any) => a.display_order - b.display_order)
-              .map((img: any) => img.image_url) || [],
+            images:
+              item.item_images
+                ?.toSorted(
+                  (a: any, b: any) => a.display_order - b.display_order
+                )
+                .map((img: any) => img.image_url) || [],
             liked: false,
           };
         });
 
         setItems(transformedItems);
       } catch (err) {
-        console.error('Unexpected error fetching items:', err);
+        console.error("Unexpected error fetching items:", err);
       } finally {
         setLoading(false);
       }
@@ -120,10 +131,12 @@ export default function HomePage() {
     async function getCurrentUser() {
       try {
         const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         setCurrentUserId(user?.id || null);
       } catch (err) {
-        console.error('Error fetching current user:', err);
+        console.error("Error fetching current user:", err);
       }
     }
     getCurrentUser();
@@ -152,8 +165,13 @@ export default function HomePage() {
 
   const filteredItems = useMemo(() => {
     return items
-      .filter((item) => selectedCategory === "All" || item.category === selectedCategory)
-      .filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      .filter(
+        (item) =>
+          selectedCategory === "All" || item.category === selectedCategory
+      )
+      .filter((item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
       .toSorted(
         (a, b) =>
           new Date(b.postedAt || Date.now()).getTime() -
@@ -186,8 +204,8 @@ export default function HomePage() {
       }
 
       // Update profile counts: increment items_sold, decrement items_listed
-      const { error: profileError } = await supabase.rpc('mark_item_sold', {
-        user_id: currentUserId
+      const { error: profileError } = await supabase.rpc("mark_item_sold", {
+        user_id: currentUserId,
       });
 
       if (profileError) {
@@ -229,17 +247,19 @@ export default function HomePage() {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
 
-      <select
-        className="category-filter"
-        value={selectedCategory}
-        onChange={(e) => setSelectedCategory(e.target.value)}
-      >
+      <div className="category-pill-nav">
         {categories.map((cat) => (
-          <option key={cat} value={cat}>
+          <button
+            key={cat}
+            className={`category-pill ${
+              selectedCategory === cat ? "active" : ""
+            }`}
+            onClick={() => setSelectedCategory(cat)}
+          >
             {cat}
-          </option>
+          </button>
         ))}
-      </select>
+      </div>
 
       <div className="items-wrapper">
         <div className="item-container">
@@ -248,7 +268,8 @@ export default function HomePage() {
           ) : filteredItems.length > 0 ? (
             filteredItems.map((item) => {
               const isLiked = item.liked === true;
-              const isOwnItem = currentUserId && item.postedBy.id === currentUserId;
+              const isOwnItem =
+                currentUserId && item.postedBy.id === currentUserId;
 
               return (
                 <Link
