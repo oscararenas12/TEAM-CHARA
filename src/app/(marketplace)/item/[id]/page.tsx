@@ -1,15 +1,14 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import "../../styles.css";
-import leftImg from "@/assets/left.png";
-import rightImg from "@/assets/right.png";
 import backImg from "@/assets/back.png";
 import messageImg from "@/assets/message.png";
 import laptopImg from "@/assets/laptop.jpeg";
 import { createClient } from "@/lib/supabase/client";
+import Carousel from "@/components/shared/Carousel";
 
 interface Item {
   id: string;
@@ -34,7 +33,6 @@ export default function ItemDetailPage() {
   const [item, setItem] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Fetch item from Supabase
   useEffect(() => {
@@ -43,8 +41,9 @@ export default function ItemDetailPage() {
         const supabase = createClient();
 
         const { data, error } = await supabase
-          .from('items')
-          .select(`
+          .from("items")
+          .select(
+            `
             id,
             name,
             description,
@@ -64,46 +63,53 @@ export default function ItemDetailPage() {
               image_url,
               display_order
             )
-          `)
-          .eq('id', itemId)
+          `
+          )
+          .eq("id", itemId)
           .single();
 
         if (error) {
-          console.error('Error fetching item:', error);
-          setError('Item not found');
+          console.error("Error fetching item:", error);
+          setError("Item not found");
           return;
         }
 
         if (!data) {
-          setError('Item not found');
+          setError("Item not found");
           return;
         }
 
         // Transform Supabase data to Item interface
         // Handle profiles - can be object or array depending on query
-        const profile = Array.isArray(data.profiles) ? data.profiles[0] : data.profiles;
-        const category = Array.isArray(data.categories) ? data.categories[0] : data.categories;
+        const profile = Array.isArray(data.profiles)
+          ? data.profiles[0]
+          : data.profiles;
+        const category = Array.isArray(data.categories)
+          ? data.categories[0]
+          : data.categories;
 
         // Validate seller_id exists
         if (!data.seller_id) {
-          console.error('Missing seller_id for item:', data.id);
-          setError('Invalid item data');
+          console.error("Missing seller_id for item:", data.id);
+          setError("Invalid item data");
           return;
         }
 
         const transformedItem: Item = {
           id: data.id,
           name: data.name,
-          description: data.description || 'No description provided',
+          description: data.description || "No description provided",
           price: `$${parseFloat(data.price).toFixed(2)}`,
-          category: category?.name || 'Other',
-          condition: data.condition || 'good',
+          category: category?.name || "Other",
+          condition: data.condition || "good",
           postedBy: {
             id: data.seller_id,
             name: profile
-              ? `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim() || 'Unknown'
-              : 'Unknown',
-            profilePic: profile?.avatar_url || '',
+              ? `${profile.first_name ?? ""} ${
+                  profile.last_name ?? ""
+                }`.trim() || "Unknown"
+              : "Unknown",
+            profilePic: profile?.avatar_url || "",
           },
           images: data.item_images
             ?.toSorted((a: any, b: any) => a.display_order - b.display_order)
@@ -112,8 +118,8 @@ export default function ItemDetailPage() {
 
         setItem(transformedItem);
       } catch (err) {
-        console.error('Unexpected error fetching item:', err);
-        setError('Failed to load item');
+        console.error("Unexpected error fetching item:", err);
+        setError("Failed to load item");
       } finally {
         setLoading(false);
       }
@@ -123,38 +129,27 @@ export default function ItemDetailPage() {
   }, [itemId]);
 
   if (loading) return <p className="no-items">Loading item...</p>;
-  if (error || !item) return <p className="no-items">{error || 'Item not found!'}</p>;
-
-  const nextImage = () =>
-    setCurrentImageIndex((prev) => (prev === item.images.length - 1 ? 0 : prev + 1));
-
-  const prevImage = () =>
-    setCurrentImageIndex((prev) => (prev === 0 ? item.images.length - 1 : prev - 1));
+  if (error || !item)
+    return <p className="no-items">{error || "Item not found!"}</p>;
 
   const sendQuickMessage = (text: string) => {
     router.push(
-      `/messages?autoMessage=${encodeURIComponent(text)}&to=${encodeURIComponent(item.postedBy.id)}`
+      `/messages?autoMessage=${encodeURIComponent(
+        text
+      )}&to=${encodeURIComponent(item.postedBy.id)}`
     );
   };
 
   return (
     <div className="item-detail">
       {/* Back button */}
-      <div className="item-detail-head">
-        <Link href="/home" className="back-button">
-          <img id="backbut" src={backImg.src} alt="Go home" />
-        </Link>
-      </div>
+      <Link href="/home" className="back-button">
+        <img id="backbut" src={backImg.src} alt="Go home" />
+      </Link>
 
       {/* Image carousel */}
       <div className="box item-images-box">
-        <button onClick={prevImage}>
-          <img src={leftImg.src} alt="Go left" />
-        </button>
-        <img src={item.images[currentImageIndex]} alt={`${item.name} ${currentImageIndex + 1}`} />
-        <button onClick={nextImage}>
-          <img src={rightImg.src} alt="Go right" />
-        </button>
+        <Carousel images={item.images} alt={item.name} />
       </div>
 
       {/* Item info */}
@@ -181,15 +176,20 @@ export default function ItemDetailPage() {
         <div className="seller-info-box1">
           <div className="seller-info-box3">
             <div className="seller-avatar">
-              {item.postedBy.profilePic
-                ? <img src={item.postedBy.profilePic} alt={item.postedBy.name} />
-                : item.postedBy.name.charAt(0).toUpperCase()}
+              {item.postedBy.profilePic ? (
+                <img src={item.postedBy.profilePic} alt={item.postedBy.name} />
+              ) : (
+                item.postedBy.name.charAt(0).toUpperCase()
+              )}
             </div>
             <div className="seller-info-box2">
               <p>{item.postedBy.name}</p>
             </div>
           </div>
-          <Link href={`/publicprofile/${item.postedBy.id}`} className="seller-link">
+          <Link
+            href={`/publicprofile/${item.postedBy.id}`}
+            className="seller-link"
+          >
             <button>View Profile</button>
           </Link>
         </div>
@@ -199,9 +199,20 @@ export default function ItemDetailPage() {
       <div className="box quick-questions-box">
         <h3>Quick Questions</h3>
         <div className="questions">
-          {["Is this available?", "Can I pick up tomorrow?", "What's the condition like?", "Can you send more photos?"].map((q, i) => (
-            <div key={i} className="question" onClick={() => sendQuickMessage(q)}>
-              <p><img src={messageImg.src} /> {q}</p>
+          {[
+            "Is this available?",
+            "Can I pick up tomorrow?",
+            "What's the condition like?",
+            "Can you send more photos?",
+          ].map((q, i) => (
+            <div
+              key={i}
+              className="question"
+              onClick={() => sendQuickMessage(q)}
+            >
+              <p>
+                <img src={messageImg.src} /> {q}
+              </p>
             </div>
           ))}
           <Link href={`/messages?to=${encodeURIComponent(item.postedBy.id)}`}>

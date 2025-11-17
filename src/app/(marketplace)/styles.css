@@ -69,6 +69,7 @@
   top: 0;
   background-color: #fff;
   margin: 0 20%;
+  z-index: 100;
 }
 
 .item-detail {
@@ -76,7 +77,7 @@
   flex-direction: column;
   align-items: center;
   gap: 40px;
-  padding: 10% 20px;
+  padding: 20px;
   margin: 0 18% 40px;
 }
 
@@ -84,19 +85,17 @@
 #backbut {
   width: 3vw;
   padding: 0;
-  margin-left: 2%;
   
 }
 
 .back-button {
-  align-self: flex-start;
-  margin-bottom: 10px;
+  position: fixed;
+  top: 20px;
+  left: 20px;
   text-decoration: none;
   color: #333;
   font-weight: bold;
- 
-
-  
+  z-index: 1000;
 }
 
 /* Image Carousel */
