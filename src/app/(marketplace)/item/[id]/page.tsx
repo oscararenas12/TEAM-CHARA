@@ -23,6 +23,7 @@ interface Item {
   };
   condition: string;
   category: string;
+  isbn?: string;
 }
 
 export default function ItemDetailPage() {
@@ -62,6 +63,9 @@ export default function ItemDetailPage() {
             item_images (
               image_url,
               display_order
+            ),
+            item_tags (
+              tag
             )
           `
           )
@@ -95,6 +99,25 @@ export default function ItemDetailPage() {
           return;
         }
 
+        // Extract ISBN from tags
+        const isbnTag = data.item_tags?.find((tag: any) =>
+          tag.tag.startsWith("ISBN:")
+        );
+        let isbn = isbnTag ? isbnTag.tag.replace("ISBN: ", "") : undefined;
+
+        // Format ISBN to standard format xxx-x-xxx-xxxxx-x
+        if (isbn) {
+          const cleanIsbn = isbn.replace(/[-\s]/g, "");
+          if (cleanIsbn.length === 13) {
+            const prefix = cleanIsbn.substring(0, 3);
+            const group = cleanIsbn.substring(3, 4);
+            const registrant = cleanIsbn.substring(4, 7);
+            const publication = cleanIsbn.substring(7, 12);
+            const check = cleanIsbn.substring(12, 13);
+            isbn = `${prefix}-${group}-${registrant}-${publication}-${check}`;
+          }
+        }
+
         const transformedItem: Item = {
           id: data.id,
           name: data.name,
@@ -102,6 +125,7 @@ export default function ItemDetailPage() {
           price: `$${parseFloat(data.price).toFixed(2)}`,
           category: category?.name || "Other",
           condition: data.condition || "good",
+          isbn: isbn,
           postedBy: {
             id: data.seller_id,
             name: profile
@@ -167,8 +191,18 @@ export default function ItemDetailPage() {
       {/* Description */}
       <div className="box description">
         <h3>Description</h3>
-        <p className="item-description">{item.description}</p>
+        <p className="item-description" style={{ whiteSpace: "pre-wrap" }}>
+          {item.description}
+        </p>
       </div>
+
+      {/* ISBN */}
+      {item.isbn && (
+        <div className="box isbn-box">
+          <h3>ISBN</h3>
+          <p className="item-isbn">{item.isbn}</p>
+        </div>
+      )}
 
       {/* Seller Info */}
       <div className="box seller-info-box">
