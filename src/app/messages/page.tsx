@@ -136,7 +136,6 @@ export default function MessagesPage() {
     <div className="messages-page">
       <div className="messages-head">
         <h1 id="page-head">Messages</h1>
-        
       </div>
 
       <div className="chat-container">
