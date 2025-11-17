@@ -69,6 +69,7 @@
   top: 0;
   background-color: #fff;
   margin: 0 20%;
+  z-index: 100;
 }
 
 .item-detail {
