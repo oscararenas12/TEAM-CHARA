@@ -241,27 +241,25 @@ export async function getOrCreateDirectChat(
     }
   }
 
-  // No existing chat found, create new one
-  const { data: newChat, error: chatError } = await supabase
+  // No existing chat found, create new one using RPC function (bypasses RLS)
+  const { data: newChatId, error: createError } = await supabase
+    .rpc('create_chat_with_participants', {
+      user1_id: user1Id,
+      user2_id: user2Id,
+      chat_title: null,
+      is_group_chat: false,
+    });
+
+  if (createError) throw createError;
+
+  // Fetch and return the newly created chat
+  const { data: newChat, error: fetchError } = await supabase
     .from('chats')
-    .insert({
-      title: null,
-      is_group: false,
-    })
-    .select()
+    .select('*')
+    .eq('id', newChatId)
     .single();
 
-  if (chatError) throw chatError;
-
-  // Add both users as participants
-  const { error: participantsError } = await supabase
-    .from('chat_participants')
-    .insert([
-      { chat_id: newChat.id, user_id: user1Id },
-      { chat_id: newChat.id, user_id: user2Id },
-    ]);
-
-  if (participantsError) throw participantsError;
+  if (fetchError) throw fetchError;
 
   return newChat;
 }
