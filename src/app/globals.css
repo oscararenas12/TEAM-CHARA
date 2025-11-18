@@ -35,52 +35,110 @@ a:visited {
   color: inherit;
 }
 
-/* ===== Bottom Navigation Bar ===== */
-.bottom-navbar {
+/* ===== Dock Navigation Bar ===== */
+.dock-navbar {
   position: fixed;
-  bottom: 0;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  height: 5%;
-  background: white;
-  padding: 10px 0;
-  width: 100%;
-  border-top: solid 1px rgb(207, 204, 204);
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1000;
+  pointer-events: none;
 }
 
-.bottom-navbar a {
-  text-decoration: none;
-  color: black;
-  font-size: 0.9rem;
-  font-family: Arial, Helvetica, sans-serif;
+.dock-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  pointer-events: auto;
 }
 
-.Nav-icon {
-  width: 20px;
-  margin: 5px;
-}
-
-.nav-col {
+.dock-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.nav-col a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
   text-decoration: none;
-  color: #333;
+  color: #666;
+  padding: 8px;
+  border-radius: 16px;
+  background: transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  min-width: 60px;
+  transform-origin: bottom center;
 }
 
-.nav-col a.active {
-  background-color: rgb(255, 209, 2);
-  border-radius: 4px;
-  padding: 2px 8px;
-  width: 60px;
+.dock-icon {
+  width: 32px;
+  height: 32px;
+  filter: grayscale(100%);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.dock-item:hover .dock-icon {
+  filter: grayscale(0%);
+}
+
+.dock-label {
+  font-size: 0.7rem;
+  margin-top: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.dock-item:hover .dock-label {
+  opacity: 1;
+}
+
+.dock-item.active {
+  background-color: rgba(255, 209, 2, 0.2);
+  border-radius: 16px;
+}
+
+.dock-item.active .dock-icon {
+  filter: grayscale(0%);
+}
+
+.dock-item.active .dock-label {
+  color: #000;
+  font-weight: 600;
+  opacity: 1;
+}
+
+/* Glow effect for active item */
+.dock-item.active::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 209, 2, 0.3);
+  border-radius: 16px;
+  filter: blur(8px);
+  z-index: -1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* ===== Home Page Header ===== */
