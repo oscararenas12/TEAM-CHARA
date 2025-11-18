@@ -735,3 +735,217 @@
 #page-head {
   font-size: 2rem;
 }
+
+
+/* ===== Responsive Enhancements (Safe Additions) ===== */
+
+/* Profile & Item Cards */
+@media (max-width: 1024px) {
+  .item-container {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .item-card {
+    width: 45%;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .item-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .item-card {
+    width: 85%;
+    margin: 10px 0;
+  }
+
+  .item-img {
+    height: 20vh;
+  }
+
+  .listed-item-sec {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .own-item-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .item-card {
+    width: 95%;
+    margin: 10px auto;
+  }
+
+  .item-img {
+    height: 18vh;
+  }
+
+  #name {
+    font-size: 15px;
+  }
+
+  #price {
+    font-size: 16px;
+  }
+
+  .posted-by {
+    font-size: 13px;
+  }
+
+  .own-item-actions button {
+    font-size: 0.75rem;
+  }
+}
+
+/* Cart Section Improvements */
+@media (max-width: 768px) {
+  .cart-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cart-item-info {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .cart-butts {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .remove-btn1, .seller-link button {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .cart-item-img {
+    width: 65px;
+    height: 55px;
+  }
+
+  .cart-item-name {
+    font-size: 0.95rem;
+  }
+
+  .cart-item-price {
+    font-size: 0.9rem;
+  }
+
+  .remove-btn1, .seller-link button {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
+}
+
+/* Navbar / Header Responsiveness */
+@media (max-width: 720px) {
+  .home-head1 {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .home-head2 img {
+    width: 8vw;
+    min-width: 40px;
+  }
+
+  .icon-cart {
+    padding-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .cart-icon {
+    width: 6vw;
+    min-width: 30px;
+  }
+}
+
+/* Item Detail Page */
+@media (max-width: 768px) {
+  .item-info-box, .seller-info-box1, .seller-info-box2, .seller-info-box3 {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .item-info-box p {
+    font-size: 1.2rem;
+  }
+
+  .item-images-box img {
+    width: 85%;
+  }
+}
+
+@media (max-width: 480px) {
+  .item-detail {
+    margin: 0 10px 60px;
+    padding-top: 25%;
+  }
+
+  .item-images-box img {
+    width: 100%;
+  }
+
+  .item-info-box p {
+    font-size: 1rem;
+  }
+}
+
+/* Sell Page Adjustments */
+@media (max-width: 768px) {
+  .create-listing {
+    padding: 15px;
+  }
+
+  .create-listing h2 {
+    font-size: 1.3rem;
+  }
+
+  .photos-container {
+    justify-content: center;
+  }
+
+  .photo-preview, .add-photo-tile {
+    width: 110px;
+    height: 110px;
+  }
+
+  .item-form {
+    padding: 0 10px;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+}
+
+/* Question Box Responsive */
+@media (max-width: 480px) {
+  .question p {
+    width: 90%;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 0.9rem;
+  }
+
+  .question p img {
+    width: 5vw;
+    min-width: 20px;
+  }
+}

@@ -306,7 +306,7 @@ export default function PublicProfilePage() {
         {/* Send Message Button */}
         <div className="profile-butts">
           <Link href={`/messages/${profile.id}`}>
-            <button className="profile-butts1">Send Message</button>
+            <button className="profile-butts2">Send Message</button>
           </Link>
         </div>
       </div>
@@ -406,7 +406,7 @@ export default function PublicProfilePage() {
                     <button className="profile-butts1">View Item</button>
                   </Link>
                   <Link href={`/messages/${profile.id}`}>
-                    <button className="profile-butts1">Send Message</button>
+                    <button className="profile-butts3">Send Message</button>
                   </Link>
                 </div>
               </div>
