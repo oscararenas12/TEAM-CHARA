@@ -35,7 +35,6 @@ export default function ItemDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch item from Supabase
   useEffect(() => {
     async function fetchItem() {
       try {
@@ -43,8 +42,7 @@ export default function ItemDetailPage() {
 
         const { data, error } = await supabase
           .from("items")
-          .select(
-            `
+          .select(`
             id,
             name,
             description,
@@ -67,45 +65,26 @@ export default function ItemDetailPage() {
             item_tags (
               tag
             )
-          `
-          )
+          `)
           .eq("id", itemId)
           .single();
 
-        if (error) {
-          console.error("Error fetching item:", error);
+        if (error || !data) {
           setError("Item not found");
           return;
         }
 
-        if (!data) {
-          setError("Item not found");
-          return;
-        }
+        const profile = Array.isArray(data.profiles) ? data.profiles[0] : data.profiles;
+        const category = Array.isArray(data.categories) ? data.categories[0] : data.categories;
 
-        // Transform Supabase data to Item interface
-        // Handle profiles - can be object or array depending on query
-        const profile = Array.isArray(data.profiles)
-          ? data.profiles[0]
-          : data.profiles;
-        const category = Array.isArray(data.categories)
-          ? data.categories[0]
-          : data.categories;
-
-        // Validate seller_id exists
         if (!data.seller_id) {
-          console.error("Missing seller_id for item:", data.id);
           setError("Invalid item data");
           return;
         }
 
-        // Extract ISBN from tags
-        const isbnTag = data.item_tags?.find((tag: any) =>
-          tag.tag.startsWith("ISBN:")
-        );
+        let isbnTag = data.item_tags?.find((tag: any) => tag.tag.startsWith("ISBN:"));
         let isbn = isbnTag ? isbnTag.tag.replace("ISBN: ", "") : undefined;
 
-        // Format ISBN to standard format xxx-x-xxx-xxxxx-x
         if (isbn) {
           const cleanIsbn = isbn.replace(/[-\s]/g, "");
           if (cleanIsbn.length === 13) {
@@ -118,7 +97,7 @@ export default function ItemDetailPage() {
           }
         }
 
-        const transformedItem: Item = {
+        setItem({
           id: data.id,
           name: data.name,
           description: data.description || "No description provided",
@@ -129,20 +108,16 @@ export default function ItemDetailPage() {
           postedBy: {
             id: data.seller_id,
             name: profile
-              ? `${profile.first_name ?? ""} ${
-                  profile.last_name ?? ""
-                }`.trim() || "Unknown"
+              ? `${profile.first_name ?? ""} ${profile.last_name ?? ""}`.trim() || "Unknown"
               : "Unknown",
             profilePic: profile?.avatar_url || "",
           },
           images: data.item_images
             ?.toSorted((a: any, b: any) => a.display_order - b.display_order)
             .map((img: any) => img.image_url) || [laptopImg.src],
-        };
-
-        setItem(transformedItem);
+        });
       } catch (err) {
-        console.error("Unexpected error fetching item:", err);
+        console.error(err);
         setError("Failed to load item");
       } finally {
         setLoading(false);
@@ -153,14 +128,11 @@ export default function ItemDetailPage() {
   }, [itemId]);
 
   if (loading) return <p className="no-items">Loading item...</p>;
-  if (error || !item)
-    return <p className="no-items">{error || "Item not found!"}</p>;
+  if (error || !item) return <p className="no-items">{error || "Item not found!"}</p>;
 
   const sendQuickMessage = (text: string) => {
     router.push(
-      `/messages?autoMessage=${encodeURIComponent(
-        text
-      )}&to=${encodeURIComponent(item.postedBy.id)}`
+      `/messages?autoMessage=${encodeURIComponent(text)}&to=${encodeURIComponent(item.postedBy.id)}`
     );
   };
 
@@ -171,12 +143,12 @@ export default function ItemDetailPage() {
         <img id="backbut" src={backImg.src} alt="Go home" />
       </Link>
 
-      {/* Image carousel */}
+      {/* Carousel */}
       <div className="box item-images-box">
         <Carousel images={item.images} alt={item.name} />
       </div>
 
-      {/* Item info */}
+      {/* Item Info */}
       <div className="item-info-box">
         <p>{item.name}</p>
         <p className="item-price">{item.price}</p>
@@ -220,10 +192,7 @@ export default function ItemDetailPage() {
               <p>{item.postedBy.name}</p>
             </div>
           </div>
-          <Link
-            href={`/publicprofile/${item.postedBy.id}`}
-            className="seller-link"
-          >
+          <Link href={`/publicprofile/${item.postedBy.id}`} className="seller-link">
             <button>View Profile</button>
           </Link>
         </div>
@@ -239,11 +208,7 @@ export default function ItemDetailPage() {
             "What's the condition like?",
             "Can you send more photos?",
           ].map((q, i) => (
-            <div
-              key={i}
-              className="question"
-              onClick={() => sendQuickMessage(q)}
-            >
+            <div key={i} className="question" onClick={() => sendQuickMessage(q)}>
               <p>
                 <img src={messageImg.src} /> {q}
               </p>

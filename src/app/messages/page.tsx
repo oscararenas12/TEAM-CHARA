@@ -32,19 +32,16 @@ export default function MessagesPage() {
   const [isCreatingChat, setIsCreatingChat] = useState(false);
   const hasProcessedParams = useRef(false);
 
-  // 🔥🔥🔥 THE ONLY CHANGE YOU ASKED FOR — SORT CHATS
   const sortedChats = chats.slice().sort((a, b) => {
     const aTime = new Date(a.last_message?.created_at || 0).getTime();
     const bTime = new Date(b.last_message?.created_at || 0).getTime();
-    return bTime - aTime; // Newest first
+    return bTime - aTime;
   });
 
   useEffect(() => {
-  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-}, [messages]);
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-
-  // Handle URL parameters (to open specific chat)
   useEffect(() => {
     const targetUserId = searchParams.get('to');
     const autoMessage = searchParams.get('autoMessage');
@@ -174,17 +171,14 @@ export default function MessagesPage() {
     return date.toLocaleDateString([], { month: "short", day: "numeric" });
   };
 
-  const getReadReceiptStatus = (message: any): string | null => {
-    if (message.sender_id !== profile?.id) return null;
-    const receipts = (message.read_receipts || []).filter(
-      (r: any) => r.user_id !== profile?.id
-    );
-    if (receipts.length === 0) return "Delivered";
-
-    const latest = receipts.reduce((a: any, b: any) =>
-      new Date(a.read_at) > new Date(b.read_at) ? a : b
-    );
-    return `Read at ${new Date(latest.read_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
+  const getMessageStatus = (message: any, index: number): string | null => {
+    const isOwn = message.sender_id === profile?.id;
+    if (!isOwn) return null;
+    const lastOwnIndex = messages.map(m => m.sender_id).lastIndexOf(profile?.id!);
+    if (index === lastOwnIndex) {
+      return message.read_receipts && message.read_receipts.length > 0 ? "Seen" : "Delivered";
+    }
+    return null;
   };
 
   if (profileLoading || (chatsLoading && chats.length === 0)) {
@@ -218,7 +212,6 @@ export default function MessagesPage() {
       </div>
 
       <div className="chat-container">
-        {/* Chat List */}
         <div className="chat-list">
           {sortedChats.length === 0 ? (
             <div style={{ padding: "20px", textAlign: "center", color: "#666" }}>
@@ -228,43 +221,28 @@ export default function MessagesPage() {
             sortedChats.map((chat) => (
               <div
                 key={chat.id}
-                className={`chat-item ${
-                  selectedChat?.id === chat.id ? "active" : ""
-                }`}
+                className={`chat-item ${selectedChat?.id === chat.id ? "active" : ""}`}
                 onClick={() => handleChatSelect(chat)}
               >
                 <div className="chat-avatar">{getChatAvatar(chat)}</div>
-
                 <div className="chat-info">
                   <div className="chat-name">{getChatDisplayName(chat)}</div>
-                  <div className="chat-last-message">
-                    {chat.last_message?.text || "No messages yet"}
-                  </div>
+                  <div className="chat-last-message">{chat.last_message?.text || "No messages yet"}</div>
                 </div>
-
                 <div className="chat-meta">
-                  <div className="chat-time">
-                    {chat.last_message
-                      ? formatChatTime(chat.last_message.created_at)
-                      : ""}
-                  </div>
-                  {chat.unread_count > 0 && (
-                    <div className="chat-unread">{chat.unread_count}</div>
-                  )}
+                  <div className="chat-time">{chat.last_message ? formatChatTime(chat.last_message.created_at) : ""}</div>
+                  {chat.unread_count > 0 && <div className="chat-unread-dot" />}
                 </div>
               </div>
             ))
           )}
         </div>
 
-        {/* Chat Window */}
         {selectedChat ? (
           <div className="chat-window">
             <div className="chat-window-header">
               <div className="chat-avatar">{getChatAvatar(selectedChat)}</div>
-              <div className="chat-window-title">
-                {getChatDisplayName(selectedChat)}
-              </div>
+              <div className="chat-window-title">{getChatDisplayName(selectedChat)}</div>
             </div>
 
             <div className="messages-container">
@@ -272,23 +250,14 @@ export default function MessagesPage() {
                 <div style={{ padding: "20px", textAlign: "center", color: "#666" }}>
                   No messages yet. Start the conversation!
                 </div>
-
               ) : (
                 messages.map((message, index) => {
                   const isOwn = message.sender_id === profile?.id;
                   const isEditing = editingMessageId === message.id;
-
-                  const lastOwnIndex = profile?.id
-                    ? messages.map(m => m.sender_id).lastIndexOf(profile.id)
-                    : -1;
-
-                  const isLastOwn = isOwn && index === lastOwnIndex;
+                  const messageStatus = getMessageStatus(message, index);
 
                   return (
-                    <div
-                      key={`${message.id}-${index}`}
-                      className={`message ${isOwn ? "sent" : "received"}`}
-                    >
+                    <div key={`${message.id}-${index}`} className={`message ${isOwn ? "sent" : "received"}`}>
                       {isEditing ? (
                         <div className="message-edit-container">
                           <input
@@ -300,53 +269,21 @@ export default function MessagesPage() {
                             autoFocus
                           />
                           <div className="message-edit-buttons">
-                            <button onClick={handleSaveEdit} className="edit-save-btn">
-                              Save
-                            </button>
-                            <button
-                              onClick={handleCancelEdit}
-                              className="edit-cancel-btn"
-                            >
-                              Cancel
-                            </button>
+                            <button onClick={handleSaveEdit} className="edit-save-btn">Save</button>
+                            <button onClick={handleCancelEdit} className="edit-cancel-btn">Cancel</button>
                           </div>
                         </div>
                       ) : (
                         <>
-                          <div className="message-content">
-                            {message.text}
-                            {message.is_edited && (
-                              <span
-                                style={{
-                                  fontSize: "0.8em",
-                                  color: "#888",
-                                  marginLeft: "8px",
-                                }}
-                              >
-                                (edited)
-                              </span>
-                            )}
-                          </div>
-                          <div className="message-time">
-                            {formatMessageTime(message.created_at)}
+                          <div className="message-content">{message.text}</div>
+                          
+                          <div className="message-info-row">
+                            <span className="message-time">{formatMessageTime(message.created_at)}</span>
+                            {isOwn && <button onClick={() => handleStartEdit(message.id, message.text)} className="message-edit-btn">Edit</button>}
                           </div>
 
-                          {isLastOwn && getReadReceiptStatus(message) && (
-                            <div className="message-read-status">
-                              {getReadReceiptStatus(message)}
-                            </div>
-                          )}
-
-                          {isOwn && (
-                            <button
-                              onClick={() =>
-                                handleStartEdit(message.id, message.text)
-                              }
-                              className="message-edit-btn"
-                              title="Edit message"
-                            >
-                              ⋯
-                            </button>
+                          {messageStatus && (
+                            <div className="message-status-below">{messageStatus}</div>
                           )}
                         </>
                       )}
@@ -366,11 +303,7 @@ export default function MessagesPage() {
                 onKeyPress={handleKeyPress}
                 className="message-input"
               />
-              <button
-                onClick={handleSendMessage}
-                className="send-button"
-                disabled={!messageText.trim()}
-              >
+              <button onClick={handleSendMessage} className="send-button" disabled={!messageText.trim()}>
                 Send
               </button>
             </div>

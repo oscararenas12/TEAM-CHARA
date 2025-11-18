@@ -192,10 +192,13 @@
     min-height: 0;
 }
 
+/* ===== Messages ===== */
+/* ===== Edit button outside message bubble ===== */
 .message {
     display: flex;
     flex-direction: column;
     max-width: 65%;
+    position: relative; /* for positioning the edit button */
 }
 
 .message.sent {
@@ -203,6 +206,19 @@
     align-items: flex-end;
 }
 
+/* The 3-dot edit button outside bubble */
+.message-edit-btn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.8em;
+  padding: 0;
+}
+
+.message-edit-btn:hover {
+    color: #ffd518;
+}
 .message.received {
     align-self: flex-start;
     align-items: flex-start;
@@ -213,6 +229,7 @@
     border-radius: 18px;
     font-family: Arial, Helvetica, sans-serif;
     word-wrap: break-word;
+    position: relative;
 }
 
 .message.sent .message-content {
@@ -229,9 +246,55 @@
     font-size: 0.8rem;
     color: #666;
     margin-top: 2px;
-    font-family: Arial, Helvetica, sans-serif;
 }
 
+
+/* ===== Edit input container ===== */
+.message-edit-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.message-edit-input {
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    outline: none;
+}
+
+.message-edit-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.edit-save-btn, .edit-cancel-btn {
+    padding: 5px 10px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.edit-save-btn {
+    background-color: #ffd518;
+    color: #333;
+}
+
+.edit-save-btn:hover {
+    background-color: #ffed4e;
+}
+
+.edit-cancel-btn {
+    background-color: #ddd;
+    color: #333;
+}
+
+.edit-cancel-btn:hover {
+    background-color: #bbb;
+}
+
+/* ===== Message Input ===== */
 .message-input-container {
     display: flex;
     gap: 10px;
@@ -311,8 +374,6 @@
     margin-left: 20px;
 }
 
-
-
 /* ===== Responsive Messages Page ===== */
 @media (max-width: 1024px) {
   .chat-list {
@@ -359,7 +420,7 @@
   }
 
   .chat-info {
-    display: none; /* hides long chat text for compact layout */
+    display: none;
   }
 
   .chat-meta {
@@ -427,4 +488,32 @@
     font-size: 0.9rem;
     padding: 8px 12px;
   }
+}
+
+.chat-unread-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.chat-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #efb60a;
+  display: inline-block;
+}
+.message-status-below {
+  font-size: 0.75em;
+  color: #888;
+  margin-top: 2px;
+}
+.message-info-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 4px;
+  font-size: 0.8em;
+  color: #888;
 }
