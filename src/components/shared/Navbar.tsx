@@ -13,10 +13,30 @@ export default function Navbar() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const navItems = [
-    { href: "/home", icon: homeImg.src, label: "Home" },
-    { href: "/messages", icon: messageImg.src, label: "Messages" },
-    { href: "/sell", icon: plusImg.src, label: "Sell" },
-    { href: "/profile", icon: userImg.src, label: "Profile" },
+    {
+      href: "/home",
+      icon: homeImg.src,
+      label: "Home",
+      subtext: "Find what you need, Sell what you don't",
+    },
+    {
+      href: "/messages",
+      icon: messageImg.src,
+      label: "Messages",
+      subtext: "Connect with buyers and sellers.",
+    },
+    {
+      href: "/sell",
+      icon: plusImg.src,
+      label: "Sell",
+      subtext: "List your items for sale",
+    },
+    {
+      href: "/profile",
+      icon: userImg.src,
+      label: "Profile",
+      subtext: "Manage your account and listings",
+    },
   ];
 
   return (
@@ -44,6 +64,9 @@ export default function Navbar() {
             >
               <img className="dock-icon" src={item.icon} alt={item.label} />
               <span className="dock-label">{item.label}</span>
+              {hoveredIndex === index && (
+                <span className="dock-tooltip">{item.subtext}</span>
+              )}
             </Link>
           );
         })}
