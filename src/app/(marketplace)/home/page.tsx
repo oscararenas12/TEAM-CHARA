@@ -25,6 +25,7 @@ interface Listing {
   images: string[];
   condition: string;
   liked?: boolean;
+  isbn?: string;
 }
 
 export default function HomePage() {
@@ -67,6 +68,9 @@ export default function HomePage() {
             item_images (
               image_url,
               display_order
+            ),
+            item_tags (
+              tag
             )
           `
           )
@@ -88,6 +92,24 @@ export default function HomePage() {
             ? item.categories[0]
             : item.categories;
 
+          // Extract and format ISBN from tags
+          const isbnTag = item.item_tags?.find((tag: any) =>
+            tag.tag.startsWith("ISBN:")
+          );
+          let isbn = isbnTag ? isbnTag.tag.replace("ISBN: ", "") : undefined;
+
+          if (isbn) {
+            const cleanIsbn = isbn.replace(/[-\s]/g, "");
+            if (cleanIsbn.length === 13) {
+              const prefix = cleanIsbn.substring(0, 3);
+              const group = cleanIsbn.substring(3, 4);
+              const registrant = cleanIsbn.substring(4, 7);
+              const publication = cleanIsbn.substring(7, 12);
+              const check = cleanIsbn.substring(12, 13);
+              isbn = `${prefix}-${group}-${registrant}-${publication}-${check}`;
+            }
+          }
+
           return {
             id: item.id,
             name: item.name,
@@ -96,6 +118,7 @@ export default function HomePage() {
             category: category?.name || "Other",
             condition: item.condition || "good",
             postedAt: item.created_at,
+            isbn: isbn,
             postedBy: {
               id: item.seller_id || "",
               name: profile
@@ -169,9 +192,15 @@ export default function HomePage() {
         (item) =>
           selectedCategory === "All" || item.category === selectedCategory
       )
-      .filter((item) =>
-        item.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      .filter((item) => {
+        const searchLower = searchTerm.toLowerCase();
+        return (
+          item.name.toLowerCase().includes(searchLower) ||
+          (item.description &&
+            item.description.toLowerCase().includes(searchLower)) ||
+          (item.isbn && item.isbn.toLowerCase().includes(searchLower))
+        );
+      })
       .toSorted(
         (a, b) =>
           new Date(b.postedAt || Date.now()).getTime() -
@@ -301,6 +330,9 @@ export default function HomePage() {
                     <p id="price">{item.price}</p>
                   </div>
 
+                  {item.isbn && item.category.toLowerCase() === "books" && (
+                    <p className="isbn-preview">ISBN: {item.isbn}</p>
+                  )}
                   <p className="condition con2">{item.condition}</p>
                   <hr className="list-divider" />
 
