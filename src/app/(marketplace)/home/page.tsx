@@ -266,8 +266,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      <p id="line">Find what you need, Sell what you don't</p>
-
       <input
         type="text"
         placeholder="Search..."
