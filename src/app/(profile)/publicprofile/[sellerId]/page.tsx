@@ -305,7 +305,7 @@ export default function PublicProfilePage() {
 
         {/* Send Message Button */}
         <div className="profile-butts">
-          <Link href={`/messages/${profile.id}`}>
+          <Link href={`/messages?to=${profile.id}`}>
             <button className="profile-butts1">Send Message</button>
           </Link>
         </div>
@@ -405,7 +405,7 @@ export default function PublicProfilePage() {
                   <Link href={`/item/${item.id}`}>
                     <button className="profile-butts1">View Item</button>
                   </Link>
-                  <Link href={`/messages/${profile.id}`}>
+                  <Link href={`/messages?to=${profile.id}`}>
                     <button className="profile-butts1">Send Message</button>
                   </Link>
                 </div>
