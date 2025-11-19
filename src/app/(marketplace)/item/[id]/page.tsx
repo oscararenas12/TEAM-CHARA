@@ -127,7 +127,19 @@ export default function ItemDetailPage() {
     fetchItem();
   }, [itemId]);
 
-  if (loading) return <p className="no-items">Loading item...</p>;
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div style={{
+        width: '40px',
+        height: '40px',
+        border: '4px solid #f3f3f3',
+        borderTop: '4px solid #ffd518',
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite'
+      }} />
+      <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
   if (error || !item) return <p className="no-items">{error || "Item not found!"}</p>;
 
   const sendQuickMessage = (text: string) => {

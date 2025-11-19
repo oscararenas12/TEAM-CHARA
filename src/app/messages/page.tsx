@@ -17,7 +17,6 @@ export default function MessagesPage() {
         <div className="messages-head">
           <h1 id="page-head">Messages</h1>
         </div>
-        <p className="subtext">Loading...</p>
       </div>
     }>
       <MessagesContent />
@@ -202,7 +201,17 @@ function MessagesContent() {
         <div className="messages-head">
           <h1 id="page-head">Messages</h1>
         </div>
-        <p className="subtext">Loading your conversations...</p>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '4px solid #f3f3f3',
+            borderTop: '4px solid #ffd518',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }} />
+        </div>
+        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
