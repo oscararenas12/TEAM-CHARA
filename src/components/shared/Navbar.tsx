@@ -8,7 +8,11 @@ import messageImg from "@/assets/message.png";
 import userImg from "@/assets/user.png";
 import plusImg from "@/assets/plus.png";
 
-export default function Navbar() {
+interface NavbarProps {
+  forceShow?: boolean;
+}
+
+export default function Navbar({ forceShow = false }: NavbarProps) {
   const pathname = usePathname();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
@@ -39,9 +43,9 @@ export default function Navbar() {
     },
   ];
 
-  // Only show navbar on main pages
+  // Only show navbar on main pages (unless forceShow is true)
   const allowedPages = ["/home", "/messages", "/sell", "/profile"];
-  if (!allowedPages.includes(pathname)) {
+  if (!forceShow && !allowedPages.includes(pathname)) {
     return null;
   }
 

@@ -21,8 +21,17 @@ interface UserListing {
 export default function ProfilePage() {
   const [userListings, setUserListings] = useState<UserListing[]>([]);
   const [loadingListings, setLoadingListings] = useState(true);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const { profile, loading, error } = useUserProfile();
+
+  // Auto-dismiss toast after 3 seconds
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   useEffect(() => {
     async function fetchUserListings() {
@@ -101,7 +110,7 @@ export default function ProfilePage() {
 
       if (error) {
         console.error("Error marking item as sold:", error);
-        alert("Failed to mark item as sold");
+        setToast({ message: "Failed to mark item as sold", type: "error" });
         return;
       }
 
@@ -116,10 +125,10 @@ export default function ProfilePage() {
       }
 
       setUserListings(userListings.filter((item) => item.id !== itemId));
-      alert("Item marked as sold!");
+      setToast({ message: "Item marked as sold!", type: "success" });
     } catch (err) {
       console.error("Unexpected error:", err);
-      alert("Failed to mark item as sold");
+      setToast({ message: "Failed to mark item as sold", type: "error" });
     }
   };
 
@@ -133,6 +142,30 @@ export default function ProfilePage() {
 
   return (
     <div className="profile-page">
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          className={`toast-notification ${toast.type}`}
+          style={{
+            position: 'fixed',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            padding: '12px 24px',
+            borderRadius: '8px',
+            backgroundColor: toast.type === 'success' ? '#d4edda' : '#f8d7da',
+            color: toast.type === 'success' ? '#155724' : '#721c24',
+            border: `1px solid ${toast.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            zIndex: 1000,
+            animation: 'fadeInOut 3s ease-in-out',
+            fontWeight: 500,
+          }}
+        >
+          {toast.message}
+        </div>
+      )}
+
       {/* Profile Header */}
       <div className="profile-header">
         <div className="profile-pic-info">
