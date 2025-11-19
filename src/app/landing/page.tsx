@@ -11,6 +11,9 @@ import search2Img from "@/assets/search2.png"
 import verified2Img from "@/assets/verified2.png"
 import growthImg from "@/assets/growth.png"
 import checkImg from "@/assets/check.png"
+import CountUp from './CountUp'
+import { useRef } from 'react';
+
 
 export default function LandingPage() {
   return (
@@ -23,6 +26,7 @@ export default function LandingPage() {
         </div>
 
         <p className="words">
+          
           Buy and sell with <br /> Fellow Students
         </p>
         <p className="hero-paragraph">
@@ -45,11 +49,25 @@ export default function LandingPage() {
 
         <div className="landing-bottoms">
           <div className="landing-bottom">
-            <p className="val">1000+</p>
+            <p className="val"><CountUp 
+  from={0}
+  to={1000}
+  separator=","
+  direction="up"
+  duration={1}
+  className="count-up-text"
+/>+</p>
             <p className="hero-paragraph">Verified Students</p>
           </div>
           <div className="landing-bottom">
-            <p className="val">5000+</p>
+            <p className="val"><CountUp
+  from={0}
+  to={5000}
+  separator=","
+  direction="up"
+  duration={10}
+  className="count-up-text"
+/>+</p>
             <p className="hero-paragraph">Items listed</p>
           </div>
           <div className="landing-bottom">

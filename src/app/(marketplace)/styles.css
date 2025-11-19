@@ -949,3 +949,13 @@
     min-width: 20px;
   }
 }
+/* Top arrows (prev/next) */
+.item-images-box button{
+  width: 50px;
+  color: rgb(255, 215, 56);
+}
+
+
+
+
+

@@ -26,6 +26,7 @@ export default function MessagesPage() {
 }
 
 function MessagesContent() {
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const searchParams = useSearchParams();
   const { profile, loading: profileLoading } = useUserProfile();
   const {
@@ -46,12 +47,19 @@ function MessagesContent() {
   const [isCreatingChat, setIsCreatingChat] = useState(false);
   const hasProcessedParams = useRef(false);
 
-  // Handle URL parameters (to open a chat with a specific user)
+  const sortedChats = chats.slice().sort((a, b) => {
+    const aTime = new Date(a.last_message?.created_at || 0).getTime();
+    const bTime = new Date(b.last_message?.created_at || 0).getTime();
+    return bTime - aTime;
+  });
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   useEffect(() => {
     const targetUserId = searchParams.get('to');
     const autoMessage = searchParams.get('autoMessage');
-
-    console.log('🔍 URL params:', { targetUserId, autoMessage, profileId: profile?.id, chatsLoading, hasProcessed: hasProcessedParams.current });
 
     if (!profile?.id || !targetUserId || chatsLoading || hasProcessedParams.current) return;
 
@@ -61,67 +69,39 @@ function MessagesContent() {
       try {
         hasProcessedParams.current = true;
         setIsCreatingChat(true);
-        console.log('🚀 Creating/getting chat between:', profile.id, 'and', targetUserId);
 
-        // Get or create a direct chat with the target user
         const chat = await getOrCreateDirectChat(profile.id, targetUserId);
-        console.log('✅ Chat created/retrieved:', chat);
-
-        // Refresh chats to get the updated list with the new/existing chat
         await refreshChats();
 
-        // Find the chat in the list and select it
         const supabase = createClient();
-        const { data: chatDetails, error: chatError } = await supabase
-          .from('chats')
-          .select('*')
-          .eq('id', chat.id)
+        const { data: chatDetails } = await supabase
+          .from("chats")
+          .select("*")
+          .eq("id", chat.id)
           .single();
 
-        if (chatError) {
-          console.error('❌ Error fetching chat details:', chatError);
-          throw chatError;
+        const { data: participants } = await supabase
+          .from("chat_participants")
+          .select(`user_id, profiles:user_id (*)`)
+          .eq("chat_id", chat.id);
+
+        const chatToSelect: ChatWithDetails = {
+          ...chatDetails,
+          participants: participants?.map((p: any) => p.profiles).filter(Boolean) || [],
+          last_message: null,
+          unread_count: 0,
+        };
+
+        selectChat(chatToSelect);
+
+        if (autoMessage) {
+          await sendMessage(chat.id, autoMessage);
         }
 
-        console.log('📝 Chat details:', chatDetails);
+        window.history.replaceState({}, '', '/messages');
 
-        if (chatDetails) {
-          // Get participants for this chat
-          const { data: participants, error: participantsError } = await supabase
-            .from('chat_participants')
-            .select(`
-              user_id,
-              profiles:user_id (*)
-            `)
-            .eq('chat_id', chat.id);
-
-          if (participantsError) {
-            console.error('❌ Error fetching participants:', participantsError);
-            throw participantsError;
-          }
-
-          console.log('👥 Participants:', participants);
-
-          const chatToSelect: ChatWithDetails = {
-            ...chatDetails,
-            participants: participants?.map((p: any) => p.profiles).filter(Boolean) || [],
-            last_message: null,
-            unread_count: 0,
-          };
-
-          selectChat(chatToSelect);
-
-          // If there's an auto-message, send it
-          if (autoMessage) {
-            console.log('📨 Auto-sending message:', autoMessage);
-            await sendMessage(chat.id, autoMessage);
-          }
-
-          // Clear URL parameters after everything is done
-          window.history.replaceState({}, '', '/messages');
-        }
       } catch (err) {
-        console.error('❌ Error opening chat:', err);
+        console.error("❌ Error opening chat:", err);
         alert(`Failed to open chat: ${err instanceof Error ? err.message : JSON.stringify(err)}`);
       } finally {
         setIsCreatingChat(false);
@@ -131,15 +111,10 @@ function MessagesContent() {
     openOrCreateChat();
   }, [profile?.id, searchParams, chatsLoading]);
 
-  // Handle chat selection
-  const handleChatSelect = (chat: ChatWithDetails) => {
-    selectChat(chat);
-  };
+  const handleChatSelect = (chat: ChatWithDetails) => selectChat(chat);
 
-  // Handle sending a message
   const handleSendMessage = async () => {
     if (!messageText.trim() || !selectedChat) return;
-
     try {
       await sendMessage(selectedChat.id, messageText);
       setMessageText("");
@@ -155,16 +130,13 @@ function MessagesContent() {
     }
   };
 
-  // Handle starting to edit a message
   const handleStartEdit = (messageId: string, currentText: string) => {
     setEditingMessageId(messageId);
     setEditText(currentText);
   };
 
-  // Handle saving an edited message
   const handleSaveEdit = async () => {
     if (!editingMessageId || !editText.trim()) return;
-
     try {
       await editMessage(editingMessageId, editText);
       setEditingMessageId(null);
@@ -174,13 +146,11 @@ function MessagesContent() {
     }
   };
 
-  // Handle canceling edit
   const handleCancelEdit = () => {
     setEditingMessageId(null);
     setEditText("");
   };
 
-  // Handle key press in edit mode
   const handleEditKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -190,90 +160,42 @@ function MessagesContent() {
     }
   };
 
-  // Helper function to get the other participant's name in a 1-on-1 chat
   const getChatDisplayName = (chat: ChatWithDetails): string => {
-    if (chat.is_group) {
-      return chat.title || "Group Chat";
-    }
+    if (chat.is_group) return chat.title || "Group Chat";
 
-    // For 1-on-1 chats, show the other person's name
-    const otherParticipant = chat.participants.find(
-      (p) => p.id !== profile?.id
-    );
+    const other = chat.participants.find((p) => p.id !== profile?.id);
+    if (!other) return "Unknown User";
 
-    if (otherParticipant) {
-      const firstName = otherParticipant.first_name || "";
-      const lastName = otherParticipant.last_name || "";
-      return `${firstName} ${lastName}`.trim() || otherParticipant.email;
-    }
-
-    return "Unknown User";
+    return `${other.first_name || ""} ${other.last_name || ""}`.trim() || other.email;
   };
 
-  // Helper function to get chat avatar initial
-  const getChatAvatar = (chat: ChatWithDetails): string => {
-    const displayName = getChatDisplayName(chat);
-    return displayName.charAt(0).toUpperCase();
-  };
+  const getChatAvatar = (chat: ChatWithDetails) =>
+    getChatDisplayName(chat).charAt(0).toUpperCase();
 
-  // Helper function to format timestamp
-  const formatMessageTime = (timestamp: string): string => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const formatMessageTime = (timestamp: string): string =>
+    new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-  // Helper function to format last message time for chat list
   const formatChatTime = (timestamp: string): string => {
     const date = new Date(timestamp);
     const now = new Date();
-    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+    const diff = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
-    if (diffInHours < 24) {
-      return date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } else {
-      return date.toLocaleDateString([], {
-        month: "short",
-        day: "numeric",
-      });
+    if (diff < 24) {
+      return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     }
+    return date.toLocaleDateString([], { month: "short", day: "numeric" });
   };
 
-  // Helper function to get read receipt status for a message
-  const getReadReceiptStatus = (message: any): string | null => {
-    // Only show read receipts for own messages
-    if (message.sender_id !== profile?.id) return null;
-
-    const readReceipts = message.read_receipts || [];
-
-    // Get receipts from other users (not yourself)
-    const otherUserReceipts = readReceipts.filter(
-      (receipt: any) => receipt.user_id !== profile?.id
-    );
-
-    if (otherUserReceipts.length > 0) {
-      // Message has been read - show the most recent read time
-      const latestReceipt = otherUserReceipts.reduce((latest: any, current: any) => {
-        return new Date(current.read_at) > new Date(latest.read_at) ? current : latest;
-      }, otherUserReceipts[0]);
-
-      const readDate = new Date(latestReceipt.read_at);
-      return `Read at ${readDate.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
-    } else {
-      // Message has been delivered but not read
-      return "Delivered";
+  const getMessageStatus = (message: any, index: number): string | null => {
+    const isOwn = message.sender_id === profile?.id;
+    if (!isOwn) return null;
+    const lastOwnIndex = messages.map(m => m.sender_id).lastIndexOf(profile?.id!);
+    if (index === lastOwnIndex) {
+      return message.read_receipts && message.read_receipts.length > 0 ? "Seen" : "Delivered";
     }
+    return null;
   };
 
-  // Show loading state
   if (profileLoading || (chatsLoading && chats.length === 0)) {
     return (
       <div className="messages-page">
@@ -285,7 +207,6 @@ function MessagesContent() {
     );
   }
 
-  // Show error state
   if (error) {
     return (
       <div className="messages-page">
@@ -306,55 +227,37 @@ function MessagesContent() {
       </div>
 
       <div className="chat-container">
-        {/* Chat List */}
         <div className="chat-list">
-          {chats.length === 0 ? (
+          {sortedChats.length === 0 ? (
             <div style={{ padding: "20px", textAlign: "center", color: "#666" }}>
               No conversations yet. Start chatting with other students!
             </div>
           ) : (
-            chats.map((chat) => (
+            sortedChats.map((chat) => (
               <div
                 key={chat.id}
-                className={`chat-item ${
-                  selectedChat?.id === chat.id ? "active" : ""
-                }`}
+                className={`chat-item ${selectedChat?.id === chat.id ? "active" : ""}`}
                 onClick={() => handleChatSelect(chat)}
               >
-                <div className="chat-avatar">
-                  {getChatAvatar(chat)}
-                </div>
+                <div className="chat-avatar">{getChatAvatar(chat)}</div>
                 <div className="chat-info">
                   <div className="chat-name">{getChatDisplayName(chat)}</div>
-                  <div className="chat-last-message">
-                    {chat.last_message?.text || "No messages yet"}
-                  </div>
+                  <div className="chat-last-message">{chat.last_message?.text || "No messages yet"}</div>
                 </div>
                 <div className="chat-meta">
-                  <div className="chat-time">
-                    {chat.last_message
-                      ? formatChatTime(chat.last_message.created_at)
-                      : ""}
-                  </div>
-                  {chat.unread_count > 0 && (
-                    <div className="chat-unread">{chat.unread_count}</div>
-                  )}
+                  <div className="chat-time">{chat.last_message ? formatChatTime(chat.last_message.created_at) : ""}</div>
+                  {chat.unread_count > 0 && <div className="chat-unread-dot" />}
                 </div>
               </div>
             ))
           )}
         </div>
 
-        {/* Chat Window */}
         {selectedChat ? (
           <div className="chat-window">
             <div className="chat-window-header">
-              <div className="chat-avatar">
-                {getChatAvatar(selectedChat)}
-              </div>
-              <div className="chat-window-title">
-                {getChatDisplayName(selectedChat)}
-              </div>
+              <div className="chat-avatar">{getChatAvatar(selectedChat)}</div>
+              <div className="chat-window-title">{getChatDisplayName(selectedChat)}</div>
             </div>
 
             <div className="messages-container">
@@ -364,22 +267,13 @@ function MessagesContent() {
                 </div>
               ) : (
                 messages.map((message, index) => {
-                  const isOwnMessage = message.sender_id === profile?.id;
+                  const isOwn = message.sender_id === profile?.id;
                   const isEditing = editingMessageId === message.id;
-
-                  // Find the last message sent by the current user
-                  const lastOwnMessageIndex = profile?.id
-                    ? messages.map(m => m.sender_id).lastIndexOf(profile.id)
-                    : -1;
-                  const isLastOwnMessage = isOwnMessage && index === lastOwnMessageIndex;
+                  const messageStatus = getMessageStatus(message, index);
 
                   return (
-                    <div
-                      key={message.id}
-                      className={`message ${isOwnMessage ? "sent" : "received"}`}
-                    >
+                    <div key={`${message.id}-${index}`} className={`message ${isOwn ? "sent" : "received"}`}>
                       {isEditing ? (
-                        // Edit mode
                         <div className="message-edit-container">
                           <input
                             type="text"
@@ -390,41 +284,21 @@ function MessagesContent() {
                             autoFocus
                           />
                           <div className="message-edit-buttons">
-                            <button onClick={handleSaveEdit} className="edit-save-btn">
-                              Save
-                            </button>
-                            <button onClick={handleCancelEdit} className="edit-cancel-btn">
-                              Cancel
-                            </button>
+                            <button onClick={handleSaveEdit} className="edit-save-btn">Save</button>
+                            <button onClick={handleCancelEdit} className="edit-cancel-btn">Cancel</button>
                           </div>
                         </div>
                       ) : (
-                        // View mode
                         <>
-                          <div className="message-content">
-                            {message.text}
-                            {message.is_edited && (
-                              <span style={{ fontSize: "0.8em", color: "#888", marginLeft: "8px" }}>
-                                (edited)
-                              </span>
-                            )}
+                          <div className="message-content">{message.text}</div>
+                          
+                          <div className="message-info-row">
+                            <span className="message-time">{formatMessageTime(message.created_at)}</span>
+                            {isOwn && <button onClick={() => handleStartEdit(message.id, message.text)} className="message-edit-btn">Edit</button>}
                           </div>
-                          <div className="message-time">
-                            {formatMessageTime(message.created_at)}
-                          </div>
-                          {isLastOwnMessage && getReadReceiptStatus(message) && (
-                            <div className="message-read-status">
-                              {getReadReceiptStatus(message)}
-                            </div>
-                          )}
-                          {isOwnMessage && (
-                            <button
-                              onClick={() => handleStartEdit(message.id, message.text)}
-                              className="message-edit-btn"
-                              title="Edit message"
-                            >
-                              ⋯
-                            </button>
+
+                          {messageStatus && (
+                            <div className="message-status-below">{messageStatus}</div>
                           )}
                         </>
                       )}
@@ -432,6 +306,7 @@ function MessagesContent() {
                   );
                 })
               )}
+              <div ref={messagesEndRef} />
             </div>
 
             <div className="message-input-container">
@@ -443,11 +318,7 @@ function MessagesContent() {
                 onKeyPress={handleKeyPress}
                 className="message-input"
               />
-              <button
-                onClick={handleSendMessage}
-                className="send-button"
-                disabled={!messageText.trim()}
-              >
+              <button onClick={handleSendMessage} className="send-button" disabled={!messageText.trim()}>
                 Send
               </button>
             </div>

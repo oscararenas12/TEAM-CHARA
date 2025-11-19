@@ -305,8 +305,8 @@ export default function PublicProfilePage() {
 
         {/* Send Message Button */}
         <div className="profile-butts">
-          <Link href={`/messages/${profile.id}`}>
-            <button className="profile-butts2">Send Message</button>
+          <Link href={`/messages?to=${encodeURIComponent(profile.id)}`}>
+            <button className="question-send">Send Message</button>
           </Link>
         </div>
       </div>
