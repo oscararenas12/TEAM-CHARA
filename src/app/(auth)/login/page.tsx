@@ -158,7 +158,13 @@ export default function LoginPage() {
             onChange={handleInputChange}
             required
           />{" "}
-          <button className="forgot-pass">Forgot Password</button>
+          <button
+            type="button"
+            className="forgot-pass"
+            onClick={() => router.push('/forgot-password')}
+          >
+            Forgot Password?
+          </button>
           <br />
           
           <button type="submit" disabled={isLoading}>
