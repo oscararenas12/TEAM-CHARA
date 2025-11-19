@@ -19,9 +19,16 @@ export default function SellPage() {
   const [condition, setCondition] = useState("");
   const [isbn, setIsbn] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [actualFiles, setActualFiles] = useState<File[]>([]);
+
+  // Auto-dismiss toast after 3 seconds
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   const removeImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
@@ -30,17 +37,15 @@ export default function SellPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(null);
 
     // Validation
     if (!profile) {
-      setError("You must be logged in to create a listing");
+      setToast({ message: "You must be logged in to create a listing", type: "error" });
       return;
     }
 
     if (actualFiles.length === 0) {
-      setError("Please add at least one photo");
+      setToast({ message: "Please add at least one photo", type: "error" });
       return;
     }
 
@@ -130,7 +135,7 @@ export default function SellPage() {
       }
 
       // Success! Show message and clear form
-      setSuccess("Listing created successfully! Redirecting to your profile...");
+      setToast({ message: "Listing created successfully! Redirecting...", type: "success" });
       setTitle("");
       setDescription("");
       setPrice("");
@@ -148,7 +153,7 @@ export default function SellPage() {
       }, 2000);
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create listing');
+      setToast({ message: err instanceof Error ? err.message : 'Failed to create listing', type: "error" });
     } finally {
       setIsSubmitting(false);
     }
@@ -161,8 +166,7 @@ export default function SellPage() {
     setCategory("");
     setCondition("");
     setIsbn("");
-    setError(null);
-    setSuccess(null);
+    setToast(null);
     images.forEach((url) => URL.revokeObjectURL(url));
     setImages([]);
     setActualFiles([]);
@@ -189,20 +193,31 @@ export default function SellPage() {
 
   return (
     <div className="sell-page">
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            padding: '12px 24px',
+            borderRadius: '8px',
+            backgroundColor: toast.type === 'success' ? '#d4edda' : '#f8d7da',
+            color: toast.type === 'success' ? '#155724' : '#721c24',
+            border: `1px solid ${toast.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            zIndex: 1000,
+            animation: 'fadeInOut 3s ease-in-out',
+            fontWeight: 500,
+          }}
+        >
+          {toast.message}
+        </div>
+      )}
+
       <div className="create-listing">
         <h2 id="page-head">Create Listing</h2>
-        
-        {error && (
-          <div style={{ color: 'red', padding: '10px', backgroundColor: '#ffebee', borderRadius: '5px', marginTop: '10px' }}>
-            {error}
-          </div>
-          
-        )}
-        {success && (
-          <div style={{ color: 'green', padding: '10px', backgroundColor: '#e8f5e9', borderRadius: '5px', marginTop: '10px' }}>
-            {success}
-          </div>
-        )}
       </div>
       <p className="subtext">
           Share what you're looking to sell with the campus community
