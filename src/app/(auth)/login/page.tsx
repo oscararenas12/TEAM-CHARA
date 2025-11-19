@@ -158,7 +158,9 @@ export default function LoginPage() {
             onChange={handleInputChange}
             required
           />{" "}
+          <button className="forgot-pass">Forgot Password</button>
           <br />
+          
           <button type="submit" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Login"}
           </button>

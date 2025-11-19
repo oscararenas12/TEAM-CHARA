@@ -146,7 +146,9 @@ export async function getChatMessages(chatId: string): Promise<MessageWithSender
 export async function sendMessage(
   chatId: string,
   senderId: string,
-  text: string
+  text: string,
+  imageUrl?: string,
+  imageMetadata?: any
 ): Promise<Message> {
   const supabase = createClient();
 
@@ -155,7 +157,9 @@ export async function sendMessage(
     .insert({
       chat_id: chatId,
       sender_id: senderId,
-      text: text,
+      text: text || null,
+      image_url: imageUrl || null,
+      image_metadata: imageMetadata || null,
       is_read: false,
       is_edited: false,
     })
