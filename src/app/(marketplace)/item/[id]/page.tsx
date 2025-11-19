@@ -8,6 +8,7 @@ import backImg from "@/assets/back.png";
 import messageImg from "@/assets/message.png";
 import laptopImg from "@/assets/laptop.jpeg";
 import { createClient } from "@/lib/supabase/client";
+import Spinner from "@/components/shared/Spinner";
 import Carousel from "@/components/shared/Carousel";
 
 interface Item {
@@ -129,15 +130,7 @@ export default function ItemDetailPage() {
 
   if (loading) return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <div style={{
-        width: '40px',
-        height: '40px',
-        border: '4px solid #f3f3f3',
-        borderTop: '4px solid #ffd518',
-        borderRadius: '50%',
-        animation: 'spin 1s linear infinite'
-      }} />
-      <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+      <Spinner />
     </div>
   );
   if (error || !item) return <p className="no-items">{error || "Item not found!"}</p>;

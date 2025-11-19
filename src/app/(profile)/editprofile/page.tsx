@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import "../styles.css";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import Spinner from "@/components/shared/Spinner";
 import { createClient } from "@/lib/supabase/client";
 
 export default function EditProfilePage() {
@@ -148,15 +149,7 @@ export default function EditProfilePage() {
           height: "100vh",
         }}
       >
-        <div style={{
-          width: '40px',
-          height: '40px',
-          border: '4px solid #f3f3f3',
-          borderTop: '4px solid #ffd518',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
-        }} />
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+        <Spinner />
       </div>
     );
   }

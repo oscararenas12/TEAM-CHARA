@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
 import hatImg from "@/assets/hat.png"
 import "../login/styles.css"
@@ -24,7 +24,6 @@ export default function ResetPasswordPage() {
 
 function ResetPasswordContent() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const supabase = createClient()
 
   const [password, setPassword] = useState("")
@@ -37,13 +36,20 @@ function ResetPasswordContent() {
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        // No session means the token might be in the URL hash
-        // Supabase handles this automatically
+
+      // Check for session or recovery token in URL
+      const hash = window.location.hash
+      const search = window.location.search
+      const hasAccessToken = /access_token=/.test(hash)
+      const isRecovery = /type=recovery/.test(hash + search)
+
+      if (!session && !(hasAccessToken && isRecovery)) {
+        // No session and no valid recovery token, redirect to forgot-password
+        router.push('/forgot-password')
       }
     }
     checkSession()
-  }, [supabase.auth])
+  }, [supabase.auth, router])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -137,6 +143,7 @@ function ResetPasswordContent() {
         <form onSubmit={handleSubmit}>
           <label htmlFor="password">New Password</label>
           <input
+            id="password"
             name="password"
             type="password"
             placeholder="Enter new password"
@@ -148,6 +155,7 @@ function ResetPasswordContent() {
 
           <label htmlFor="confirmPassword">Confirm Password</label>
           <input
+            id="confirmPassword"
             name="confirmPassword"
             type="password"
             placeholder="Confirm new password"

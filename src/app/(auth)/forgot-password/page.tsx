@@ -77,6 +77,7 @@ export default function ForgotPasswordPage() {
         <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email</label>
           <input
+            id="email"
             name="email"
             type="email"
             placeholder="email@student.csulb.edu"

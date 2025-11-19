@@ -10,6 +10,7 @@ import heartemImg from "@/assets/heartempty.png";
 import heartImg from "@/assets/heart.png";
 import { useListingStore } from "@/lib/useListingsStore";
 import { createClient } from "@/lib/supabase/client";
+import Spinner from "@/components/shared/Spinner";
 
 interface Listing {
   id: string;
@@ -292,15 +293,7 @@ export default function HomePage() {
         <div className="item-container">
           {loading ? (
             <div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '50px 0' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                border: '4px solid #f3f3f3',
-                borderTop: '4px solid #ffd518',
-                borderRadius: '50%',
-                animation: 'spin 1s linear infinite'
-              }} />
-              <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+              <Spinner />
             </div>
           ) : filteredItems.length > 0 ? (
             filteredItems.map((item) => {
