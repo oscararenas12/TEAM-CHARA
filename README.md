@@ -85,3 +85,6 @@ Only CSULB students with `@student.csulb.edu` email addresses can sign up.
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Supabase Documentation](https://supabase.com/docs)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs)
+
+
+### Stager 2 phase
