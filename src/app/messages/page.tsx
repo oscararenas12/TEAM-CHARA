@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import hatImg from "@/assets/hat.png";
 import "./styles.css";
@@ -11,6 +11,21 @@ import { getOrCreateDirectChat } from "@/lib/supabase/chat";
 import { createClient } from "@/lib/supabase/client";
 
 export default function MessagesPage() {
+  return (
+    <Suspense fallback={
+      <div className="messages-page">
+        <div className="messages-head">
+          <h1 id="page-head">Messages</h1>
+        </div>
+        <p className="subtext">Loading...</p>
+      </div>
+    }>
+      <MessagesContent />
+    </Suspense>
+  );
+}
+
+function MessagesContent() {
   const searchParams = useSearchParams();
   const { profile, loading: profileLoading } = useUserProfile();
   const {

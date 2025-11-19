@@ -29,8 +29,8 @@ export default function SessionMonitor() {
         router.push('/login')
       }
 
-      // Handle user deleted or unauthorized
-      if (event === 'USER_DELETED') {
+      // Handle user updated (covers account changes)
+      if (event === 'USER_UPDATED' && !session) {
         await supabase.auth.signOut()
         router.push('/login')
       }
