@@ -173,12 +173,14 @@ export function useChat(userId: string | undefined) {
         },
         async (payload) => {
           console.log('🔴 New message received:', payload.new);
+          console.log('🖼️ Image URL:', (payload.new as any).image_url);
+          console.log('📊 Image metadata:', (payload.new as any).image_metadata);
 
           // Fetch the sender profile
           const { data: sender } = await supabase
             .from('profiles')
             .select('*')
-            .eq('id', payload.new.sender_id)
+            .eq('id', (payload.new as any).sender_id)
             .single();
 
           if (sender) {
@@ -188,10 +190,16 @@ export function useChat(userId: string | undefined) {
               read_receipts: [],
             };
 
+            console.log('✅ Complete message object:', newMessage);
+
             // Only add if it's not already in the list (avoid duplicates from optimistic updates)
             setMessages((prev) => {
               const exists = prev.some((msg) => msg.id === newMessage.id);
-              if (exists) return prev;
+              if (exists) {
+                console.log('⚠️ Message already exists, skipping');
+                return prev;
+              }
+              console.log('✨ Adding new message to state');
               return [...prev, newMessage];
             });
 
