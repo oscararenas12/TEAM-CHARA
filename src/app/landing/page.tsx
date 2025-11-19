@@ -34,10 +34,10 @@ export default function LandingPage() {
         </p>
 
         <div className="landing-butt2">
-          <Link href="/login">
+          <Link href="/signup">
             <button className="landing-butt">Get Started</button>
           </Link>
-          <Link href="/signup">
+          <Link href="/login">
             <button id="sign-in">Sign in</button>
           </Link>
         </div>
@@ -79,6 +79,9 @@ export default function LandingPage() {
             <p className="hero-paragraph">Student Savings</p>
           </div>
         </div>
+        <p className="hero-paragraph" style={{ fontSize: '12px', marginTop: '10px', opacity: 0.7 }}>
+          *Projected estimates
+        </p>
       </section>
 
       {/* ===== ABOUT SECTION ===== */}
@@ -150,23 +153,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ===== CATEGORY SECTION ===== */}
-      <section id="category" className="section">
-        <h2>Popular Categories</h2>
-        <p>Find everything you need for college life</p>
-
-        <div className="cat-boxes">
-          <div className="cat-box"><p>Textbooks</p></div>
-          <div className="cat-box"><p>Furniture</p></div>
-          <div className="cat-box"><p>Electronics</p></div>
-          <div className="cat-box"><p>Clothing</p></div>
-          <div className="cat-box"><p>Kitchen Items</p></div>
-          <div className="cat-box"><p>Sports Equipment</p></div>
-          <div className="cat-box"><p>School Supplies</p></div>
-          <div className="cat-box"><p>Decor</p></div>
-        </div>
-      </section>
-
       {/* ===== SAFETY SECTION ===== */}
       <section id="safety" className="section">
         <div><img id="v2" src={verified2Img.src} alt="Verified" /></div>
@@ -213,7 +199,7 @@ export default function LandingPage() {
         <p className="hero-paragraph">
           Join hundreds of CSULB students already buying and selling on campus.
         </p>
-        <Link href="/login">
+        <Link href="/signup">
           <button className="landing-butt last-butt">Create Your Account</button>
         </Link>
         <p className="hero-paragraph">No Fee • No hidden costs • Just students helping students.</p>
