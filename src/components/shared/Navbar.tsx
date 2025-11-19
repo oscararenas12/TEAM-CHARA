@@ -39,6 +39,12 @@ export default function Navbar() {
     },
   ];
 
+  // Only show navbar on main pages
+  const allowedPages = ["/home", "/messages", "/sell", "/profile"];
+  if (!allowedPages.includes(pathname)) {
+    return null;
+  }
+
   return (
     <nav className="dock-navbar">
       <div className="dock-container">
