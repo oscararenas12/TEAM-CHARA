@@ -10,6 +10,7 @@ import heartemImg from "@/assets/heartempty.png";
 import heartImg from "@/assets/heart.png";
 import { useListingStore } from "@/lib/useListingsStore";
 import { createClient } from "@/lib/supabase/client";
+import Spinner from "@/components/shared/Spinner";
 
 interface Listing {
   id: string;
@@ -291,7 +292,9 @@ export default function HomePage() {
       <div className="items-wrapper">
         <div className="item-container">
           {loading ? (
-            <p className="no-items">Loading items...</p>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '50px 0' }}>
+              <Spinner />
+            </div>
           ) : filteredItems.length > 0 ? (
             filteredItems.map((item) => {
               const isLiked = item.liked === true;

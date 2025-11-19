@@ -8,6 +8,7 @@ import backImg from "@/assets/back.png";
 import messageImg from "@/assets/message.png";
 import laptopImg from "@/assets/laptop.jpeg";
 import { createClient } from "@/lib/supabase/client";
+import Spinner from "@/components/shared/Spinner";
 import Carousel from "@/components/shared/Carousel";
 
 interface Item {
@@ -127,7 +128,11 @@ export default function ItemDetailPage() {
     fetchItem();
   }, [itemId]);
 
-  if (loading) return <p className="no-items">Loading item...</p>;
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Spinner />
+    </div>
+  );
   if (error || !item) return <p className="no-items">{error || "Item not found!"}</p>;
 
   const sendQuickMessage = (text: string) => {

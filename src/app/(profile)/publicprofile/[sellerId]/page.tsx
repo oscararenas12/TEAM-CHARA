@@ -5,6 +5,7 @@ import "../../styles.css"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
+import Spinner from "@/components/shared/Spinner"
 import laptopImg from "@/assets/laptop.jpeg"
 
 interface SellerListing {
@@ -276,7 +277,11 @@ export default function PublicProfilePage() {
     }
   }
 
-  if (loading) return <p>Loading profile...</p>
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Spinner />
+    </div>
+  )
   if (error || !profile) return <p>Error loading profile: {error || 'Profile not found'}</p>
 
   return (

@@ -9,6 +9,7 @@ import { useChat } from "@/hooks/useChat";
 import type { ChatWithDetails } from "@/types/database.types";
 import { getOrCreateDirectChat } from "@/lib/supabase/chat";
 import { createClient } from "@/lib/supabase/client";
+import Spinner from "@/components/shared/Spinner";
 
 export default function MessagesPage() {
   return (
@@ -17,7 +18,6 @@ export default function MessagesPage() {
         <div className="messages-head">
           <h1 id="page-head">Messages</h1>
         </div>
-        <p className="subtext">Loading...</p>
       </div>
     }>
       <MessagesContent />
@@ -202,7 +202,9 @@ function MessagesContent() {
         <div className="messages-head">
           <h1 id="page-head">Messages</h1>
         </div>
-        <p className="subtext">Loading your conversations...</p>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '50px' }}>
+          <Spinner />
+        </div>
       </div>
     );
   }
