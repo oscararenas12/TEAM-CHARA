@@ -183,3 +183,14 @@ form input:focus {
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
 }
+
+
+
+.forgot-pass {
+    background: none;
+    border: none;
+    color:rgb(0, 41, 188);
+    display: flex;
+    justify-content: right;
+    margin-top: 5px;
+}
