@@ -79,14 +79,27 @@ export function useChat(userId: string | undefined) {
     [userId, loadMessages]
   );
 
-  // Send a message
+  // Send a message (with optional image)
   const handleSendMessage = useCallback(
-    async (chatId: string, text: string) => {
-      if (!userId || !text.trim()) return;
+    async (chatId: string, text: string, imageFile?: File) => {
+      if (!userId) return;
+      if (!text.trim() && !imageFile) return; // Must have text or image
 
       try {
         setError(null);
-        const newMessage = await sendMessage(chatId, userId, text);
+
+        let imageUrl: string | undefined;
+        let imageMetadata: any;
+
+        // Upload image if provided
+        if (imageFile) {
+          const { uploadChatImage } = await import('@/lib/supabase/images');
+          const result = await uploadChatImage(chatId, imageFile);
+          imageUrl = result.url;
+          imageMetadata = result.metadata;
+        }
+
+        const newMessage = await sendMessage(chatId, userId, text, imageUrl, imageMetadata);
 
         // Optimistically add message to local state
         const supabase = createClient();

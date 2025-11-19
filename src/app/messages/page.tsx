@@ -10,6 +10,38 @@ import type { ChatWithDetails } from "@/types/database.types";
 import { getOrCreateDirectChat } from "@/lib/supabase/chat";
 import { createClient } from "@/lib/supabase/client";
 
+// Component to handle async image loading
+function MessageImage({ imagePath }: { imagePath: string }) {
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadImage() {
+      const { getChatImageUrl } = await import('@/lib/supabase/images');
+      const url = await getChatImageUrl(imagePath);
+      setImageUrl(url);
+      setLoading(false);
+    }
+    loadImage();
+  }, [imagePath]);
+
+  if (loading) {
+    return <div className="message-image-loading">Loading image...</div>;
+  }
+
+  return (
+    <div className="message-image-container">
+      <img
+        src={imageUrl}
+        alt="Shared image"
+        className="message-image"
+        onClick={() => window.open(imageUrl, '_blank')}
+        title="Click to view full size"
+      />
+    </div>
+  );
+}
+
 export default function MessagesPage() {
   return (
     <Suspense fallback={
@@ -45,7 +77,11 @@ function MessagesContent() {
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editText, setEditText] = useState<string>("");
   const [isCreatingChat, setIsCreatingChat] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const hasProcessedParams = useRef(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const sortedChats = chats.slice().sort((a, b) => {
     const aTime = new Date(a.last_message?.created_at || 0).getTime();
@@ -113,13 +149,49 @@ function MessagesContent() {
 
   const handleChatSelect = (chat: ChatWithDetails) => selectChat(chat);
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate image
+    const { validateImage, createImagePreview } = require('@/lib/supabase/images');
+    const validation = validateImage(file);
+
+    if (!validation.valid) {
+      alert(validation.error);
+      return;
+    }
+
+    setSelectedImage(file);
+    const preview = createImagePreview(file);
+    setImagePreview(preview);
+  };
+
+  const handleRemoveImage = () => {
+    if (imagePreview) {
+      const { revokeImagePreview } = require('@/lib/supabase/images');
+      revokeImagePreview(imagePreview);
+    }
+    setSelectedImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleSendMessage = async () => {
-    if (!messageText.trim() || !selectedChat) return;
+    if ((!messageText.trim() && !selectedImage) || !selectedChat) return;
+
     try {
-      await sendMessage(selectedChat.id, messageText);
+      setIsUploading(true);
+      await sendMessage(selectedChat.id, messageText, selectedImage || undefined);
       setMessageText("");
+      handleRemoveImage();
     } catch (err) {
       console.error("Failed to send message:", err);
+      alert("Failed to send message. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -290,11 +362,19 @@ function MessagesContent() {
                         </div>
                       ) : (
                         <>
-                          <div className="message-content">{message.text}</div>
-                          
+                          {/* Display image if present */}
+                          {message.image_url && (
+                            <MessageImage imagePath={message.image_url} />
+                          )}
+
+                          {/* Display text if present */}
+                          {message.text && (
+                            <div className="message-content">{message.text}</div>
+                          )}
+
                           <div className="message-info-row">
                             <span className="message-time">{formatMessageTime(message.created_at)}</span>
-                            {isOwn && <button onClick={() => handleStartEdit(message.id, message.text)} className="message-edit-btn">Edit</button>}
+                            {isOwn && message.text && <button onClick={() => handleStartEdit(message.id, message.text || '')} className="message-edit-btn">Edit</button>}
                           </div>
 
                           {messageStatus && (
@@ -310,17 +390,57 @@ function MessagesContent() {
             </div>
 
             <div className="message-input-container">
-              <input
-                type="text"
-                placeholder="Type a message..."
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="message-input"
-              />
-              <button onClick={handleSendMessage} className="send-button" disabled={!messageText.trim()}>
-                Send
-              </button>
+              {/* Image Preview */}
+              {imagePreview && (
+                <div className="image-preview-container">
+                  <img src={imagePreview} alt="Preview" className="image-preview" />
+                  <button onClick={handleRemoveImage} className="remove-image-btn" type="button">
+                    ✕
+                  </button>
+                </div>
+              )}
+
+              <div className="input-row">
+                {/* Hidden file input */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageSelect}
+                  accept="image/jpeg,image/png,image/webp"
+                  style={{ display: 'none' }}
+                />
+
+                {/* Image upload button */}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="image-upload-btn"
+                  type="button"
+                  disabled={isUploading}
+                  title="Attach image"
+                >
+                  📎
+                </button>
+
+                {/* Text input */}
+                <input
+                  type="text"
+                  placeholder="Type a message..."
+                  value={messageText}
+                  onChange={(e) => setMessageText(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="message-input"
+                  disabled={isUploading}
+                />
+
+                {/* Send button */}
+                <button
+                  onClick={handleSendMessage}
+                  className="send-button"
+                  disabled={(!messageText.trim() && !selectedImage) || isUploading}
+                >
+                  {isUploading ? 'Sending...' : 'Send'}
+                </button>
+              </div>
             </div>
           </div>
         ) : (

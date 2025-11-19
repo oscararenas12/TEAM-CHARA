@@ -40,7 +40,15 @@ export interface Message {
   id: string;
   chat_id: string;
   sender_id: string;
-  text: string;
+  text: string | null;
+  image_url: string | null;
+  image_metadata: {
+    filename: string;
+    size: number;
+    width: number;
+    height: number;
+    type: string;
+  } | null;
   is_read: boolean;
   is_edited: boolean;
   created_at: string;
