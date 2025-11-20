@@ -302,7 +302,9 @@
     border-top: 1px solid #e0e0e0;
     background: #f8f9fa;
     flex-shrink: 0;
+    margin-bottom: 55px;
 }
+
 
 .message-input {
     flex: 1;
