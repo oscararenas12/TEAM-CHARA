@@ -8,6 +8,7 @@ import backImg from "@/assets/back.png";
 import messageImg from "@/assets/message.png";
 import laptopImg from "@/assets/laptop.jpeg";
 import { createClient } from "@/lib/supabase/client";
+import Spinner from "@/components/shared/Spinner";
 import Carousel from "@/components/shared/Carousel";
 
 interface Item {
@@ -34,11 +35,16 @@ export default function ItemDetailPage() {
   const [item, setItem] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchItem() {
       try {
         const supabase = createClient();
+
+        // Get current user
+        const { data: { user } } = await supabase.auth.getUser();
+        setCurrentUserId(user?.id || null);
 
         const { data, error } = await supabase
           .from("items")
@@ -127,7 +133,11 @@ export default function ItemDetailPage() {
     fetchItem();
   }, [itemId]);
 
-  if (loading) return <p className="no-items">Loading item...</p>;
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Spinner />
+    </div>
+  );
   if (error || !item) return <p className="no-items">{error || "Item not found!"}</p>;
 
   const sendQuickMessage = (text: string) => {
@@ -198,27 +208,29 @@ export default function ItemDetailPage() {
         </div>
       </div>
 
-      {/* Quick Questions */}
-      <div className="box quick-questions-box">
-        <h3>Quick Questions</h3>
-        <div className="questions">
-          {[
-            "Is this available?",
-            "Can I pick up tomorrow?",
-            "What's the condition like?",
-            "Can you send more photos?",
-          ].map((q, i) => (
-            <div key={i} className="question" onClick={() => sendQuickMessage(q)}>
-              <p>
-                <img src={messageImg.src} /> {q}
-              </p>
-            </div>
-          ))}
-          <Link href={`/messages?to=${encodeURIComponent(item.postedBy.id)}`}>
-            <button className="question-send">Send Message</button>
-          </Link>
+      {/* Quick Questions - Only show for other users' items */}
+      {currentUserId !== item.postedBy.id && (
+        <div className="box quick-questions-box">
+          <h3>Quick Questions</h3>
+          <div className="questions">
+            {[
+              "Is this available?",
+              "Can I pick up tomorrow?",
+              "What's the condition like?",
+              "Can you send more photos?",
+            ].map((q, i) => (
+              <div key={i} className="question" onClick={() => sendQuickMessage(q)}>
+                <p>
+                  <img src={messageImg.src} /> {q}
+                </p>
+              </div>
+            ))}
+            <Link href={`/messages?to=${encodeURIComponent(item.postedBy.id)}`}>
+              <button className="question-send">Send Message</button>
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

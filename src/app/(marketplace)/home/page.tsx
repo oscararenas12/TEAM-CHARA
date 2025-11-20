@@ -10,6 +10,7 @@ import heartemImg from "@/assets/heartempty.png";
 import heartImg from "@/assets/heart.png";
 import { useListingStore } from "@/lib/useListingsStore";
 import { createClient } from "@/lib/supabase/client";
+import Spinner from "@/components/shared/Spinner";
 
 interface Listing {
   id: string;
@@ -33,10 +34,19 @@ export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const itemsFromStore = useListingStore((state) => state.items) || [];
   const setItems = useListingStore((state) => state.setItems);
   const toggleLike = useListingStore((state) => state.toggleLike);
+
+  // Auto-dismiss toast after 3 seconds
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   // Fetch items from Supabase on mount
   useEffect(() => {
@@ -209,12 +219,8 @@ export default function HomePage() {
   }, [items, searchTerm, selectedCategory]);
 
   const handleMarkSold = async (itemId: string) => {
-    if (!confirm("Are you sure you want to mark this item as sold?")) {
-      return;
-    }
-
     if (!currentUserId) {
-      alert("You must be logged in");
+      setToast({ message: "You must be logged in", type: "error" });
       return;
     }
 
@@ -228,7 +234,7 @@ export default function HomePage() {
 
       if (error) {
         console.error("Error marking item as sold:", error);
-        alert("Failed to mark item as sold");
+        setToast({ message: "Failed to mark item as sold", type: "error" });
         return;
       }
 
@@ -245,15 +251,38 @@ export default function HomePage() {
       // Remove from local state
       const updatedItems = items.filter((item) => item.id !== itemId);
       setItems(updatedItems);
-      alert("Item marked as sold!");
+      setToast({ message: "Item marked as sold!", type: "success" });
     } catch (err) {
       console.error("Unexpected error:", err);
-      alert("Failed to mark item as sold");
+      setToast({ message: "Failed to mark item as sold", type: "error" });
     }
   };
 
   return (
     <div className="homepage-wrapper">
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '20px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            padding: '12px 24px',
+            borderRadius: '8px',
+            backgroundColor: toast.type === 'success' ? '#d4edda' : '#f8d7da',
+            color: toast.type === 'success' ? '#155724' : '#721c24',
+            border: `1px solid ${toast.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            zIndex: 1000,
+            animation: 'fadeInOut 3s ease-in-out',
+            fontWeight: 500,
+          }}
+        >
+          {toast.message}
+        </div>
+      )}
+
       <div className="home-head1">
         <div className="home-head2">
           <img id="hat-home" src={hatImg.src} alt="Hat logo" />
@@ -291,7 +320,9 @@ export default function HomePage() {
       <div className="items-wrapper">
         <div className="item-container">
           {loading ? (
-            <p className="no-items">Loading items...</p>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '50px 0' }}>
+              <Spinner />
+            </div>
           ) : filteredItems.length > 0 ? (
             filteredItems.map((item) => {
               const isLiked = item.liked === true;

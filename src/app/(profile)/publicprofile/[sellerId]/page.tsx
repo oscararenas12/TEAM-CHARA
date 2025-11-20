@@ -5,6 +5,8 @@ import "../../styles.css"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
+import Spinner from "@/components/shared/Spinner"
+import Navbar from "@/components/shared/Navbar"
 import laptopImg from "@/assets/laptop.jpeg"
 
 interface SellerListing {
@@ -276,10 +278,15 @@ export default function PublicProfilePage() {
     }
   }
 
-  if (loading) return <p>Loading profile...</p>
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Spinner />
+    </div>
+  )
   if (error || !profile) return <p>Error loading profile: {error || 'Profile not found'}</p>
 
   return (
+    <>
     <div className="profile-page">
       {/* Profile Header */}
       <div className="profile-header">
@@ -303,12 +310,14 @@ export default function PublicProfilePage() {
           </div>
         </div>
 
-        {/* Send Message Button */}
-        <div className="profile-butts">
-          <Link href={`/messages?to=${encodeURIComponent(profile.id)}`}>
-            <button className="question-send">Send Message</button>
-          </Link>
-        </div>
+        {/* Send Message Button - Only show for other users */}
+        {currentUserId && currentUserId !== sellerId && (
+          <div className="profile-butts">
+            <Link href={`/messages?to=${encodeURIComponent(profile.id)}`}>
+              <button className="question-send">Send Message</button>
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Profile Stats */}
@@ -405,9 +414,11 @@ export default function PublicProfilePage() {
                   <Link href={`/item/${item.id}`}>
                     <button className="profile-butts1">View Item</button>
                   </Link>
-                  <Link href={`/messages/${profile.id}`}>
-                    <button className="profile-butts3">Send Message</button>
-                  </Link>
+                  {currentUserId && currentUserId !== sellerId && (
+                    <Link href={`/messages?to=${encodeURIComponent(profile.id)}`}>
+                      <button className="profile-butts3">Send Message</button>
+                    </Link>
+                  )}
                 </div>
               </div>
             ))
@@ -417,5 +428,9 @@ export default function PublicProfilePage() {
         </div>
       </div>
     </div>
+
+    {/* Show navbar only when viewing own profile */}
+    {currentUserId && currentUserId === sellerId && <Navbar forceShow />}
+    </>
   )
 }

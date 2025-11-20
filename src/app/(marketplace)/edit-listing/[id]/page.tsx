@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import "../../styles.css";
 import { createClient } from "@/lib/supabase/client";
+import Spinner from "@/components/shared/Spinner";
 
 export default function EditListingPage() {
   const params = useParams();
@@ -293,8 +294,8 @@ export default function EditListingPage() {
 
   if (loading) {
     return (
-      <div className="sell-page">
-        <p>Loading listing...</p>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Spinner />
       </div>
     );
   }
