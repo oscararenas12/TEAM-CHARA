@@ -172,10 +172,6 @@ export function useChat(userId: string | undefined) {
           filter: `chat_id=eq.${selectedChat.id}`,
         },
         async (payload) => {
-          console.log('🔴 New message received:', payload.new);
-          console.log('🖼️ Image URL:', (payload.new as any).image_url);
-          console.log('📊 Image metadata:', (payload.new as any).image_metadata);
-
           // Fetch the sender profile
           const { data: sender } = await supabase
             .from('profiles')
@@ -190,16 +186,10 @@ export function useChat(userId: string | undefined) {
               read_receipts: [],
             };
 
-            console.log('✅ Complete message object:', newMessage);
-
             // Only add if it's not already in the list (avoid duplicates from optimistic updates)
             setMessages((prev) => {
               const exists = prev.some((msg) => msg.id === newMessage.id);
-              if (exists) {
-                console.log('⚠️ Message already exists, skipping');
-                return prev;
-              }
-              console.log('✨ Adding new message to state');
+              if (exists) return prev;
               return [...prev, newMessage];
             });
 
@@ -223,8 +213,6 @@ export function useChat(userId: string | undefined) {
           filter: `chat_id=eq.${selectedChat.id}`,
         },
         (payload) => {
-          console.log('✏️ Message updated:', payload.new);
-
           // Update the message in local state
           setMessages((prev) =>
             prev.map((msg) =>
@@ -243,8 +231,6 @@ export function useChat(userId: string | undefined) {
           table: 'message_read_receipts',
         },
         async (payload: any) => {
-          console.log('👁️ Read receipt created:', payload.new);
-
           // Update the message's read receipts in local state
           setMessages((prev) =>
             prev.map((msg) => {
@@ -269,7 +255,6 @@ export function useChat(userId: string | undefined) {
 
     // Cleanup: unsubscribe when chat changes or component unmounts
     return () => {
-      console.log('🔌 Unsubscribing from chat:', selectedChat.id);
       supabase.removeChannel(channel);
     };
   }, [selectedChat?.id, userId, loadChats]);
