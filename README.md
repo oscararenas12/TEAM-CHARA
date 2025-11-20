@@ -42,20 +42,12 @@ This project employs a modern web development stack and leverages powerful libra
 ## Authors
 
 **Oscar Arenas** - Backend Engineer
-[Add bio here]
-[LinkedIn](#)
 
 **Warissa Hossain** - Frontend Engineer
-[Add bio here]
-[LinkedIn](#)
 
 **Min Hein** - Frontend Engineer
-[Add bio here]
-[LinkedIn](#)
 
 **Angel Rivera** - Backend Engineer
-[Add bio here]
-[LinkedIn](#)
 
 ## Getting Started
 
