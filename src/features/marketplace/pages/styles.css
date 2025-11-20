@@ -1,0 +1,146 @@
+/* =======================================
+   ===== Home / Marketplace Page Styles =====
+   ======================================= */
+
+/* Header */
+#page-head {
+  text-align: left;
+}
+
+.home-head {
+  margin-top: 3%;
+  margin-left: 2%;
+}
+
+.home-head1 {
+  background: black;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 2px;
+ 
+}
+
+.home-head1 h1 {
+  color: rgb(255, 204, 0);
+ 
+}
+
+/* === Left Section (Logo + Title) === */
+.home-head2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px; /* slight spacing between logo and text */
+}
+
+/* === Logo Image === */
+.home-head2 img {
+  width: 3vw;
+  min-width: 45px;
+  max-width: 60px;
+  height: auto;
+  padding-left: 20px;
+}
+/* === Cart Icon === */
+.cart-icon {
+  width: 2.5vw;
+  min-width: 35px;
+  max-width: 50px;
+  height: auto;
+}
+
+/* === Cart Container === */
+.icon-cart {
+  padding-right: 30px;
+  display: flex;
+  align-items: center;
+}
+
+/* =======================================
+   ===== Item Detail Page Styles =====
+   ======================================= */
+
+.item-detail-head {
+  width: 100%;
+  border-bottom: 1px solid #e7e7e7;
+  padding: 20px 40px;
+  position: fixed;
+  top: 0;
+  background-color: #fff;
+  margin: 0 20%;
+}
+
+.item-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 10% 20px;
+  margin: 0 18% 40px;
+}
+
+/* Back Button */
+#backbut {
+  width: 3vw;
+  padding: 0;
+  margin-left: 2%;
+}
+
+.back-button {
+  align-self: flex-start;
+  margin-bottom: 10px;
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Image Carousel */
+.item-images-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-images-box img {
+  width: 60%;
+  border-radius: 8px;
+}
+
+.item-images-box button {
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin: 0 20px;
+}
+
+/* Item Info */
+.item-info-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 30px;
+  width: 100%;
+}
+
+.item-info-box p {
+  margin: 5px 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.item-price {
+  color: rgb(255, 204, 0);
+}
+
+.item-condition {
+  font-weight: bold;
+}
+
+/* Generic Box Layout */
+.box {
+  width: 100%;
+  border: 1px solid #e7e7e7;
+  padding:0;
+}

@@ -1,14 +1,21 @@
+/* ===== GLOBAL STYLES ===== */
+/* These styles apply to the entire application */
+
+/* ===== Global Font Settings ===== */
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
 
 body {
-    background: rgb(251, 253, 255);
-    font-family: Arial, sans-serif;
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 html, body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 /* ===== App container ===== */
@@ -16,184 +23,24 @@ html, body {
     text-align: center;
 }
 
-h1 {
+/* ===== Global heading styles ===== */
+h1, h2, h3, h4, h5, h6 {
     text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-/* ===== Login / Signup card ===== */
-.card {
-    background-color: rgb(255, 255, 255);
-    width: 80%;
-    max-width: 400px;
-    height: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 10px auto 5% ;
-    padding: 30px 20px;
-    border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-    flex-direction: column;
+/* ===== LINKS ===== */
+a {
+    text-decoration: none;
+    color: black;
 }
 
-/* ===== The signle paragraph after h1 ===== */
-#des {
-    color: grey;
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1rem;
+a:visited {
+    color: None;
 }
 
-/* ===== Feature points above login/signup ===== */
-.point img {
-  width: 30px;
-  height: 30px;
-}
-
-.points-container {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 15px;
-    gap: 35px;
-    width: 100%;
-    margin-bottom: 0;
-}
-
-.point p {
-    font-size: 0.8rem;
-    text-align: center;
-    color: grey;
-}
-
-.point {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    margin-top: 5px;
-}
-
-/* ===== Card heading ===== */
-h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-/* ===== Page layout ===== */
-.login-page,
-.signup-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-    gap: 0.2rem;
-}
-
-#hat {
-  display: block;
-  margin: 40px auto 2px;
-  width: 70px;
-}
-
-.login-page h1 {
-  margin-top: 5px;
-  margin-bottom: 2px;
-}
-
-/* ===== Navigation buttons container ===== */
-.nav-buttons-cont {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    background: rgb(236, 236, 236);
-    padding: 5px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-}
-
-/* ===== Navigation buttons ===== */
-.nav-buttons-cont button {
-    width: 22vw;
-    min-width: 160px;
-    max-width: 180px;
-    padding: 12px 20px;
-    font-size: 16px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    background: transparent;
-    margin: 2px 10px;
-    border-radius: 10px;
-    font-weight: bold;
-}
-
-.nav-buttons-cont button:active {
-    background: rgb(214, 210, 211);
-}
-
-.nav-buttons-cont button.active {
-  background-color: rgb(255, 255, 255);
-}
-
-/* ===== Form ===== */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-}
-
-/* ===== Form inputs ===== */
-form input {
-    padding: 9px;
-    font-size: 16px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-label {
-    font-weight: bold;
-}
-
-/* ===== Submit button ===== */
-form button[type="submit"] {
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    background: hsl(44, 96%, 60%);
-    cursor: pointer;
-    transition: background 0.2s;
-    font-weight: bold;
-}
-
-form button[type="submit"]:active {
-    background: rgb(255, 255, 255);
-}
-form input {
-  transition: border-color 0.2s ease;
-  outline: none;
-}
-
-form input:focus {
-  border:solid 2px #ffd518; /* yellow */
-  outline: none;
-}
-
-/* ===== text below card login/signup ===== */
-
-.under-card {
-    font-size: 0.9 rem;
-    color: grey;
-    margin-top: 0;
-}
-
-/* ===== bottom navbar ===== */
-
+/* ===== Bottom Navigation Bar ===== */
+/* This navbar appears on all pages */
 .bottom-navbar {
     position: fixed;
     bottom: 0;
@@ -201,60 +48,65 @@ form input:focus {
     justify-content: space-around;
     align-items: center;
     height: 5%;
- 
+    background: white;
     padding: 10px 0;
     width: 100%;
     border-top: solid 1px rgb(207, 204, 204);
+    z-index: 1000;
 }
 
 .bottom-navbar a {
-  text-decoration: none;
-  color: black;
-  font-size: 0.9rem;
+    text-decoration: none;
+    color: black;
+    font-size: 0.9rem;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .Nav-icon {
     width: 20px;
     margin: 5px;
 }
+
 .nav-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .nav-col a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  color: #333;
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
 }
 
 .nav-col a.active {
-    background-color: rgb(255, 210, 8);
+    background-color: rgb(255, 209, 2);
     border-radius: 4px;
     padding: 2px 8px;
     width: 60px;
 }
-/* =====home page===== */
 
-
+/* ===== Home Page Header ===== */
 #page-head {
     text-align: left;
 }
 
-.home-head {
-    margin-top: 3%;
-    margin-left: 2%;
+
+#line {
+    margin-left: 25px;
+    margin-bottom: 0;
+    font-size: 1.5rem;
+    color: rgb(136, 132, 116);
 }
 
+/* ===== Search Bar ===== */
 .Search-bar {
-    width: calc(100% - 40px);
-    max-width: 100%;
+    width: 95%;              
     height: 35px;
-    margin: 2px 20px;
+    margin: 20px auto;
+    display: block;          
     border-radius: 25px;
     border: none;
     padding: 8px 25px;
@@ -264,8 +116,64 @@ form input:focus {
 }
 
 .Search-bar:focus {
-    border:solid 2px #ffd518; /* yellow */
+    border: solid 2px #ffd518; /* yellow */
     outline: none;
+}
+
+
+/* ===== Items Section for Home Page ===== */
+.items-wrapper {
+    display: flex;
+    justify-content: center;  
+    padding: 2vh 2vw;        
+}
+
+.item-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start; 
+    margin: 0;       
+    max-width: 90vw;   
+    width: 95%;  
+}
+
+.item-card {
+    background-color: rgb(254, 254, 255);
+    padding: 1.5vh 1.5vw;       
+    width: 25vw;                 
+    min-width: 180px;            
+    border-radius: 1vh;
+    box-shadow: 0 0.5vh 1.5vh rgba(0, 0, 0, 0.1); 
+    margin: 2vh 1vw;             
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.item-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0.4vh 1vh rgba(0, 0, 0, 0.15);
+}
+
+.item-img {
+    width: 100%;                
+    height: 25vh;               
+    object-fit: cover;         
+    border-radius: 0.5vh;
+}
+
+.posted-by {
+    font-size: 1.5vh;          
+    color: gray;
+    margin-top: 1vh;
+    text-align: center;
+}
+
+/* ===== Miscellaneous ===== */
+#hat-home {
+    width: 50px;
+    margin: 10px;
 }
 
 @media (max-width: 600px) {
@@ -274,4 +182,68 @@ form input:focus {
     margin: 2px 10px;
     font-size: 0.9rem;
   }
+}
+
+
+/* =====items for home page ===== *//* Wrapper centers the whole flex block */
+
+.items-wrapper {
+  display: flex;
+  justify-content: center;  /* center the group of cards */
+  padding: 2vh 2vw;         /* responsive padding */
+}
+
+/* Container for flex items */
+.item-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start; /* rows start from left */
+  gap: 2vw;                    /* space between cards, responsive */
+  max-width: 90vw;             /* container max width responsive */
+}
+
+/* Individual cards */
+.item-card {
+  background-color: rgb(254, 254, 255);
+  padding: 1.5vh 1.5vw;        /* responsive padding */
+  width: 20vw;                  /* responsive width */
+  min-width: 180px;             /* prevents cards from getting too small */
+  border-radius: 1vh;
+  box-shadow: 0 0.5vh 1.5vh rgba(0,0,0,0.1); /* responsive shadow */
+  margin: 2vh 1vw;              /* spacing between cards */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect */
+.item-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0.4vh 1vh rgba(0, 0, 0, 0.15);
+}
+
+/* Images inside card */
+.item-img {
+  width: 100%;                /* fills card width */
+  height: 25vh;               /* responsive height based on viewport */
+  object-fit: cover;          /* maintain aspect ratio, fill card nicely */
+  border-radius: 0.5vh;
+}
+
+/* Text inside card */
+.posted-by {
+  font-size: 1.5vh;           /* responsive font size */
+  color: gray;
+  margin-top: 1vh;
+  text-align: center;
+}
+
+a {
+    text-decoration: None;
+    color: black;
+}
+
+a:visited {
+    color: None;
 }
